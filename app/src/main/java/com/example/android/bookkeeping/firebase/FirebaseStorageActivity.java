@@ -20,6 +20,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FirebaseStorageActivity extends AppCompatActivity {
 
@@ -40,9 +42,7 @@ public class FirebaseStorageActivity extends AppCompatActivity {
 
                 if(dataList.size() > 0 ){
                     DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("data/");
-                    for(AccountData ad : dataList){
-                        ref.push().setValue(ad);
-                    }
+                    ref.push().setValue(dataList);
                 }
 
             }
@@ -57,9 +57,14 @@ public class FirebaseStorageActivity extends AppCompatActivity {
                 ref.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                         ArrayList <?> value = (ArrayList<?>) dataSnapshot.getValue();
-                         for (Object v : value ) {
-                        Log.d(LOG_TAG, "Value is: " + value);
+                         HashMap<String , Object> value = (HashMap<String, Object>) dataSnapshot.getValue();
+
+                         for(Map.Entry<String, Object> entry : value.entrySet()) {
+                            String key = entry.getKey();
+                            Object object = entry.getValue();
+
+                             Log.i(LOG_TAG, "key " + key + "object " + entry.getValue());
+                            // key -LH6wPM03-hBADMFHh7gobject [{name=account , valueRUB=1453,54, value=20, lastTransaction=Date 24-05-06, value 25, currency USD, comment comment , currency=EUR}]
                         }
                     }
 
