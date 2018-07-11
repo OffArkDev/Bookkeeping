@@ -79,7 +79,7 @@ public class FirebaseStartActivity extends AppCompatActivity {
         buttonAuth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                    signin(ETemail.getText().toString(), ETpassword.getText().toString());
+                    signin(ETemail.getText().toString().trim(), ETpassword.getText().toString());
             }
         });
 
