@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">Bookkeeping</string>
+    <string name="add_account_button">add new account</string>
+    <string name="accounts_list">Accounts list</string>
+    <string name="transactions_list">Transactions list</string>
+    <string name="account_name">Enter the name of the account:</string>
+    <string name="account_value">Enter amount of money:</string>
+    <string name="transaction_name">Enter the name of the transaction:</string>
+    <string name="transaction_value">>Enter amount of money:</string>
+    <string name="here">here</string>
+    <string name="currency">Currency</string>
+    <string name="done">done</string>
+    <string name="currency_rub">RUB</string>
+    <string name="currency_usd">USD</string>
+    <string name="currency_eur">EUR</string>
+    <string name="add_transaction_button">add transaction</string>
+    <string name="edit_date">Write date of transaction</string>
+    <string name="hint_date">dd-mm-yyyy</string>
+    <string name="edit_comment">Write an additional comment</string>
+    <string name="type">type</string>
+    <string name="create_transaction">Create transaction</string>
+    <string name="create_account">Create account</string>
+    <string name="transaction_list">List of transactions</string>
+    <string name="button_account_delete">delete</string>
+    <string name="button_cloud">cloud</string>
+    <string name="cloud">Creating cloud</string>
+    <string name="cloud_message">You can save or load your data to cloud here</string>
+    <string name="button_cloud_save">save</string>
+    <string name="button_cloud_load">load</string>
+    <string name="firebase_authorization">Authorization</string>
+    <string name="firebase_registration">Registration</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+
+
+</resources>

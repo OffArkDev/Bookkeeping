@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.TransactionsListActivity">
+
+
+
+    <TextView
+        android:id="@+id/transactions_textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:text="@string/transactions_list" />
+
+    <ListView
+        android:id="@+id/transactions_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="5">
+
+    </ListView>
+
+
+
+
+
+        <Button
+            android:id="@+id/add_transaction_button"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:adjustViewBounds="true"
+            android:text="@string/add_transaction_button"
+            />
+
+
+
+
+
+
+</android.support.v7.widget.LinearLayoutCompat>

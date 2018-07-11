@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_margin="8dp"
+    >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:textSize="16sp"
+        android:text="@string/account_name"/>
+
+    <EditText
+        android:id="@+id/name_create_account"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:layout_marginTop="4dp"
+
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:layout_marginTop="16dp"
+        android:hint="@string/here"
+        android:text="@string/account_value"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+    <EditText
+        android:id="@+id/value_create_account"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:maxLength="12"
+        android:digits="1234567890."
+        android:textSize="18sp"
+        android:inputType="number"
+        />
+    <Spinner
+        android:id="@+id/account_currency_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:prompt="@string/currency"
+        >
+
+
+    </Spinner>
+</LinearLayout>
+
+    <Button
+        android:id="@+id/button_done_create_account"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/done"/>
+
+
+</LinearLayout>
