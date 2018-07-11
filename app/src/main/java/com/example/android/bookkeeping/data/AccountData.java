@@ -29,9 +29,15 @@ public class AccountData {
     }
 
 
-    public void setTransaction(Transaction transaction) {
+    public void setToTransactions (Transaction transaction) {
         transactions.add(transaction);
     }
+
+    public ArrayList<Transaction> getTransactions() {
+        return transactions;
+    }
+
+
     public String getValue() {
         return value;
     }
