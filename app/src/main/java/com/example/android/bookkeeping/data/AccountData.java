@@ -7,6 +7,7 @@ import com.example.android.bookkeeping.currency.CurrencyArray;
 import com.example.android.bookkeeping.currency.CurrencyConverter;
 import com.example.android.bookkeeping.currency.DownloadActualCurrency;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -18,7 +19,7 @@ public class AccountData {
     private String valueRUB;
 
     private String currency;
-   private List<Transaction> transactions;
+    private ArrayList<Transaction> transactions;
 
     public AccountData(String name, String value, String currency) {
         this.name = name;
@@ -28,8 +29,9 @@ public class AccountData {
     }
 
 
-
-
+    public void setTransaction(Transaction transaction) {
+        transactions.add(transaction);
+    }
     public String getValue() {
         return value;
     }
@@ -50,10 +52,6 @@ public class AccountData {
         if (currency.equals("RUB")) {
             valueRUB = value;
         } else {
-
-
-            if (DownloadActualCurrency.isDownloaded) {
-                CurrencyArray currencyArray = new CurrencyArray();
                 if (currency.equals("USD")) {
                     valueRUB = DownloadActualCurrency.getRUBFromUSD(value);
                     Log.i(LOG_TAG, "valueRUB " + valueRUB);
@@ -61,33 +59,6 @@ public class AccountData {
                     valueRUB = DownloadActualCurrency.getRUBFromEUR(value);
                     Log.i(LOG_TAG, "valueRUB " + valueRUB);
                 }
-
-            return;
-            }
-
-
-
-            ApiAdapter adapter = new ApiAdapter();
-
-            CurrencyConverter currencyConverter = new CurrencyConverter();
-
-
-            try {
-                currencyConverter =  new DownloadActualCurrency().execute().get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();            }
-
-                                Log.i(LOG_TAG, "RUB " + currencyConverter.getCurrencyArray().getUSDRUB() + " EUR " + currencyConverter.getCurrencyArray().getUSDEUR());
-                                Log.i(LOG_TAG, "currency " + currency);
-                                if (currency.equals("USD")) {
-                                    valueRUB = currencyConverter.getCurrencyArray().getRUBFromUSD(value);
-                                    Log.i(LOG_TAG, "valueRUB " + valueRUB);
-                                } else if (currency.equals("EUR")) {
-                                    valueRUB = currencyConverter.getCurrencyArray().getRUBFromEUR(value);
-                                    Log.i(LOG_TAG, "valueRUB " + valueRUB);
-                                }
         }
     }
 

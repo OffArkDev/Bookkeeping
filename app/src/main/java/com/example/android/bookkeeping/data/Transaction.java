@@ -35,8 +35,6 @@ public class Transaction {
             valueRUB = value;
         } else {
 
-
-
             if (DownloadActualCurrency.isDownloaded) {
                 CurrencyArray currencyArray = new CurrencyArray();
                 if (currency.equals("USD")) {
@@ -47,30 +45,9 @@ public class Transaction {
                     Log.i(LOG_TAG, "valueRUB " + valueRUB);
                 }
 
-                return;
+
             }
 
-
-
-            ApiAdapter adapter = new ApiAdapter();
-            CurrencyConverter currencyConverter = new CurrencyConverter();
-
-            try {
-                currencyConverter =  new DownloadActualCurrency().execute().get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();            }
-
-            Log.i(LOG_TAG, "RUB " + currencyConverter.getCurrencyArray().getUSDRUB() + " EUR " + currencyConverter.getCurrencyArray().getUSDEUR());
-            Log.i(LOG_TAG, "currency " + currency);
-            if (currency.equals("USD")) {
-                valueRUB = currencyConverter.getCurrencyArray().getRUBFromUSD(value);
-                Log.i(LOG_TAG, "valueRUB " + valueRUB);
-            } else if (currency.equals("EUR")) {
-                valueRUB = currencyConverter.getCurrencyArray().getRUBFromEUR(value);
-                Log.i(LOG_TAG, "valueRUB " + valueRUB);
-            }
         }
     }
 

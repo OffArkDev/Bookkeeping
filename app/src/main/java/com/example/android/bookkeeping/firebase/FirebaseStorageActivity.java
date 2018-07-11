@@ -13,6 +13,11 @@ import com.example.android.bookkeeping.R;
 import com.example.android.bookkeeping.data.AccountData;
 import com.example.android.bookkeeping.data.DBHelper;
 import com.example.android.bookkeeping.data.Transaction;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -31,13 +36,46 @@ public class FirebaseStorageActivity extends AppCompatActivity {
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getDataFromDB();
+               ArrayList<AccountData> dataList = getDataListFromDB();
+
+                if(dataList.size() > 0 ){
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("data/");
+                    for(AccountData ad : dataList){
+                        ref.push().setValue(ad);
+                    }
+                }
+
+            }
+        });
+
+        buttonLoad.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ArrayList<AccountData> dataList = new ArrayList<>();
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("data/");
+
+                ref.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        // This method is called once with the initial value and again
+                        // whenever data at this location is updated.
+                        ArrayList <?> value = (ArrayList<?>) dataSnapshot.getValue();
+                        Log.d(LOG_TAG, "Value is: " + value);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        // Failed to read value
+                        Log.w(LOG_TAG, "Failed to read value.", error.toException());
+                    }
+                });
+
             }
         });
 
     }
 
-    public void getDataFromDB() {
+    public ArrayList<AccountData> getDataListFromDB() {
 
         DBHelper dbHelper = new DBHelper(this);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -128,8 +166,7 @@ public class FirebaseStorageActivity extends AppCompatActivity {
                 Log.d(LOG_TAG, "name " + name + "value " + value);
                 Transaction transaction = new Transaction(type, name, date, value, currency, comment);
                 transaction.convertValueRUB();
-
-                transactions.add(transaction);
+                accountDataList.get(position).setTransaction(transaction);
 
             } while (cursorT.moveToNext());
         }
@@ -138,10 +175,7 @@ public class FirebaseStorageActivity extends AppCompatActivity {
         Log.d(LOG_TAG, "--- ---");
         dbHelper.close();
 
-     //   return transactions;
-
-
-      //  return accountDataList;
+        return accountDataList;
     }
 
 }

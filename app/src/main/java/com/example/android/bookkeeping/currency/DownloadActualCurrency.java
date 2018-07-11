@@ -31,6 +31,9 @@ public class DownloadActualCurrency extends AsyncTask <Void, Void, CurrencyConve
         } catch (IOException e) {
             e.printStackTrace();
         }
+        Log.i(LOG_TAG, "RUB " + currencyConverter.getCurrencyArray().getUSDRUB() + " EUR " + currencyConverter.getCurrencyArray().getUSDEUR());
+        USDEUR = currencyConverter.currencyArray.getUSDEUR();
+        USDRUB = currencyConverter.currencyArray.getUSDRUB();
 
         return currencyConverter;
     }
@@ -40,8 +43,7 @@ public class DownloadActualCurrency extends AsyncTask <Void, Void, CurrencyConve
         super.onPostExecute(currencyConverter);
         Log.i("uRi", "end of downloading");
         isDownloaded = true;
-        USDEUR = currencyConverter.currencyArray.getUSDEUR();
-        USDRUB = currencyConverter.currencyArray.getUSDRUB();
+
     }
 
     public String getUSDRUB() {

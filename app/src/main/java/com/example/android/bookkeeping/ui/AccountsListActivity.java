@@ -15,11 +15,15 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.android.bookkeeping.R;
+import com.example.android.bookkeeping.currency.ApiAdapter;
+import com.example.android.bookkeeping.currency.CurrencyConverter;
+import com.example.android.bookkeeping.currency.DownloadActualCurrency;
 import com.example.android.bookkeeping.data.AccountData;
 import com.example.android.bookkeeping.data.DBHelper;
 import com.example.android.bookkeeping.firebase.FirebaseStartActivity;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class AccountsListActivity extends AppCompatActivity  {
     final String LOG_TAG = "myAccountList";
@@ -32,6 +36,9 @@ public class AccountsListActivity extends AppCompatActivity  {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accounts_list);
+
+
+
 
         final Context context = this;
 
@@ -47,6 +54,22 @@ public class AccountsListActivity extends AppCompatActivity  {
 
         dbHelper = new DBHelper(this);
 
+        if (!DownloadActualCurrency.isDownloaded) {
+            ApiAdapter adapter = new ApiAdapter();
+
+            CurrencyConverter currencyConverter = new CurrencyConverter();
+
+
+            try {
+                currencyConverter = new DownloadActualCurrency().execute().get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+
+        }
+
         final ArrayList<AccountData> list = getAccountsListFromDb();
 
         final AccountsListAdapter accountsListAdapter = new AccountsListAdapter(this, list);
@@ -57,6 +80,7 @@ public class AccountsListActivity extends AppCompatActivity  {
 
             listView.setAdapter(accountsListAdapter);
         }
+
 
 
         buttonCreateAccount.setOnClickListener(new View.OnClickListener() {
