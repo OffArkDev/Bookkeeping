@@ -25,8 +25,8 @@
     <string name="button_cloud">cloud</string>
     <string name="cloud">Creating cloud</string>
     <string name="cloud_message">You can save or load your data to cloud here</string>
-    <string name="button_cloud_save">save</string>
-    <string name="button_cloud_load">load</string>
+    <string name="button_cloud_save">save to cloud</string>
+    <string name="button_cloud_load">load from cloud</string>
     <string name="firebase_authorization">Authorization</string>
     <string name="firebase_registration">Registration</string>
     <string name="hint_email">Email</string>

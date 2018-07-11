@@ -19,7 +19,7 @@ public class AccountData {
     private String valueRUB;
 
     private String currency;
-    private ArrayList<Transaction> transactions;
+    private ArrayList<Transaction> transactions = new ArrayList<>();
 
     public AccountData(String name, String value, String currency) {
         this.name = name;
@@ -66,9 +66,11 @@ public class AccountData {
         if (transactions == null) {
             return "no last transaction";
         }
-        String lastTransaction = transactions.get(transactions.size() - 1).getDataString();
-        if (lastTransaction == null || lastTransaction.equals(""))
-            return "no last transactions";
-        else return lastTransaction;
+        if (!transactions.isEmpty()) {
+            String lastTransaction = transactions.get(transactions.size() - 1).getDataString();
+            if (lastTransaction == null || lastTransaction.equals(""))
+                return "no last transactions";
+            else return lastTransaction;
+        } else  return "no last transactions";
     }
 }

@@ -57,10 +57,10 @@ public class FirebaseStorageActivity extends AppCompatActivity {
                 ref.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        // This method is called once with the initial value and again
-                        // whenever data at this location is updated.
-                        ArrayList <?> value = (ArrayList<?>) dataSnapshot.getValue();
+                         ArrayList <?> value = (ArrayList<?>) dataSnapshot.getValue();
+                         for (Object v : value ) {
                         Log.d(LOG_TAG, "Value is: " + value);
+                        }
                     }
 
                     @Override
