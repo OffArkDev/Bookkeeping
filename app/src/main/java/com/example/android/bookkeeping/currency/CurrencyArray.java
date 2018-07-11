@@ -3,8 +3,10 @@ package com.example.android.bookkeeping.currency;
 import java.text.DecimalFormat;
 
 public class CurrencyArray {
-    private String USDRUB;
-    private String USDEUR;
+    private  String USDRUB;
+    private  String USDEUR;
+
+
     DecimalFormat df = new DecimalFormat("##.##");
 
     public String getUSDRUB() {
