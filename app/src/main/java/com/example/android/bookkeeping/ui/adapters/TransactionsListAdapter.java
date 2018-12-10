@@ -1,4 +1,4 @@
-package com.example.android.bookkeeping.ui;
+package com.example.android.bookkeeping.ui.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;

@@ -9,15 +9,14 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.android.bookkeeping.R;
 import com.example.android.bookkeeping.data.AccountData;
 import com.example.android.bookkeeping.data.DBHelper;
 import com.example.android.bookkeeping.data.Transaction;
+import com.example.android.bookkeeping.ui.adapters.TransactionsListAdapter;
 
 import java.util.ArrayList;
 
@@ -121,7 +120,6 @@ public class TransactionsListActivity extends AppCompatActivity {
                 String comment = cursor.getString(commentColIndex);
                 Log.d(LOG_TAG, "name " + name + "value " + value);
                 Transaction transaction = new Transaction(type, name, date, value, currency, comment);
-                transaction.convertValueRUB();
                 transactions.add(transaction);
 
             } while (cursor.moveToNext());
@@ -167,7 +165,6 @@ public class TransactionsListActivity extends AppCompatActivity {
                                 ", currency = " + currency);
 
                 accountData = new AccountData(name, value, currency);
-                accountData.convertValueRUB();
         } while (c.moveToNext());
         } else {
             Log.d(LOG_TAG, "0 rows");

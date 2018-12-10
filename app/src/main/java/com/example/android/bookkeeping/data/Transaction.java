@@ -1,14 +1,5 @@
 package com.example.android.bookkeeping.data;
 
-import android.util.Log;
-
-import com.example.android.bookkeeping.currency.ApiAdapter;
-import com.example.android.bookkeeping.currency.CurrencyArray;
-import com.example.android.bookkeeping.currency.CurrencyConverter;
-import com.example.android.bookkeeping.currency.DownloadActualCurrency;
-
-import java.util.concurrent.ExecutionException;
-
 public class Transaction {
     private final static String LOG_TAG = "myTransaction";
 
@@ -30,26 +21,6 @@ public class Transaction {
         this.comment = comment;
     }
 
-    public void convertValueRUB() {
-        if (currency.equals("RUB")) {
-            valueRUB = value;
-        } else {
-
-            if (DownloadActualCurrency.isDownloaded) {
-                CurrencyArray currencyArray = new CurrencyArray();
-                if (currency.equals("USD")) {
-                    valueRUB = DownloadActualCurrency.getRUBFromUSD(value);
-                    Log.i(LOG_TAG, "valueRUB " + valueRUB);
-                } else if (currency.equals("EUR")) {
-                    valueRUB = DownloadActualCurrency.getRUBFromEUR(value);
-                    Log.i(LOG_TAG, "valueRUB " + valueRUB);
-                }
-
-
-            }
-
-        }
-    }
 
     public String getType() {
         return type;

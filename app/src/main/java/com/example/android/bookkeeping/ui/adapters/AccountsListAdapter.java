@@ -1,4 +1,4 @@
-package com.example.android.bookkeeping.ui;
+package com.example.android.bookkeeping.ui.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,20 +7,20 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.example.android.bookkeeping.data.AccountData;
 import com.example.android.bookkeeping.R;
+import com.example.android.bookkeeping.data.AccountSaver;
 
-import java.util.ArrayList;
+import java.util.List;
 
 
 public class AccountsListAdapter extends BaseAdapter {
 
 
     private LayoutInflater LInflater;
-    private ArrayList<AccountData> list;
+    private List<AccountSaver> list;
 
 
-    public AccountsListAdapter(Context context, ArrayList<AccountData> data){
+    public AccountsListAdapter(Context context, List<AccountSaver> data){
 
         list = data;
         LInflater = (LayoutInflater) context
@@ -28,14 +28,15 @@ public class AccountsListAdapter extends BaseAdapter {
     }
 
 
-
     @Override
     public int getCount() {
-        return list.size();
+        if (list == null) {
+            return 0;
+        } else return list.size();
     }
 
     @Override
-    public AccountData getItem(int position) {
+    public AccountSaver getItem(int position) {
         return list.get(position);
     }
 
@@ -63,18 +64,18 @@ public class AccountsListAdapter extends BaseAdapter {
         }
 
         holder = (ViewHolder) v.getTag();
-        AccountData accountData = getData(position);
+        AccountSaver accountData = getData(position);
 
         holder.name.setText(String.format("name: %s", accountData.getName()));
         holder.value.setText(String.format("value: %s", accountData.getValue()));
         holder.valueRUB.setText(String.format("value in RUB: %s",accountData.getValueRUB()));
         holder.currency.setText(String.format("currency: %s", accountData.getCurrency()));
-        holder.lastTransactions.setText(String.format("last transactions: %s", accountData.getLastTransaction()));
+        //  holder.lastTransactions.setText(String.format("last transactions: %s", accountData.getLastTransaction()));
 
         return v;
     }
 
-   private AccountData getData(int position){
+    private AccountSaver getData(int position){
         return (getItem(position));
     }
 

@@ -1,6 +1,5 @@
 package com.example.android.bookkeeping.ui;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,37 +12,40 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.android.bookkeeping.R;
+import com.example.android.bookkeeping.currency.CurrencyRatesData;
+import com.example.android.bookkeeping.data.AccountSaver;
 import com.example.android.bookkeeping.data.DBHelper;
+import com.example.android.bookkeeping.di.AppModule;
+import com.example.android.bookkeeping.di.DaggerAppComponent;
+import com.example.android.bookkeeping.di.StorageModule;
+import com.example.android.bookkeeping.repository.AccountsDataSource;
+
+import javax.inject.Inject;
 
 public class CreateAccountActivity extends AppCompatActivity {
-    static String LOG_TAG = "myCreateAccount";
 
-    EditText nameAccount;
-    EditText valueAccount;
-    Spinner spinner;
+  private EditText nameAccount;
+  private EditText valueAccount;
+  private Spinner spinner;
+  private Button btnDone;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
 
-        Button  buttonDone;
-        final DBHelper dbHelper = new DBHelper(this);
+        initViews();
 
-        spinner = findViewById(R.id.account_currency_spinner);
-        buttonDone = findViewById(R.id.button_done_create_account);
-        nameAccount = findViewById(R.id.name_create_account);
-        valueAccount = findViewById(R.id.value_create_account);
+        Intent intent = getIntent();
 
-        String str[] = {"RUB","USD", "EUR"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, str);
+        String ratesNames[] = intent.getStringArrayExtra("rates");
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, ratesNames);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setSelection(0);
 
-        final Intent intent = new Intent(this, AccountsListActivity.class);
-
-        buttonDone.setOnClickListener(new View.OnClickListener() {
+        btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 switch (view.getId()) {
@@ -52,12 +54,15 @@ public class CreateAccountActivity extends AppCompatActivity {
                         String value = valueAccount.getText().toString();
                         String currency = spinner.getSelectedItem().toString();
 
-                        if (name.equals("") || value.equals("") || currency.equals("")) {
-                            Toast.makeText(CreateAccountActivity.this, "Please fill all fields", Toast.LENGTH_LONG).show();
+                        if (name.equals("")) {
+                            Toast.makeText(CreateAccountActivity.this, getString(R.string.write_name), Toast.LENGTH_LONG).show();
                         } else {
-
-                            dbHelper.insertLastAccountsData(name, value, currency);
-                            startActivity(intent);
+                            Intent resultIntent = new Intent();
+                            resultIntent.putExtra("name", name);
+                            resultIntent.putExtra("value", value);
+                            resultIntent.putExtra("currency", currency);
+                            setResult(RESULT_OK, resultIntent);
+                            finish();
                         }
 
                         break;
@@ -66,7 +71,11 @@ public class CreateAccountActivity extends AppCompatActivity {
         });
     }
 
-
-
+    public void initViews() {
+        spinner = findViewById(R.id.account_currency_spinner);
+        btnDone = findViewById(R.id.button_done_create_account);
+        nameAccount = findViewById(R.id.name_create_account);
+        valueAccount = findViewById(R.id.value_create_account);
+    }
 
 }

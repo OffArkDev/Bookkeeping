@@ -64,9 +64,17 @@ public class FirebaseStorageActivity extends AppCompatActivity {
                             String key = entry.getKey();
                              Object v = entry.getValue();
                              Log.i(LOG_TAG, v.getClass().getName());
-                             if (v instanceof List) {
+                             if (v instanceof List) {                                                              //ArrayList <Account>
                                  ArrayList<HashMap<String, Object>> list = (ArrayList<HashMap<String, Object>>)v;
-                                 Log.i(LOG_TAG, "key " + key + "object " + list.get(0).get("name") + " tr ");
+
+
+                                 for (HashMap<String, Object> ac : list) {
+                                     Log.i(LOG_TAG, "name " + ac.get("name") +
+                                                            "value " +ac.get(" value") +
+                                     " currency " + ac.get("currency") + " valueRUB " + ac.get("valueRUB"));
+
+
+                                 }
 
                              } else if (v instanceof Map) {
                                  Log.i(LOG_TAG, "hmmmm ");
@@ -131,7 +139,6 @@ public class FirebaseStorageActivity extends AppCompatActivity {
                                 ", currency = " + currency);
 
                 AccountData accountData = new AccountData(name, value, currency);
-                accountData.convertValueRUB();
                 accountDataList.add(accountData);
 
             } while (c.moveToNext());
@@ -188,7 +195,6 @@ public class FirebaseStorageActivity extends AppCompatActivity {
                 String comment = cursorT.getString(commentColIndex);
                 Log.d(LOG_TAG, "name " + name + "value " + value);
                 Transaction transaction = new Transaction(type, name, date, value, currency, comment);
-                transaction.convertValueRUB();
                 accountDataList.get(position).setToTransactions(transaction);
 
             } while (cursorT.moveToNext());

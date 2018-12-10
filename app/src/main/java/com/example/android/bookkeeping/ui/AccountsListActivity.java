@@ -1,89 +1,110 @@
 package com.example.android.bookkeeping.ui;
 
-import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.android.bookkeeping.R;
-import com.example.android.bookkeeping.currency.ApiAdapter;
-import com.example.android.bookkeeping.currency.CurrencyConverter;
-import com.example.android.bookkeeping.currency.DownloadActualCurrency;
-import com.example.android.bookkeeping.data.AccountData;
+import com.example.android.bookkeeping.currency.CurrencyRatesData;
+import com.example.android.bookkeeping.currency.RatesListener;
+import com.example.android.bookkeeping.currency.UrlParser;
+import com.example.android.bookkeeping.data.AccountSaver;
 import com.example.android.bookkeeping.data.DBHelper;
+import com.example.android.bookkeeping.di.AppModule;
+import com.example.android.bookkeeping.di.DaggerAppComponent;
+import com.example.android.bookkeeping.di.StorageModule;
+import com.example.android.bookkeeping.di.UrlParserModule;
 import com.example.android.bookkeeping.firebase.FirebaseStartActivity;
+import com.example.android.bookkeeping.repository.AccountsRepository;
+import com.example.android.bookkeeping.ui.adapters.AccountsListAdapter;
 
-import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.concurrent.Callable;
 
-public class AccountsListActivity extends AppCompatActivity  {
-    final String LOG_TAG = "myAccountList";
+import javax.inject.Inject;
 
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+
+public class AccountsListActivity extends AppCompatActivity implements RatesListener {
+
+    final String TAG = "myAccountList";
 
     DBHelper dbHelper;
 
-    /** Called when the activity is first created. */
+    private Button btnCreateAccount;
+    private Button btnDeleteAccount;
+    private Button btnCloud;
+    private ListView listView;
+
+    private Context context = this;
+
+    private AccountsListAdapter accountsListAdapter;
+    private List<AccountSaver> list;
+    private CurrencyRatesData currencyRatesData;
+
+    private final String url = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
+
+
+    @Inject
+    public AccountsRepository accountsRepository;
+
+    @Inject
+    public UrlParser urlParser;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accounts_list);
+        DaggerAppComponent.builder()
+                .appModule(new AppModule(getApplication()))
+                .storageModule(new StorageModule(getApplication()))
+                .urlParserModule(new UrlParserModule(url, this))
+                .build()
+                .injectAccountsListActivity(this);
+
+        initViews();
+
+
+        accountsRepository.getAll()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<List<AccountSaver>>() {
+                    @Override
+                    public void accept(List<AccountSaver> accountSavers) {
+                        list = accountSavers;
+                        accountsListAdapter = new AccountsListAdapter(context, list);
+                        listView.setAdapter(accountsListAdapter);
+                    }
+                });
+
+        urlParser.execute();
 
 
 
+        accountsListAdapter = new AccountsListAdapter(this, list);
+        listView.setAdapter(accountsListAdapter);
 
-        final Context context = this;
+        setOnclickListeners();
+    }
 
-        final Intent intentTransactions = new Intent(this, TransactionsListActivity.class);
+    public void initViews () {
+        btnCreateAccount = findViewById(R.id.add_account_button);
+        btnDeleteAccount = findViewById(R.id.delete_account_button);
+        btnCloud = findViewById(R.id.button_cloud);
+        listView = findViewById(R.id.accounts_list_view);
+    }
 
+    public void setOnclickListeners() {
 
-        Button buttonCreateAccount = findViewById(R.id.add_account_button);
-        Button buttonDeleteAccount = findViewById(R.id.delete_account_button);
-        Button buttonCloud = findViewById(R.id.button_cloud);
-        final ListView listView = findViewById(R.id.accounts_list_view);
-
-        // создаем объект для создания и управления версиями БД
-
-        dbHelper = new DBHelper(this);
-
-        if (!DownloadActualCurrency.isDownloaded) {
-            ApiAdapter adapter = new ApiAdapter();
-
-            CurrencyConverter currencyConverter = new CurrencyConverter();
-
-
-            try {
-                currencyConverter = new DownloadActualCurrency().execute().get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-
-        }
-
-        final ArrayList<AccountData> list = getAccountsListFromDb();
-
-        final AccountsListAdapter accountsListAdapter = new AccountsListAdapter(this, list);
-
-        if (list == null) {
-            Log.i(LOG_TAG, "no data from base");
-        } else {
-
-            listView.setAdapter(accountsListAdapter);
-        }
-
-
-
-        buttonCreateAccount.setOnClickListener(new View.OnClickListener() {
+        btnCreateAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 switch (view.getId()) {
@@ -94,7 +115,7 @@ public class AccountsListActivity extends AppCompatActivity  {
             }
         });
 
-        buttonDeleteAccount.setOnClickListener(new View.OnClickListener() {
+        btnDeleteAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -109,94 +130,59 @@ public class AccountsListActivity extends AppCompatActivity  {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                Intent intentTransactions = new Intent(context, TransactionsListActivity.class);
                 intentTransactions.putExtra("position", String.valueOf(position));
                 startActivity(intentTransactions);
-
-
 
             }
         });
 
-        buttonCloud.setOnClickListener(new View.OnClickListener() {
+        btnCloud.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, FirebaseStartActivity.class);
                 startActivity(intent);
             }
         });
-
-
     }
 
-    public void deleteAccountFromDB(int position) {
-        int pos = position + 1;
-
-        SQLiteDatabase database = dbHelper.getWritableDatabase();
-//        int delCount = database.delete(DBHelper.TABLE_ACCOUNTS_DATA, DBHelper.KEY_ID + "=" + position, null);
-        database.delete(DBHelper.TABLE_ACCOUNTS_DATA, "ID = ?",new String[] {String.valueOf(pos)});
-
-        Log.d("mLog", "deleted rows count = " + pos);
+    @Override
+    public void loadingComplete(CurrencyRatesData currencyRatesData) {
+        this.currencyRatesData = currencyRatesData;
     }
 
-    public ArrayList<AccountData> getAccountsListFromDb() {
+    public void createAccount() {
+        Intent intent = new Intent(this, CreateAccountActivity.class);
+        intent.putExtra("rates", currencyRatesData.getCurrenciesList());
+        startActivityForResult(intent, 1);
+    }
 
 
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (data != null) {
+            if (requestCode == 1) {
+                if (resultCode == RESULT_OK) {
+                    //getting data of new account from intent
+                    String name = data.getStringExtra("name");
+                    String value = data.getStringExtra("value");
+                    String currency = data.getStringExtra("currency");
+                    //convert value to value in rubles
+                    String valueRUB = "";
+                    if (currency.equals("RUB")) {
+                        valueRUB = value;
+                    }
+                    if (!value.equals("") && !currency.equals("")) {
+                        valueRUB = currencyRatesData.convertCurrency(new BigDecimal(value), currency, "RUB").toString();
+                    }
+                    //save result to list and database
+                    AccountSaver newAccountSaver = new AccountSaver(name, value, valueRUB, currency);
+                    list.add(newAccountSaver);
 
-        boolean applicationIsJustNowCreated = DBHelper.maxAccountsId == -1;
-
-                Log.d(LOG_TAG, "--- Rows in mytable: ---");
-                Cursor c = db.query(DBHelper.TABLE_ACCOUNTS_DATA, null, null, null, null, null, null);
-
-
-        ArrayList<AccountData> accountDataList = new ArrayList<>();
-                if (c.moveToFirst()) {
-
-                    int idColIndex = c.getColumnIndex(DBHelper.KEY_ID);
-                    int nameColIndex = c.getColumnIndex(DBHelper.KEY_NAME);
-                    int valueColIndex = c.getColumnIndex(DBHelper.KEY_VALUE);
-                    int currencyColIndex = c.getColumnIndex(DBHelper.KEY_CURRENCY);
-
-                    do {
-
-                        if (applicationIsJustNowCreated) DBHelper.maxAccountsId++;
-
-                        String name = c.getString(nameColIndex);
-                        String value = c.getString(valueColIndex);
-                        String currency = c.getString(currencyColIndex);
-                        Log.d(LOG_TAG,
-                                "ID = " + c.getInt(idColIndex) +
-                                        ", name = " + name +
-                                        ", value = " + value +
-                                        ", currency = " + currency);
-
-                        AccountData accountData = new AccountData(name, value, currency);
-                        accountData.convertValueRUB();
-                        accountDataList.add(accountData);
-
-                    } while (c.moveToNext());
-                } else {
-                    Log.d(LOG_TAG, "0 rows");
-                    return null;
+                    accountsRepository.insert(newAccountSaver);
                 }
-                c.close();
-
-        dbHelper.close();
-
-
-        return  accountDataList;
+            }
         }
-
-        public void createAccount() {
-            Intent intent = new Intent(this, CreateAccountActivity.class);
-            startActivity(intent);
-        }
-
-
-
-
-
-
-
+    }
 }
 

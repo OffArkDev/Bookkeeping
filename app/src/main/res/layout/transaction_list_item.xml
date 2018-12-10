@@ -15,63 +15,190 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/transaction_name"
-            android:textSize="20sp"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:paddingStart="?android:attr/listPreferredItemPaddingStart" />
+            android:orientation="horizontal"
+            android:weightSum="2"
+            >
+
+        <TextView
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Transaction name"
+            />
+
+            <TextView
+                android:id="@+id/transaction_name"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAlignment="textEnd"
+                android:text="for present"
+                />
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:weightSum="2">
-
+            android:weightSum="2"
+            android:orientation="horizontal"
+            >
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/black"
+                android:text="Value"
+                />
             <TextView
                 android:id="@+id/transaction_value"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:textColor="@color/black"
                 android:layout_weight="1"
-                android:layout_gravity="center_horizontal"
-                android:paddingStart="?android:attr/listPreferredItemPaddingStart" />
-
-            <TextView
-                android:id="@+id/transaction_value_rub"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="center_horizontal"
-                android:paddingStart="?android:attr/listPreferredItemPaddingStart" />
-
+                android:textAlignment="textEnd"
+                android:text="20.0"
+                />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/transaction_currency"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:paddingStart="?android:attr/listPreferredItemPaddingStart" />
 
-        <TextView
-            android:id="@+id/transaction_date"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:paddingStart="?android:attr/listPreferredItemPaddingStart" />
-        <TextView
-            android:id="@+id/transaction_type"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:paddingStart="?android:attr/listPreferredItemPaddingStart" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="2"
+                android:orientation="horizontal"
+                >
 
-        <TextView
-            android:id="@+id/transaction_comment"
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/black"
+                    android:text="Value in rub"
+                    />
+
+                <TextView
+                    android:id="@+id/transaction_value_rub"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:layout_weight="1"
+                    android:textAlignment="textEnd"
+                    android:text="20.0"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="2"
+                android:orientation="horizontal"
+                >
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/black"
+                    android:text="Currency"
+                    />
+
+                <TextView
+                    android:id="@+id/transaction_currency"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:layout_weight="1"
+                    android:textAlignment="textEnd"
+                    android:text="USD"
+                    />
+            </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:paddingStart="?android:attr/listPreferredItemPaddingStart" />
+            android:weightSum="2"
+            android:orientation="horizontal"
+            >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/black"
+                android:text="Date"
+                />
+
+            <TextView
+                android:id="@+id/transaction_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:layout_weight="1"
+                android:textAlignment="textEnd"
+                android:text="20.0"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="2"
+            android:orientation="horizontal"
+            >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/black"
+                android:text="Type"
+                />
+
+            <TextView
+                android:id="@+id/transaction_type"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:layout_weight="1"
+                android:textAlignment="textEnd"
+                android:text="incoming"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="2"
+            android:orientation="horizontal"
+            >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/black"
+                android:text="Comment"
+                />
+
+            <TextView
+                android:id="@+id/transaction_comment"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:layout_weight="1"
+                android:textAlignment="textEnd"
+                android:text="for my best boyfriend"
+                />
+        </LinearLayout>
+
     </LinearLayout>
 
 </LinearLayout>

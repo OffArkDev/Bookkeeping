@@ -12,12 +12,14 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="18dp"
         android:textSize="16sp"
+        android:textColor="@color/black"
         android:text="@string/account_name"/>
 
     <EditText
         android:id="@+id/name_create_account"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:imeOptions="actionNext"
         android:textSize="20sp"
         android:layout_marginTop="4dp"
 
@@ -28,6 +30,7 @@
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:layout_marginTop="16dp"
+        android:textColor="@color/black"
         android:hint="@string/here"
         android:text="@string/account_value"/>
 
@@ -40,6 +43,7 @@
         android:id="@+id/value_create_account"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
+        android:imeOptions="actionDone"
         android:maxLines="1"
         android:maxLength="12"
         android:digits="1234567890."

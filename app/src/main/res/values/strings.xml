@@ -3,10 +3,10 @@
     <string name="add_account_button">add new account</string>
     <string name="accounts_list">Accounts list</string>
     <string name="transactions_list">Transactions list</string>
-    <string name="account_name">Enter the name of the account:</string>
+    <string name="account_name">Enter account name:</string>
     <string name="account_value">Enter amount of money:</string>
-    <string name="transaction_name">Enter the name of the transaction:</string>
-    <string name="transaction_value">>Enter amount of money:</string>
+    <string name="transaction_name">Enter transaction name:</string>
+    <string name="transaction_value">Enter amount of money:</string>
     <string name="here">here</string>
     <string name="currency">Currency</string>
     <string name="done">done</string>
@@ -14,7 +14,7 @@
     <string name="currency_usd">USD</string>
     <string name="currency_eur">EUR</string>
     <string name="add_transaction_button">add transaction</string>
-    <string name="edit_date">Write date of transaction</string>
+    <string name="edit_date">Write the date of transaction</string>
     <string name="hint_date">dd-mm-yyyy</string>
     <string name="edit_comment">Write an additional comment</string>
     <string name="type">type</string>
@@ -31,6 +31,11 @@
     <string name="firebase_registration">Registration</string>
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
+    <string name="book_name">Name</string>
+    <string name="book_value">Account amount</string>
+    <string name="book_currency">Current currency</string>
+    <string name="book_value_rub">Amount in rubles</string>
+    <string name="write_name">Write the name at least</string>
 
 
 </resources>
