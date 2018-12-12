@@ -11,6 +11,7 @@ import com.example.android.bookkeeping.ui.AccountsListActivity;
 import javax.inject.Singleton;
 
 import dagger.Component;
+import io.reactivex.disposables.CompositeDisposable;
 
 @Singleton
 @Component(modules = {AppModule.class, StorageModule.class, UrlParserModule.class})
@@ -20,6 +21,8 @@ public interface AppComponent {
     UrlParser urlParser();
 
     AccountDao accountDao();
+
+    CompositeDisposable compositeDisposable();
 
     AccountsDatabase accountDatabase();
 

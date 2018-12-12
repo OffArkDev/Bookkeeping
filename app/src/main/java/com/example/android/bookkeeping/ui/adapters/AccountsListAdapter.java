@@ -66,10 +66,10 @@ public class AccountsListAdapter extends BaseAdapter {
         holder = (ViewHolder) v.getTag();
         AccountSaver accountData = getData(position);
 
-        holder.name.setText(String.format("name: %s", accountData.getName()));
-        holder.value.setText(String.format("value: %s", accountData.getValue()));
-        holder.valueRUB.setText(String.format("value in RUB: %s",accountData.getValueRUB()));
-        holder.currency.setText(String.format("currency: %s", accountData.getCurrency()));
+        holder.name.setText(String.format("%s", accountData.getName()));
+        holder.value.setText(String.format("%s", accountData.getValue()));
+        holder.valueRUB.setText(String.format("%s",accountData.getValueRUB()));
+        holder.currency.setText(String.format("%s", accountData.getCurrency()));
         //  holder.lastTransactions.setText(String.format("last transactions: %s", accountData.getLastTransaction()));
 
         return v;

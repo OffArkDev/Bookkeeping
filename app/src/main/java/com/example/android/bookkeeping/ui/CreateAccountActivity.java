@@ -12,15 +12,6 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.android.bookkeeping.R;
-import com.example.android.bookkeeping.currency.CurrencyRatesData;
-import com.example.android.bookkeeping.data.AccountSaver;
-import com.example.android.bookkeeping.data.DBHelper;
-import com.example.android.bookkeeping.di.AppModule;
-import com.example.android.bookkeeping.di.DaggerAppComponent;
-import com.example.android.bookkeeping.di.StorageModule;
-import com.example.android.bookkeeping.repository.AccountsDataSource;
-
-import javax.inject.Inject;
 
 public class CreateAccountActivity extends AppCompatActivity {
 

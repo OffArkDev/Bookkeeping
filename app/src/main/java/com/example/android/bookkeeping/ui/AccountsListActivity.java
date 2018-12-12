@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -26,13 +27,18 @@ import com.example.android.bookkeeping.ui.adapters.AccountsListAdapter;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
-import io.reactivex.Observable;
+import io.reactivex.CompletableObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
+import io.reactivex.internal.observers.SubscriberCompletableObserver;
+import io.reactivex.observers.DisposableCompletableObserver;
+import io.reactivex.schedulers.Schedulers;
 
 public class AccountsListActivity extends AppCompatActivity implements RatesListener {
 
@@ -60,6 +66,9 @@ public class AccountsListActivity extends AppCompatActivity implements RatesList
     @Inject
     public UrlParser urlParser;
 
+    @Inject
+    CompositeDisposable compositeDisposable;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,10 +80,28 @@ public class AccountsListActivity extends AppCompatActivity implements RatesList
                 .build()
                 .injectAccountsListActivity(this);
 
-        initViews();
+        findViews();
+        Disposable disposable = getUsersFromDatabase();
+        compositeDisposable.add(disposable);
+        urlParser.execute();
+        setAdapter();
+        setOnclickListeners();
+    }
 
+    public void findViews() {
+        btnCreateAccount = findViewById(R.id.add_account_button);
+        btnDeleteAccount = findViewById(R.id.delete_account_button);
+        btnCloud = findViewById(R.id.button_cloud);
+        listView = findViewById(R.id.accounts_list_view);
+    }
 
-        accountsRepository.getAll()
+    public void setAdapter() {
+        accountsListAdapter = new AccountsListAdapter(this, list);
+        listView.setAdapter(accountsListAdapter);
+    }
+
+    public Disposable getUsersFromDatabase() {
+        return accountsRepository.getAll()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<List<AccountSaver>>() {
                     @Override
@@ -84,22 +111,6 @@ public class AccountsListActivity extends AppCompatActivity implements RatesList
                         listView.setAdapter(accountsListAdapter);
                     }
                 });
-
-        urlParser.execute();
-
-
-
-        accountsListAdapter = new AccountsListAdapter(this, list);
-        listView.setAdapter(accountsListAdapter);
-
-        setOnclickListeners();
-    }
-
-    public void initViews () {
-        btnCreateAccount = findViewById(R.id.add_account_button);
-        btnDeleteAccount = findViewById(R.id.delete_account_button);
-        btnCloud = findViewById(R.id.button_cloud);
-        listView = findViewById(R.id.accounts_list_view);
     }
 
     public void setOnclickListeners() {
@@ -118,11 +129,7 @@ public class AccountsListActivity extends AppCompatActivity implements RatesList
         btnDeleteAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SQLiteDatabase db = dbHelper.getWritableDatabase();
-                db.delete(DBHelper.TABLE_ACCOUNTS_DATA, null, null);
-                db.delete(DBHelper.TABLE_TRANSACTIONS_DATA, null, null);
-                accountsListAdapter.notifyDataSetChanged();
-                recreate();
+                deleteAccount();
             }
         });
 
@@ -157,6 +164,36 @@ public class AccountsListActivity extends AppCompatActivity implements RatesList
         startActivityForResult(intent, 1);
     }
 
+    public void deleteAccount () {
+        compositeDisposable.add(accountsRepository.delete(list.get(0))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action() {
+                               @Override
+                               public void run() {
+                                   Log.i(TAG, "delete complete");
+                               }
+                           }, new Consumer<Throwable>() {
+                               @Override
+                               public void accept(Throwable throwable)  {
+                                   Log.e(TAG, "delete fail " + throwable.getMessage());
+                               }
+                           }
+                ));
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        compositeDisposable.clear();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        compositeDisposable.clear();
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -178,9 +215,24 @@ public class AccountsListActivity extends AppCompatActivity implements RatesList
                     //save result to list and database
                     AccountSaver newAccountSaver = new AccountSaver(name, value, valueRUB, currency);
                     list.add(newAccountSaver);
-
-                    accountsRepository.insert(newAccountSaver);
+                    setAdapter();
+                    compositeDisposable.add(accountsRepository.insert(newAccountSaver)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Action() {
+                                           @Override
+                                           public void run() {
+                                               Log.i(TAG, "insert success");
+                                           }
+                                       }, new Consumer<Throwable>() {
+                                           @Override
+                                           public void accept(Throwable throwable)  {
+                                               Log.e(TAG, "insert fail " + throwable.getMessage());
+                                           }
+                                       }
+                            ));
                 }
+
             }
         }
     }

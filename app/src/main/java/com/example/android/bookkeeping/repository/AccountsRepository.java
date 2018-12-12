@@ -4,6 +4,7 @@ import com.example.android.bookkeeping.data.AccountSaver;
 
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.Flowable;
 
 public interface AccountsRepository {
@@ -12,9 +13,9 @@ public interface AccountsRepository {
 
     AccountSaver getById(long id);
 
-    void insert(AccountSaver accountSaver);
+    Completable insert(AccountSaver accountSaver);
 
-    void update(AccountSaver accountSaver);
+    Completable update(AccountSaver accountSaver);
 
-    void delete(AccountSaver accountSaver);
+    Completable delete(AccountSaver accountSaver);
 }
