@@ -19,6 +19,8 @@
         android:id="@+id/name_create_account"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:inputType="text"
+        android:maxLines="1"
         android:imeOptions="actionNext"
         android:textSize="20sp"
         android:layout_marginTop="4dp"

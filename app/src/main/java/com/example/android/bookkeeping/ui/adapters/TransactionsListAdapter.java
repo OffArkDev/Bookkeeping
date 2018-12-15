@@ -9,15 +9,17 @@ import android.widget.TextView;
 
 import com.example.android.bookkeeping.R;
 import com.example.android.bookkeeping.data.Transaction;
+import com.example.android.bookkeeping.data.TransactionSaver;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TransactionsListAdapter extends BaseAdapter {
     private LayoutInflater LInflater;
-    private ArrayList<Transaction> list;
+    private List<TransactionSaver> list;
 
 
-    public TransactionsListAdapter(Context context, ArrayList<Transaction> data){
+    public TransactionsListAdapter(Context context, List<TransactionSaver> data){
 
         list = data;
         LInflater = (LayoutInflater) context
@@ -31,7 +33,7 @@ public class TransactionsListAdapter extends BaseAdapter {
     }
 
     @Override
-    public Transaction getItem(int position) {
+    public TransactionSaver getItem(int position) {
         return list.get(position);
     }
 
@@ -61,20 +63,20 @@ public class TransactionsListAdapter extends BaseAdapter {
         }
 
         holder = (TransactionsListAdapter.ViewHolder) v.getTag();
-        Transaction transaction = getData(position);
+        TransactionSaver transaction = getData(position);
 
 
-        holder.name.setText( String.format("name: %s", transaction.getName()));
-        holder.value.setText(String.format("value: %s", transaction.getValue()));
-        holder.valueRUB.setText(String.format("value in RUB: %s", transaction.getValueRUB()));
-        holder.currency.setText(String.format("currency: %s", transaction.getCurrency()));
-        holder.date.setText(String.format("date: %s", transaction.getDate()));
-        holder.type.setText(String.format("type: %s", transaction.getType()));
-        holder.comment.setText(String.format("comment: %s", transaction.getComment()));
+        holder.name.setText(transaction.getName());
+        holder.value.setText(transaction.getValue());
+        holder.valueRUB.setText(transaction.getValueRUB());
+        holder.currency.setText(transaction.getCurrency());
+        holder.date.setText(transaction.getDate());
+        holder.type.setText(transaction.getType());
+        holder.comment.setText(transaction.getComment());
         return v;
     }
 
-    private Transaction getData(int position){
+    private TransactionSaver getData(int position){
         return (getItem(position));
     }
 

@@ -12,28 +12,33 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.android.bookkeeping.R;
-import com.example.android.bookkeeping.data.DBHelper;
 
 public class CreateTransactionActivity extends AppCompatActivity {
 
     private final static String LOG_TAG = "myCreateTransaction";
 
-    EditText nameTransaction;
-    EditText valueTransaction;
-    EditText dateTransaction;
-    EditText commentTransaction;
-    Spinner spinnerCurrency;
-    Spinner spinnerType;
-    Button buttonCreateTransaction;
+    private EditText nameTransaction;
+    private EditText valueTransaction;
+    private EditText dateTransaction;
+    private EditText commentTransaction;
+    private Spinner spinnerCurrency;
+    private Spinner spinnerType;
+    private Button buttonCreateTransaction;
+
+
+    private String[] ratesNames;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_transaction);
+        findViews();
+        setRatesFromIntent();
+        setAdapters();
+        setOnClickListeners();
+    }
 
-        Intent intentPrev = getIntent();
-        final String position = intentPrev.getStringExtra("position");
-
+    public void findViews() {
         nameTransaction = findViewById(R.id.edit_name_transaction);
         valueTransaction = findViewById(R.id.edit_value_transaction);
         dateTransaction = findViewById(R.id.edit_transaction_date);
@@ -41,9 +46,15 @@ public class CreateTransactionActivity extends AppCompatActivity {
         spinnerCurrency = findViewById(R.id.transaction_currency_spinner);
         spinnerType = findViewById(R.id.transaction_type_spinner);
         buttonCreateTransaction = findViewById(R.id.button_done_create_transaction);
+    }
 
-        String str[] = {"RUB","USD", "EUR"};
-        ArrayAdapter<String> adapterSp1 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, str);
+    public void setRatesFromIntent() {
+        Intent intent = getIntent();
+        ratesNames = intent.getStringArrayExtra("ratesNames");
+    }
+
+    public void setAdapters() {
+        ArrayAdapter<String> adapterSp1 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, ratesNames);
         adapterSp1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCurrency.setAdapter(adapterSp1);
         spinnerCurrency.setSelection(0);
@@ -53,42 +64,40 @@ public class CreateTransactionActivity extends AppCompatActivity {
         adapterSp2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerType.setAdapter(adapterSp2);
         spinnerType.setSelection(0);
+    }
 
-        final Intent intent = new Intent(this, TransactionsListActivity.class);
-        intent.putExtra("position", position);
-
-        final DBHelper db = new DBHelper(this);
-
-
-        View.OnClickListener onClickListener = new View.OnClickListener() {
+    public void setOnClickListeners() {
+        buttonCreateTransaction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 switch (view.getId()) {
                     case R.id.button_done_create_transaction:
-
                         String name = nameTransaction.getText().toString();
                         String value = valueTransaction.getText().toString();
                         String date = dateTransaction.getText().toString();
-                        String comment= commentTransaction.getText().toString();
-                        String currency= spinnerCurrency.getSelectedItem().toString();
-                        String type= spinnerType.getSelectedItem().toString();
+                        String comment = commentTransaction.getText().toString();
+                        String currency = spinnerCurrency.getSelectedItem().toString();
+                        String type = spinnerType.getSelectedItem().toString();
 
-                        if (name.equals("") || value.equals("") || currency.equals("") || date.equals("") || comment.equals("")) {
-                            Toast.makeText(CreateTransactionActivity.this, "Please fill all fields", Toast.LENGTH_LONG).show();
+                        if (value.equals("")) {
+                            Toast.makeText(CreateTransactionActivity.this, getString(R.string.write_value), Toast.LENGTH_LONG).show();
                         } else {
+                            Intent resultIntent = new Intent();
+                            resultIntent.putExtra("name", name);
+                            resultIntent.putExtra("value", value);
+                            resultIntent.putExtra("date", date);
+                            resultIntent.putExtra("comment", comment);
+                            resultIntent.putExtra("currency", currency);
+                            resultIntent.putExtra("type", type);
 
-
-                            db.insertLastTransactionData(position, name, value, date, comment, currency, type);
-                            startActivity(intent);
+                            setResult(RESULT_OK, resultIntent);
+                            finish();
                         }
                 }
             }
-        };
+        });
 
-        buttonCreateTransaction.setOnClickListener(onClickListener);
 
     }
-
-
 
 }

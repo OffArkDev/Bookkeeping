@@ -4,41 +4,40 @@ import com.example.android.bookkeeping.data.AccountDao;
 import com.example.android.bookkeeping.data.AccountSaver;
 
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
+import io.reactivex.Single;
 import io.reactivex.functions.Action;
 
-public class AccountsDataSource implements AccountsRepository {
+public class AccountsDataSource {
     private AccountDao accountDao;
 
     public AccountsDataSource(AccountDao accountDao) {
         this.accountDao = accountDao;
     }
 
-    @Override
     public Flowable<List<AccountSaver>> getAll() {
         return accountDao.getAll();
     }
 
-    @Override
     public AccountSaver getById(long id) {
         return accountDao.getById(id);
     }
 
-    @Override
-    public Completable insert(final AccountSaver accountSaver) {
-      return   Completable.fromAction(new Action() {
+    public Single<Long> insert(final AccountSaver accountSaver) {
+
+        return Single.fromCallable(new Callable<Long>() {
             @Override
-            public void run() {
-                accountDao.insert(accountSaver);
+            public Long call () throws Exception {
+                return accountDao.insert(accountSaver);
             }
         });
     }
 
-    @Override
     public Completable update(final AccountSaver accountSaver) {
-        return   Completable.fromAction(new Action() {
+        return Completable.fromAction(new Action() {
             @Override
             public void run() {
                 accountDao.update(accountSaver);
@@ -46,9 +45,8 @@ public class AccountsDataSource implements AccountsRepository {
         });
     }
 
-    @Override
     public Completable delete(final AccountSaver accountSaver) {
-        return   Completable.fromAction(new Action() {
+        return Completable.fromAction(new Action() {
             @Override
             public void run() {
                 accountDao.delete(accountSaver);

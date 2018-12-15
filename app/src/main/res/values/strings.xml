@@ -36,6 +36,8 @@
     <string name="book_currency">Current currency</string>
     <string name="book_value_rub">Amount in rubles</string>
     <string name="write_name">Write the name at least</string>
+    <string name="write_value">Write value of transaction</string>
+
 
 
 </resources>

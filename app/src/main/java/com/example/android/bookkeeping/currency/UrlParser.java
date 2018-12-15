@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** Parser of xml document loaded with url connection
- *  ratesListener passing loaded data to AccountsListActivity
+ *  ratesListener passing loaded data to AccountsActivity
  * **/
 
 public class UrlParser extends AsyncTask <Void, Void, Void> {

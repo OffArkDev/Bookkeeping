@@ -19,6 +19,8 @@
         android:id="@+id/edit_name_transaction"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:inputType="text"
+        android:maxLines="1"
         android:imeOptions="actionNext"
         android:textSize="20sp"
         android:layout_marginTop="4dp"
@@ -98,6 +100,8 @@
         android:id="@+id/edit_transaction_comment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:inputType="text"
+        android:maxLines="1"
         android:imeOptions="actionDone"
         android:layout_marginTop="8dp"/>
 

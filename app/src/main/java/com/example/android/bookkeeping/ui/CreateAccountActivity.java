@@ -20,22 +20,40 @@ public class CreateAccountActivity extends AppCompatActivity {
   private Spinner spinner;
   private Button btnDone;
 
+  private String[] ratesNames;
+
+    private ArrayAdapter<String> adapter;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
+        findViews();
+        setRatesFromIntent();
+        setAdapter();
+        setOnClickListeners();
+    }
 
-        initViews();
+    public void findViews() {
+        spinner = findViewById(R.id.account_currency_spinner);
+        btnDone = findViewById(R.id.button_done_create_account);
+        nameAccount = findViewById(R.id.name_create_account);
+        valueAccount = findViewById(R.id.value_create_account);
+    }
 
+    public void setRatesFromIntent() {
         Intent intent = getIntent();
+        ratesNames = intent.getStringArrayExtra("rates");
+    }
 
-        String ratesNames[] = intent.getStringArrayExtra("rates");
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, ratesNames);
+    public void setAdapter() {
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, ratesNames);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setSelection(0);
+    }
 
+    public void setOnClickListeners() {
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -44,7 +62,6 @@ public class CreateAccountActivity extends AppCompatActivity {
                         String name = nameAccount.getText().toString();
                         String value = valueAccount.getText().toString();
                         String currency = spinner.getSelectedItem().toString();
-
                         if (name.equals("")) {
                             Toast.makeText(CreateAccountActivity.this, getString(R.string.write_name), Toast.LENGTH_LONG).show();
                         } else {
@@ -55,18 +72,10 @@ public class CreateAccountActivity extends AppCompatActivity {
                             setResult(RESULT_OK, resultIntent);
                             finish();
                         }
-
                         break;
                 }
             }
         });
-    }
-
-    public void initViews() {
-        spinner = findViewById(R.id.account_currency_spinner);
-        btnDone = findViewById(R.id.button_done_create_account);
-        nameAccount = findViewById(R.id.name_create_account);
-        valueAccount = findViewById(R.id.value_create_account);
     }
 
 }

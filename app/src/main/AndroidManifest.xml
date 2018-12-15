@@ -12,7 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.AccountsListActivity">
+        <activity android:name=".ui.AccountsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -22,8 +22,11 @@
             android:label="@string/create_account">
 
         </activity>
-        <activity android:name=".ui.TransactionsListActivity">
-
+        <activity android:name=".ui.TransactionsActivity"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+            </intent-filter>
         </activity>
         <activity android:name=".ui.CreateTransactionActivity"
             android:label="@string/create_transaction">

@@ -20,7 +20,7 @@ public class UrlParserModule {
 
     @Provides
     @Singleton
-    UrlParser provideUrlParser() {
+    UrlParser providesUrlParser() {
         return urlParser;
     }
 }

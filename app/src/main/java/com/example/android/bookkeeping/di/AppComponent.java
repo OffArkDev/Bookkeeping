@@ -1,32 +1,18 @@
 package com.example.android.bookkeeping.di;
 
-import android.app.Application;
-
-import com.example.android.bookkeeping.currency.UrlParser;
-import com.example.android.bookkeeping.data.AccountDao;
-import com.example.android.bookkeeping.repository.AccountsDatabase;
-import com.example.android.bookkeeping.repository.AccountsRepository;
-import com.example.android.bookkeeping.ui.AccountsListActivity;
+import com.example.android.bookkeeping.ui.AccountsActivity;
+import com.example.android.bookkeeping.ui.TransactionsActivity;
 
 import javax.inject.Singleton;
 
 import dagger.Component;
-import io.reactivex.disposables.CompositeDisposable;
+
+
 
 @Singleton
 @Component(modules = {AppModule.class, StorageModule.class, UrlParserModule.class})
 public interface AppComponent {
-    void injectAccountsListActivity(AccountsListActivity accountsListActivity);
+    void injectAccountsListActivity(AccountsActivity accountsActivity);
+    void injectTransactionsListActivity(TransactionsActivity transactionsActivity);
 
-    UrlParser urlParser();
-
-    AccountDao accountDao();
-
-    CompositeDisposable compositeDisposable();
-
-    AccountsDatabase accountDatabase();
-
-    AccountsRepository accountRepository();
-
-    Application application();
 }

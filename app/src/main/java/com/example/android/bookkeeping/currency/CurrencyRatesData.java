@@ -8,7 +8,7 @@ import java.util.List;
 
 /** Using list of pairs, can convert currency **/
 
-public class CurrencyRatesData {
+public class CurrencyRatesData  {
     String time;
     List<Pair> ratesList;
 
