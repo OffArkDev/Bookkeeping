@@ -41,32 +41,34 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-    <EditText
-        android:id="@+id/value_create_account"
-        android:layout_width="120dp"
-        android:layout_height="wrap_content"
-        android:imeOptions="actionDone"
-        android:maxLines="1"
-        android:maxLength="12"
-        android:digits="1234567890."
-        android:textSize="18sp"
-        android:inputType="number"
-        />
-    <Spinner
-        android:id="@+id/account_currency_spinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:prompt="@string/currency"
-        >
+        <EditText
+            android:id="@+id/value_create_account"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionDone"
+            android:maxLines="1"
+            android:maxLength="12"
+            android:digits="1234567890."
+            android:textSize="18sp"
+            android:inputType="number"
+            />
 
+        <Button
+            android:id="@+id/account_currency_btn"
+            android:layout_width="54dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/empty_button"
+            android:text="USD"
+            />
 
-    </Spinner>
-</LinearLayout>
+    </LinearLayout>
 
     <Button
         android:id="@+id/button_done_create_account"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/empty_button"
         android:text="@string/done"/>
 
 

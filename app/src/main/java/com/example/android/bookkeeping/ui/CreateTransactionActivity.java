@@ -19,7 +19,6 @@ public class CreateTransactionActivity extends AppCompatActivity {
 
     private EditText nameTransaction;
     private EditText valueTransaction;
-    private EditText dateTransaction;
     private EditText commentTransaction;
     private Spinner spinnerCurrency;
     private Spinner spinnerType;
@@ -41,7 +40,6 @@ public class CreateTransactionActivity extends AppCompatActivity {
     public void findViews() {
         nameTransaction = findViewById(R.id.edit_name_transaction);
         valueTransaction = findViewById(R.id.edit_value_transaction);
-        dateTransaction = findViewById(R.id.edit_transaction_date);
         commentTransaction = findViewById(R.id.edit_transaction_comment);
         spinnerCurrency = findViewById(R.id.transaction_currency_spinner);
         spinnerType = findViewById(R.id.transaction_type_spinner);
@@ -74,7 +72,6 @@ public class CreateTransactionActivity extends AppCompatActivity {
                     case R.id.button_done_create_transaction:
                         String name = nameTransaction.getText().toString();
                         String value = valueTransaction.getText().toString();
-                        String date = dateTransaction.getText().toString();
                         String comment = commentTransaction.getText().toString();
                         String currency = spinnerCurrency.getSelectedItem().toString();
                         String type = spinnerType.getSelectedItem().toString();
@@ -85,7 +82,6 @@ public class CreateTransactionActivity extends AppCompatActivity {
                             Intent resultIntent = new Intent();
                             resultIntent.putExtra("name", name);
                             resultIntent.putExtra("value", value);
-                            resultIntent.putExtra("date", date);
                             resultIntent.putExtra("comment", comment);
                             resultIntent.putExtra("currency", currency);
                             resultIntent.putExtra("type", type);

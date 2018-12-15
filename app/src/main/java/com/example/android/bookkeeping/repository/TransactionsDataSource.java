@@ -33,7 +33,7 @@ public class TransactionsDataSource {
     public Single<Long> insert(final TransactionSaver transactionSaver) {
         return Single.fromCallable(new Callable<Long>() {
             @Override
-            public Long call() throws Exception {
+            public Long call() {
                 return transactionDao.insert(transactionSaver);
             }
         });

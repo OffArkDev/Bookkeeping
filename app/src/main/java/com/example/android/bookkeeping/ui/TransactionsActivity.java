@@ -4,11 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.android.bookkeeping.R;
 import com.example.android.bookkeeping.currency.CurrencyRatesData;
@@ -19,18 +22,23 @@ import com.example.android.bookkeeping.di.StorageModule;
 import com.example.android.bookkeeping.di.UrlParserModule;
 import com.example.android.bookkeeping.repository.TransactionsDataSource;
 import com.example.android.bookkeeping.ui.adapters.TransactionsListAdapter;
+import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
@@ -43,16 +51,18 @@ public class TransactionsActivity extends AppCompatActivity {
 
     private Button btnCreateTransaction;
     private ListView listView;
+    private Button btnDeleteTransaction;
 
-    private List<TransactionSaver> transactionsList = new ArrayList<>();
+    private List<TransactionSaver> listTransactions = new ArrayList<>();
 
     private long accountId;
 
     private CurrencyRatesData currencyRatesData;
 
+    boolean isDeleteClicked = false;
+
     @Inject
     Context context;
-
 
     @Inject
     public CompositeDisposable compositeDisposable;
@@ -83,6 +93,7 @@ public class TransactionsActivity extends AppCompatActivity {
     public void findViews() {
         btnCreateTransaction = findViewById(R.id.add_transaction_button);
         listView = findViewById(R.id.transactions_list_view);
+        btnDeleteTransaction = findViewById(R.id.delete_transaction_button);
     }
 
     public void setOnClickListeners() {
@@ -92,17 +103,41 @@ public class TransactionsActivity extends AppCompatActivity {
                 createTransaction();
             }
         });
+
+        btnDeleteTransaction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isDeleteClicked) {
+                    isDeleteClicked = false;
+                    btnDeleteTransaction.setBackground(ContextCompat.getDrawable(context, R.drawable.empty_button));
+                    listView.setOnItemClickListener(null);
+                } else {
+                    isDeleteClicked = true;
+                    Toast.makeText(context, "click on account to delete", Toast.LENGTH_LONG).show();
+                    btnDeleteTransaction.setBackground(ContextCompat.getDrawable(context, R.drawable.paint_button));
+                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            deleteTransaction((int) id);
+                        }
+                    });
+                }
+            }
+        });
     }
 
     public void setAdapter() {
-        final TransactionsListAdapter transactionsListAdapter = new TransactionsListAdapter(this, transactionsList);
+        final TransactionsListAdapter transactionsListAdapter = new TransactionsListAdapter(this, listTransactions);
         listView.setAdapter(transactionsListAdapter);
     }
 
     public void setRatesFromIntent() {
         Intent intent = getIntent();
-        accountId = intent.getLongExtra("account_id", 0L);
-        currencyRatesData = EventBus.getDefault().removeStickyEvent(CurrencyRatesData.class);
+        accountId = intent.getLongExtra("accountId", 0L);
+        Gson gson = new Gson();
+        currencyRatesData = gson.fromJson(intent.getStringExtra("currencyRates"), CurrencyRatesData.class);
+        Log.i(TAG, "setRatesFromIntent: " + currencyRatesData.getTime());
+
     }
 
     public Disposable getTransactionsFromDatabase() {
@@ -111,7 +146,7 @@ public class TransactionsActivity extends AppCompatActivity {
                 .subscribe(new Consumer<List<TransactionSaver>>() {
                     @Override
                     public void accept(List<TransactionSaver> transactionSavers) {
-                        transactionsList = transactionSavers;
+                        listTransactions = transactionSavers;
                         setAdapter();
                     }
                 });
@@ -123,7 +158,45 @@ public class TransactionsActivity extends AppCompatActivity {
         startActivityForResult(intent, 1);
     }
 
+    public void deleteTransaction(final int id) {
+        compositeDisposable.add(transactionsDataSource.delete(listTransactions.get(id))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action() {
+                    @Override
+                    public void run() {
+                        Log.i(TAG, "delete transaction complete");
+                        listTransactions.remove(id);
+                        setAdapter();
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) {
+                        Log.i(TAG, "delete transaction fail " + throwable.getMessage());
+                    }
+                })
+        );
+    }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        compositeDisposable.clear();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        compositeDisposable.clear();
+    }
+
+
+    public String getCurrentDate() {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat mdformat = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
+        return mdformat.format(calendar.getTime());
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -132,11 +205,11 @@ public class TransactionsActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK) {
                    String type = data.getStringExtra("type");
                    String name = data.getStringExtra("name");
-                   String date = data.getStringExtra("date");
+                   String date = getCurrentDate();
                    String value = data.getStringExtra("value");
                    String currency = data.getStringExtra("currency");
                    String comment = data.getStringExtra("comment");
-                    String valueRUB = "";
+                   String valueRUB = "";
                     if (currency.equals("RUB")) {
                         valueRUB = value;
                     }
@@ -154,7 +227,7 @@ public class TransactionsActivity extends AppCompatActivity {
                                 public void accept(Long aLong) {
                                     Log.i(TAG, "insert success");
                                     newTransactionSaver.setId(aLong);
-                                    transactionsList.add(newTransactionSaver);
+                                    listTransactions.add(newTransactionSaver);
                                     setAdapter();
                                 }
                             }));

@@ -12,17 +12,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.AccountsActivity">
+        <activity android:name=".ui.AccountsActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".ui.CreateAccountActivity"
-            android:label="@string/create_account">
+            android:label="@string/create_account"
+            >
 
         </activity>
         <activity android:name=".ui.TransactionsActivity"
+            android:label="@string/transactions"
             >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -34,12 +39,15 @@
 
         </activity>
         <activity android:name=".firebase.FirebaseStartActivity"
-            android:label="@string/cloud">
+            android:label="@string/cloud"
+            >
 
         </activity>
-        <activity android:name=".firebase.FirebaseStorageActivity" >
-
+        <activity android:name=".firebase.FirebaseStorageActivity"
+            android:label="@string/cloud_storage"
+            >
         </activity>
+        <activity android:name=".ui.ChartActivity" />
     </application>
 
 </manifest>

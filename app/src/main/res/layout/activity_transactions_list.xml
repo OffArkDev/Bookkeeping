@@ -1,47 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.LinearLayoutCompat
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".ui.TransactionsActivity">
 
 
-
-    <TextView
-        android:id="@+id/transactions_textView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:textColor="@color/black"
-        android:textSize="32sp"
-        android:textStyle="bold"
-        android:text="@string/transactions_list" />
 
     <ListView
         android:id="@+id/transactions_list_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="5">
+        android:layout_alignParentTop="true"
+        android:layout_above="@id/buttons_layout"
+        >
 
     </ListView>
 
 
 
+<LinearLayout
+    android:id="@+id/buttons_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="4dp"
+    android:layout_alignParentBottom="true"
+    android:orientation="horizontal"
+    >
+    <Button
+        android:id="@+id/delete_transaction_button"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginEnd="2dp"
+        android:background="@drawable/empty_button"
+        android:adjustViewBounds="true"
+        android:text="@string/button_account_delete"
+        android:layout_weight="1"
+        />
+
+    <Button
+        android:id="@+id/add_transaction_button"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginStart="4dp"
+        android:background="@drawable/empty_button"
+        android:adjustViewBounds="true"
+        android:text="@string/add_transaction_button"
+        android:layout_weight="1"
+        />
+
+</LinearLayout>
 
 
-        <Button
-            android:id="@+id/add_transaction_button"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:adjustViewBounds="true"
-            android:text="@string/add_transaction_button"
-            />
 
 
 
 
 
-
-</android.support.v7.widget.LinearLayoutCompat>
+</RelativeLayout>
