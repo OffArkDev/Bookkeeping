@@ -28,8 +28,6 @@ import com.example.android.bookkeeping.repository.AccountsDataSource;
 import com.example.android.bookkeeping.ui.adapters.AccountsListAdapter;
 import com.google.gson.Gson;
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -85,7 +83,7 @@ public class AccountsActivity extends AppCompatActivity implements RatesListener
                 .storageModule(new StorageModule(getApplication()))
                 .urlParserModule(new UrlParserModule(url, this))
                 .build()
-                .injectAccountsListActivity(this);
+                .injectAccountsActivity(this);
 
         findViews();
         compositeDisposable.add(getAccountsFromDatabase());

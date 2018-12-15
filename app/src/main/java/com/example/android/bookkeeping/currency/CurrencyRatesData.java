@@ -1,5 +1,6 @@
 package com.example.android.bookkeeping.currency;
 
+import com.github.mikephil.charting.data.Entry;
 import com.google.gson.Gson;
 
 import java.math.BigDecimal;
@@ -47,6 +48,17 @@ public class CurrencyRatesData {
             result[i] = ratesList.get(i).getRate();
         }
         return result;
+    }
+
+    public List<Entry> getChartData() {
+        List<Entry> entries = new ArrayList<>();
+
+        float a = 0f;
+        for (Pair p : ratesList) {
+            entries.add(new Entry(a, p.getRate().floatValue()));
+            a++;
+        }
+        return entries;
     }
 
     public BigDecimal convertCurrency(BigDecimal currentValue, String currentCurrency, String resultCurrency) {

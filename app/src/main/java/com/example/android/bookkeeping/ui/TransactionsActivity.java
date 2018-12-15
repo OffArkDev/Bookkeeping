@@ -24,8 +24,6 @@ import com.example.android.bookkeeping.repository.TransactionsDataSource;
 import com.example.android.bookkeeping.ui.adapters.TransactionsListAdapter;
 import com.google.gson.Gson;
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -81,7 +79,7 @@ public class TransactionsActivity extends AppCompatActivity {
                 .storageModule(new StorageModule(getApplication()))
                 .urlParserModule(new UrlParserModule(url, null))
                 .build()
-                .injectTransactionsListActivity(this);
+                .injectTransactionsActivity(this);
 
         findViews();
         setRatesFromIntent();
