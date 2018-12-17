@@ -24,7 +24,7 @@ import com.example.android.bookkeeping.di.DaggerAppComponent;
 import com.example.android.bookkeeping.di.StorageModule;
 import com.example.android.bookkeeping.di.UrlParserModule;
 import com.example.android.bookkeeping.firebase.FirebaseStartActivity;
-import com.example.android.bookkeeping.repository.AccountsDataSource;
+import com.example.android.bookkeeping.repository.AccountsRepository;
 import com.example.android.bookkeeping.ui.adapters.AccountsListAdapter;
 import com.google.gson.Gson;
 
@@ -66,7 +66,7 @@ public class AccountsActivity extends AppCompatActivity implements RatesListener
     public Context context;
 
     @Inject
-    public AccountsDataSource accountsDataSource;
+    public AccountsRepository accountsRepository;
 
     @Inject
     public UrlParser urlParser;
@@ -171,14 +171,16 @@ public class AccountsActivity extends AppCompatActivity implements RatesListener
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, ChartActivity.class);
+                intent.putExtra("rates", currencyRatesData.getCurrenciesList());
                 startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
         });
     }
 
 
     public Disposable getAccountsFromDatabase() {
-        return accountsDataSource.getAll()
+        return accountsRepository.getAll()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<List<AccountSaver>>() {
                     @Override
@@ -212,7 +214,7 @@ public class AccountsActivity extends AppCompatActivity implements RatesListener
     }
 
     public void deleteAccount (final int id) {
-        compositeDisposable.add(accountsDataSource.delete(listAccounts.get(id))
+        compositeDisposable.add(accountsRepository.delete(listAccounts.get(id))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action() {
@@ -265,7 +267,7 @@ public class AccountsActivity extends AppCompatActivity implements RatesListener
                     }
                     //save result to listAccounts and database
                     final AccountSaver newAccount = new AccountSaver(name, value, valueRUB, currency);
-                    compositeDisposable.add(accountsDataSource.insert(newAccount)
+                    compositeDisposable.add(accountsRepository.insert(newAccount)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(new Consumer<Long>() {

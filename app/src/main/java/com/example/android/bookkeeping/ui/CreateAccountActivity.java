@@ -32,7 +32,6 @@ public class CreateAccountActivity extends AppCompatActivity implements DialogCo
         findViews();
         setDialog();
         setRatesFromIntent();
-        setAdapter();
         setOnClickListeners();
     }
 
@@ -46,12 +45,6 @@ public class CreateAccountActivity extends AppCompatActivity implements DialogCo
     public void setRatesFromIntent() {
         Intent intent = getIntent();
         ratesNames = intent.getStringArrayExtra("rates");
-    }
-
-    public void setAdapter() {
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, ratesNames);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
     }
 
     public void setDialog() {
@@ -95,9 +88,9 @@ public class CreateAccountActivity extends AppCompatActivity implements DialogCo
     }
 
     @Override
-    public void sendRequest(int code, String result) {
+    public void sendRequest(int code, String[] result) {
         if (code == 1) {
-            btnCurrency.setText(result);
+            btnCurrency.setText(result[0]);
         }
     }
 }

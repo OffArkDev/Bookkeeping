@@ -13,16 +13,17 @@ import android.widget.Toast;
 
 import com.example.android.bookkeeping.R;
 
-public class CreateTransactionActivity extends AppCompatActivity {
+public class CreateTransactionActivity extends AppCompatActivity implements DialogCommunicator {
 
     private final static String LOG_TAG = "myCreateTransaction";
 
     private EditText nameTransaction;
     private EditText valueTransaction;
     private EditText commentTransaction;
-    private Spinner spinnerCurrency;
+    private Button btnCurrency;
     private Spinner spinnerType;
-    private Button buttonCreateTransaction;
+    private Button btnCreate;
+    private CurrenciesDialog currenciesDialog;
 
 
     private String[] ratesNames;
@@ -33,7 +34,8 @@ public class CreateTransactionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_transaction);
         findViews();
         setRatesFromIntent();
-        setAdapters();
+        setDialog();
+        setAdapter();
         setOnClickListeners();
     }
 
@@ -41,9 +43,9 @@ public class CreateTransactionActivity extends AppCompatActivity {
         nameTransaction = findViewById(R.id.edit_name_transaction);
         valueTransaction = findViewById(R.id.edit_value_transaction);
         commentTransaction = findViewById(R.id.edit_transaction_comment);
-        spinnerCurrency = findViewById(R.id.transaction_currency_spinner);
+        btnCurrency = findViewById(R.id.transaction_currency_btn);
         spinnerType = findViewById(R.id.transaction_type_spinner);
-        buttonCreateTransaction = findViewById(R.id.button_done_create_transaction);
+        btnCreate = findViewById(R.id.button_done_create_transaction);
     }
 
     public void setRatesFromIntent() {
@@ -51,29 +53,26 @@ public class CreateTransactionActivity extends AppCompatActivity {
         ratesNames = intent.getStringArrayExtra("ratesNames");
     }
 
-    public void setAdapters() {
-        ArrayAdapter<String> adapterSp1 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, ratesNames);
-        adapterSp1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerCurrency.setAdapter(adapterSp1);
-        spinnerCurrency.setSelection(0);
-
+    public void setAdapter() {
         String str1[] = {"in", "out"};
-        ArrayAdapter<String> adapterSp2 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, str1);
-        adapterSp2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerType.setAdapter(adapterSp2);
+        ArrayAdapter<String> adapterSp = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, str1);
+        adapterSp.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerType.setAdapter(adapterSp);
         spinnerType.setSelection(0);
     }
 
+    public void setDialog() {
+        currenciesDialog = new CurrenciesDialog();
+        currenciesDialog.setDialogCommunicator(this);
+    }
     public void setOnClickListeners() {
-        buttonCreateTransaction.setOnClickListener(new View.OnClickListener() {
+        btnCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                switch (view.getId()) {
-                    case R.id.button_done_create_transaction:
                         String name = nameTransaction.getText().toString();
                         String value = valueTransaction.getText().toString();
                         String comment = commentTransaction.getText().toString();
-                        String currency = spinnerCurrency.getSelectedItem().toString();
+                        String currency = btnCurrency.getText().toString();
                         String type = spinnerType.getSelectedItem().toString();
 
                         if (value.equals("")) {
@@ -90,10 +89,24 @@ public class CreateTransactionActivity extends AppCompatActivity {
                             finish();
                         }
                 }
+            });
+
+        btnCurrency.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle args = new Bundle();
+                args.putStringArray("currencies", ratesNames);
+                currenciesDialog.setArguments(args);
+                currenciesDialog.show(getFragmentManager(), "currency");
             }
         });
 
-
     }
 
+    @Override
+    public void sendRequest(int code, String[] result) {
+        if (code == 1) {
+            btnCurrency.setText(result[0]);
+        }
+    }
 }

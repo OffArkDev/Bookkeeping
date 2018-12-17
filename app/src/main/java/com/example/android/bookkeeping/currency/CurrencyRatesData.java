@@ -1,6 +1,9 @@
 package com.example.android.bookkeeping.currency;
 
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.google.gson.Gson;
 
 import java.math.BigDecimal;
@@ -50,12 +53,11 @@ public class CurrencyRatesData {
         return result;
     }
 
-    public List<Entry> getChartData() {
-        List<Entry> entries = new ArrayList<>();
-
-        float a = 0f;
+    public ArrayList<BarEntry> getChartData() {
+        ArrayList<BarEntry> entries = new ArrayList<>();
+        int a = 0;
         for (Pair p : ratesList) {
-            entries.add(new Entry(a, p.getRate().floatValue()));
+            entries.add(new BarEntry(a, p.getRate().floatValue()));
             a++;
         }
         return entries;

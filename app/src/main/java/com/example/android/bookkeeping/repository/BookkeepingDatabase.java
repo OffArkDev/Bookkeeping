@@ -10,7 +10,7 @@ import com.example.android.bookkeeping.data.TransactionSaver;
 
 
 @Database(entities = {AccountSaver.class, TransactionSaver.class}, version = 1, exportSchema = false)
-public abstract class AccountsDatabase extends RoomDatabase {
+public abstract class BookkeepingDatabase extends RoomDatabase {
     public abstract AccountDao accountDao();
     public abstract TransactionDao transactionDao();
 }

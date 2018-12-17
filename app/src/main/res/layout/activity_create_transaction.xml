@@ -52,19 +52,23 @@
             android:inputType="number"
             android:textSize="18sp"
             />
-        <Spinner
-            android:id="@+id/transaction_currency_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:prompt="@string/currency"
+        <Button
+            android:id="@+id/transaction_currency_btn"
+            android:layout_width="54dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/empty_button"
+            android:text="USD"
             >
 
-        </Spinner>
+        </Button>
 
         <Spinner
             android:id="@+id/transaction_type_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
             android:prompt="@string/type"
             >
         </Spinner>

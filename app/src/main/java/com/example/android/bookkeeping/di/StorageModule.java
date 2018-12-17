@@ -7,8 +7,10 @@ import android.arch.persistence.room.Room;
 import com.example.android.bookkeeping.data.AccountDao;
 import com.example.android.bookkeeping.data.TransactionDao;
 import com.example.android.bookkeeping.repository.AccountsDataSource;
-import com.example.android.bookkeeping.repository.AccountsDatabase;
+import com.example.android.bookkeeping.repository.BookkeepingDatabase;
+import com.example.android.bookkeeping.repository.AccountsRepository;
 import com.example.android.bookkeeping.repository.TransactionsDataSource;
+import com.example.android.bookkeeping.repository.TransactionsRepository;
 
 import javax.inject.Singleton;
 
@@ -19,30 +21,30 @@ import io.reactivex.disposables.CompositeDisposable;
 @Module
 public class StorageModule {
 
-    private AccountsDatabase accountsDatabase;
+    private BookkeepingDatabase bookkeepingDatabase;
 
     public StorageModule(Application application){
 
-        accountsDatabase = Room.databaseBuilder(application, AccountsDatabase.class, "database").build();
+        bookkeepingDatabase = Room.databaseBuilder(application, BookkeepingDatabase.class, "database").build();
     }
 
 
     @Provides
     @Singleton
-    AccountsDatabase providesAccountsDataBase() {
-        return accountsDatabase;
+    BookkeepingDatabase providesAccountsDataBase() {
+        return bookkeepingDatabase;
     }
 
 
     @Provides
     @Singleton
-    AccountDao providesAccountDao(AccountsDatabase accountsDatabase) {
-        return accountsDatabase.accountDao();
+    AccountDao providesAccountDao(BookkeepingDatabase bookkeepingDatabase) {
+        return bookkeepingDatabase.accountDao();
     }
 
     @Provides
     @Singleton
-    AccountsDataSource providesAccountRepository(AccountDao accountDao) {
+    AccountsRepository providesAccountRepository(AccountDao accountDao) {
         return new AccountsDataSource(accountDao);
     }
 
@@ -55,13 +57,13 @@ public class StorageModule {
 
     @Singleton
     @Provides
-    TransactionDao providesTransactionDao(AccountsDatabase accountsDatabase) {
-        return accountsDatabase.transactionDao();
+    TransactionDao providesTransactionDao(BookkeepingDatabase bookkeepingDatabase) {
+        return bookkeepingDatabase.transactionDao();
     }
 
     @Singleton
     @Provides
-    TransactionsDataSource providesTransactionDataSource(TransactionDao transactionDao) {
+    TransactionsRepository providesTransactionRepository(TransactionDao transactionDao) {
         return new TransactionsDataSource(transactionDao);
     }
 

@@ -15,14 +15,14 @@ import com.example.android.bookkeeping.R;
 
 public class CurrenciesDialog extends DialogFragment {
 
-    private View rootView;
-    private GridView gridView;
-    private ArrayAdapter<String> adapter;
-    private Button btnCancel;
+   private View rootView;
+   private GridView gridView;
+   private ArrayAdapter<String> adapter;
+   private Button btnCancel;
 
-    String[] currencies;
+   private String[] currencies;
 
-    DialogCommunicator dialogCommunicator;
+   private DialogCommunicator dialogCommunicator;
 
     @Override
     public void setArguments(Bundle args) {
@@ -49,7 +49,7 @@ public class CurrenciesDialog extends DialogFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String currency = currencies[(int) id];
-                dialogCommunicator.sendRequest(1, currency);
+                dialogCommunicator.sendRequest(1, new String[] {currency});
                 getDialog().dismiss();
             }
         });

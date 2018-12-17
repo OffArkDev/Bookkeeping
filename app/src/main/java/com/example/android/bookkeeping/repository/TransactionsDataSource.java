@@ -11,7 +11,7 @@ import io.reactivex.Flowable;
 import io.reactivex.Single;
 import io.reactivex.functions.Action;
 
-public class TransactionsDataSource {
+public class TransactionsDataSource implements TransactionsRepository {
     private TransactionDao transactionDao;
 
     public TransactionsDataSource(TransactionDao transactionDao) {

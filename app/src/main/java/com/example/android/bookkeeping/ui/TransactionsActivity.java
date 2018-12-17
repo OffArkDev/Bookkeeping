@@ -20,7 +20,7 @@ import com.example.android.bookkeeping.di.AppModule;
 import com.example.android.bookkeeping.di.DaggerAppComponent;
 import com.example.android.bookkeeping.di.StorageModule;
 import com.example.android.bookkeeping.di.UrlParserModule;
-import com.example.android.bookkeeping.repository.TransactionsDataSource;
+import com.example.android.bookkeeping.repository.TransactionsRepository;
 import com.example.android.bookkeeping.ui.adapters.TransactionsListAdapter;
 import com.google.gson.Gson;
 
@@ -66,7 +66,7 @@ public class TransactionsActivity extends AppCompatActivity {
     public CompositeDisposable compositeDisposable;
 
     @Inject
-    public TransactionsDataSource transactionsDataSource;
+    public TransactionsRepository transactionsRepository;
 
 
 
@@ -139,7 +139,7 @@ public class TransactionsActivity extends AppCompatActivity {
     }
 
     public Disposable getTransactionsFromDatabase() {
-        return transactionsDataSource.getTransactionsOfAccount(accountId)
+        return transactionsRepository.getTransactionsOfAccount(accountId)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<List<TransactionSaver>>() {
                     @Override
@@ -157,7 +157,7 @@ public class TransactionsActivity extends AppCompatActivity {
     }
 
     public void deleteTransaction(final int id) {
-        compositeDisposable.add(transactionsDataSource.delete(listTransactions.get(id))
+        compositeDisposable.add(transactionsRepository.delete(listTransactions.get(id))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action() {
@@ -217,7 +217,7 @@ public class TransactionsActivity extends AppCompatActivity {
 
                     final TransactionSaver newTransactionSaver = new TransactionSaver(accountId, type, name, date, value, valueRUB, currency, comment);
 
-                    compositeDisposable.add(transactionsDataSource.insert(newTransactionSaver)
+                    compositeDisposable.add(transactionsRepository.insert(newTransactionSaver)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(new Consumer<Long>() {
