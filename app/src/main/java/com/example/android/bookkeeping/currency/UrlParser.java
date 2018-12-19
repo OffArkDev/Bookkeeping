@@ -1,7 +1,5 @@
 package com.example.android.bookkeeping.currency;
 
-import android.os.AsyncTask;
-
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -14,24 +12,20 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Parser of xml document loaded with url connection
- *  ratesListener passing loaded data to AccountsActivity
- * **/
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 
-public class UrlParser extends AsyncTask <Void, Void, Void> {
+public class UrlParser implements ObservableOnSubscribe<CurrencyRatesData> {
 
-    private RatesListener ratesListener;
     private CurrencyRatesData currencyRatesData;
     private String parsedUrl;
 
-    public UrlParser(String parsedUrl, RatesListener ratesListener) {
+    public UrlParser(String parsedUrl) {
         this.parsedUrl = parsedUrl;
-        this.ratesListener = ratesListener;
     }
 
     @Override
-    protected Void doInBackground(Void... urlParse) {
-
+    public void subscribe(ObservableEmitter<CurrencyRatesData> emitter)  {
         //init variables
         List<Pair> params = new ArrayList<>();
         URL url = createUrl(parsedUrl);
@@ -48,6 +42,7 @@ public class UrlParser extends AsyncTask <Void, Void, Void> {
             xpp.setInput(inputStream, "UTF_8");
 
             //parse xml
+            boolean rateStart = false;
             int eventType = xpp.getEventType();
             while (eventType != XmlPullParser.END_DOCUMENT) {
                 if (eventType == XmlPullParser.START_TAG) {
@@ -55,6 +50,7 @@ public class UrlParser extends AsyncTask <Void, Void, Void> {
                         if (xpp.getAttributeCount() > 0) {
                             String attribute = xpp.getAttributeName(0);
                             if (attribute.equals("time")) {
+                                rateStart = true;
                                 time = xpp.getAttributeValue(0);
                             }
                         }
@@ -69,29 +65,36 @@ public class UrlParser extends AsyncTask <Void, Void, Void> {
                             }
                         }
                     }
+                }  else if (eventType == XmlPullParser.END_TAG) {
+                    String name = xpp.getName();
+                    int atCount = xpp.getAttributeCount();
+                    String atName = "";
+                    if (atCount > 0) {
+                         atName = xpp.getAttributeName(0);
+                    }
+                    if (xpp.getName().equalsIgnoreCase("cube") && rateStart && xpp.getAttributeCount() == -1) {
+                        currencyRatesData = new CurrencyRatesData(params, time);
+                        emitter.onNext(currencyRatesData);
+                        params = new ArrayList<>();
+                        rateStart = false;
+                    }
                 }
-
                 try {
                     eventType = xpp.next();
                 } catch (IOException e) {
                     e.printStackTrace();
-
+                    emitter.onError(e);
                 }
+
+
             }
         } catch (XmlPullParserException e) {
             e.printStackTrace();
+            emitter.onError(e);
         }
-
-        currencyRatesData = new CurrencyRatesData(params, time);
-
-        return null;
+        emitter.onComplete();
     }
 
-    @Override
-    protected void onPostExecute(Void aVoid) {
-        super.onPostExecute(aVoid);
-        ratesListener.loadingComplete(currencyRatesData);
-    }
 
     private URL createUrl(String url) {
         URL result = null;
@@ -110,5 +113,4 @@ public class UrlParser extends AsyncTask <Void, Void, Void> {
             return null;
         }
     }
-
 }

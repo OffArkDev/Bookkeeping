@@ -27,11 +27,11 @@ public class CurrenciesHistoryDialog extends DialogFragment {
     private Button btnDone;
 
     private String[] currencies;
-    private List<String> chosenCurrencies;
+    private String chosenCurrency;
 
     private DialogCommunicator dialogCommunicator;
 
-    private final int CHOICE_TAG = 0;
+    private View prev_view = null;
 
     @Override
     public void setArguments(Bundle args) {
@@ -45,7 +45,6 @@ public class CurrenciesHistoryDialog extends DialogFragment {
         gridView = rootView.findViewById(R.id.grid_layout);
         btnCancel = rootView.findViewById(R.id.btn_cancel);
         btnDone = rootView.findViewById(R.id.btn_done);
-        chosenCurrencies = new ArrayList<>();
         adapter = new ArrayAdapter<>(getActivity(), R.layout.dialog_item, R.id.txt_currency, currencies);
         gridView.setAdapter(adapter);
 
@@ -59,7 +58,7 @@ public class CurrenciesHistoryDialog extends DialogFragment {
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialogCommunicator.sendRequest(2, chosenCurrencies.toArray(new String[0]));
+                dialogCommunicator.sendRequest(2, chosenCurrency);
                 getDialog().dismiss();
             }
         });
@@ -67,21 +66,12 @@ public class CurrenciesHistoryDialog extends DialogFragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                boolean chosen = false;
-                if (view.getTag() != null) {
-                    chosen = (boolean) view.getTag();
+                if (prev_view != null) {
+                    prev_view.setBackgroundColor(Color.TRANSPARENT);
                 }
-                if (chosen) {
-                    String currency = currencies[(int) id];
-                    chosenCurrencies.remove(currency);
-                    view.setTag(false);
-                    view.setBackgroundColor(Color.TRANSPARENT);
-                } else {
-                    String currency = currencies[(int) id];
-                    chosenCurrencies.add(currency);
-                    view.setTag(true);
+                    prev_view = view;
+                    chosenCurrency = currencies[(int) id];
                     view.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.paint_button));
-                }
             }
         });
         return rootView;

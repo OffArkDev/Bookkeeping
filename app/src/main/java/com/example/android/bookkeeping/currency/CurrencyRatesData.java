@@ -53,15 +53,6 @@ public class CurrencyRatesData {
         return result;
     }
 
-    public ArrayList<BarEntry> getChartData() {
-        ArrayList<BarEntry> entries = new ArrayList<>();
-        int a = 0;
-        for (Pair p : ratesList) {
-            entries.add(new BarEntry(a, p.getRate().floatValue()));
-            a++;
-        }
-        return entries;
-    }
 
     public BigDecimal convertCurrency(BigDecimal currentValue, String currentCurrency, String resultCurrency) {
         BigDecimal currentRate = getRate(currentCurrency);

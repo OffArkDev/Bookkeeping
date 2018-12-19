@@ -40,6 +40,7 @@
     <string name="transactions">Transactions</string>
     <string name="cloud_storage">Cloud storage</string>
     <string name="cancel">Cancel</string>
+    <string name="description">Choose any currency that will be drawn on the chart</string>
 
 
 </resources>

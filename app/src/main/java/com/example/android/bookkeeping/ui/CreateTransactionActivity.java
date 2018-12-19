@@ -104,9 +104,9 @@ public class CreateTransactionActivity extends AppCompatActivity implements Dial
     }
 
     @Override
-    public void sendRequest(int code, String[] result) {
+    public void sendRequest(int code, String result) {
         if (code == 1) {
-            btnCurrency.setText(result[0]);
+            btnCurrency.setText(result);
         }
     }
 }

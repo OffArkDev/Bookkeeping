@@ -1,7 +1,6 @@
 package com.example.android.bookkeeping.di;
 
 
-import com.example.android.bookkeeping.currency.RatesListener;
 import com.example.android.bookkeeping.currency.UrlParser;
 
 import javax.inject.Singleton;
@@ -14,13 +13,14 @@ public class UrlParserModule {
 
     private UrlParser urlParser;
 
-    public UrlParserModule(String parseUrl, RatesListener ratesListener) {
-        urlParser = new UrlParser(parseUrl, ratesListener);
+    public UrlParserModule(String parseUrl) {
+        urlParser = new UrlParser(parseUrl);
     }
+
 
     @Provides
     @Singleton
-    UrlParser providesUrlParser() {
+    UrlParser providesRxUrlParser() {
         return urlParser;
     }
 }

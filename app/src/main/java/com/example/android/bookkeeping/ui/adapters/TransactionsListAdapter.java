@@ -8,7 +8,6 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.example.android.bookkeeping.R;
-import com.example.android.bookkeeping.data.Transaction;
 import com.example.android.bookkeeping.data.TransactionSaver;
 
 import java.util.ArrayList;

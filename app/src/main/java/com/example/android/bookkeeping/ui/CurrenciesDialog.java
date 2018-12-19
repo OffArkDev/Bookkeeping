@@ -49,7 +49,7 @@ public class CurrenciesDialog extends DialogFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String currency = currencies[(int) id];
-                dialogCommunicator.sendRequest(1, new String[] {currency});
+                dialogCommunicator.sendRequest(1, currency);
                 getDialog().dismiss();
             }
         });

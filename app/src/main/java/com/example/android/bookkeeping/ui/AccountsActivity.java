@@ -16,7 +16,6 @@ import android.widget.Toast;
 
 import com.example.android.bookkeeping.R;
 import com.example.android.bookkeeping.currency.CurrencyRatesData;
-import com.example.android.bookkeeping.currency.RatesListener;
 import com.example.android.bookkeeping.currency.UrlParser;
 import com.example.android.bookkeeping.data.AccountSaver;
 import com.example.android.bookkeeping.di.AppModule;
@@ -34,6 +33,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.Observable;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -41,7 +42,7 @@ import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-public class AccountsActivity extends AppCompatActivity implements RatesListener {
+public class AccountsActivity extends AppCompatActivity{
 
     final String TAG = "myAccountsList";
 
@@ -81,14 +82,13 @@ public class AccountsActivity extends AppCompatActivity implements RatesListener
         DaggerAppComponent.builder()
                 .appModule(new AppModule(getApplication()))
                 .storageModule(new StorageModule(getApplication()))
-                .urlParserModule(new UrlParserModule(url, this))
+                .urlParserModule(new UrlParserModule(url))
                 .build()
                 .injectAccountsActivity(this);
 
         findViews();
-        compositeDisposable.add(getAccountsFromDatabase());
-        showOrHideProgressBar(true);
-        urlParser.execute();
+        parseUrl();
+        getAccountsFromDatabase();
         setAdapter();
         setOnClickListeners();
     }
@@ -179,8 +179,8 @@ public class AccountsActivity extends AppCompatActivity implements RatesListener
     }
 
 
-    public Disposable getAccountsFromDatabase() {
-        return accountsRepository.getAll()
+    public void getAccountsFromDatabase() {
+        compositeDisposable.add(accountsRepository.getAll()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<List<AccountSaver>>() {
                     @Override
@@ -188,21 +188,46 @@ public class AccountsActivity extends AppCompatActivity implements RatesListener
                         listAccounts = transactionSavers;
                         setAdapter();
                     }
+                }));
+    }
+
+    public void parseUrl() {
+        showOrHideProgressBar(true);
+        Observable.create(urlParser)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<CurrencyRatesData>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        compositeDisposable.add(d);
+                    }
+
+                    @Override
+                    public void onNext(CurrencyRatesData data) {
+                        currencyRatesData = data;
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.i(TAG, "onError: " + e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        showOrHideProgressBar(false);
+                    }
                 });
     }
 
-    @Override
-    public void loadingComplete(CurrencyRatesData currencyRatesData) {
-        this.currencyRatesData = currencyRatesData;
-        showOrHideProgressBar(false);
-    }
 
     public void showOrHideProgressBar(boolean show) {
         if (show) {
             vButtonsLayer.setVisibility(View.INVISIBLE);
+            ivChartButton.setVisibility(View.INVISIBLE);
             progressBar.setVisibility(View.VISIBLE);
         } else {
             vButtonsLayer.setVisibility(View.VISIBLE);
+            ivChartButton.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.INVISIBLE);
         }
     }

@@ -77,7 +77,7 @@ public class TransactionsActivity extends AppCompatActivity {
         DaggerAppComponent.builder()
                 .appModule(new AppModule(getApplication()))
                 .storageModule(new StorageModule(getApplication()))
-                .urlParserModule(new UrlParserModule(url, null))
+                .urlParserModule(new UrlParserModule(url))
                 .build()
                 .injectTransactionsActivity(this);
 

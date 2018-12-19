@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.android.bookkeeping.R;
-import com.example.android.bookkeeping.data.AccountData;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,12 +34,12 @@ public class FirebaseStorageActivity extends AppCompatActivity {
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               ArrayList<AccountData> dataList = new ArrayList<>();
+              // ArrayList<AccountData> dataList = new ArrayList<>();
 
-                if(dataList.size() > 0 ){
-                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("data/");
-                    ref.push().setValue(dataList);
-                }
+//                if(dataList.size() > 0 ){
+//                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("data/");
+//                    ref.push().setValue(dataList);
+//                }
 
             }
         });
@@ -48,7 +47,7 @@ public class FirebaseStorageActivity extends AppCompatActivity {
         buttonLoad.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ArrayList<AccountData> dataList = new ArrayList<>();
+             //   ArrayList<AccountData> dataList = new ArrayList<>();
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("data/");
 
                 ref.addValueEventListener(new ValueEventListener() {

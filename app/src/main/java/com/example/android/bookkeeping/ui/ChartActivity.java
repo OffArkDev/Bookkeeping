@@ -6,48 +6,60 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.example.android.bookkeeping.R;
 import com.example.android.bookkeeping.currency.CurrencyRatesData;
-import com.example.android.bookkeeping.currency.RatesListener;
-import com.example.android.bookkeeping.currency.RxUrlParser;
 import com.example.android.bookkeeping.currency.UrlParser;
 import com.example.android.bookkeeping.di.AppModule;
 import com.example.android.bookkeeping.di.DaggerAppComponent;
 import com.example.android.bookkeeping.di.StorageModule;
 import com.example.android.bookkeeping.di.UrlParserModule;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-public class ChartActivity extends AppCompatActivity implements DialogCommunicator, RatesListener {
+public class ChartActivity extends AppCompatActivity implements DialogCommunicator {
 
     private final static String TAG = "chartActivity";
 
-    private LineChart barChart;
+    private LineChart lineChart;
+    private ProgressBar progressBar;
+    private View rootView;
 
     private final String url = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist.xml";
     private ArrayList<CurrencyRatesData> listHistoryCurrencies = new ArrayList<>();
     private CurrenciesHistoryDialog currenciesDialog;
 
     private String[] ratesNames;
-    private String[] chosenNames;
+    private String chosenName;
 
-
+    private ArrayList<String> timesList = new ArrayList<>();
 
     @Inject
     public Context context;
+
+    @Inject
+    public CompositeDisposable compositeDisposable;
 
     @Inject
     public UrlParser urlParser;
@@ -59,7 +71,7 @@ public class ChartActivity extends AppCompatActivity implements DialogCommunicat
         DaggerAppComponent.builder()
                 .appModule(new AppModule(getApplication()))
                 .storageModule(new StorageModule(getApplication()))
-                .urlParserModule(new UrlParserModule(url, this))
+                .urlParserModule(new UrlParserModule(url))
                 .build()
                 .injectChartActivity(this);
         findViews();
@@ -67,12 +79,12 @@ public class ChartActivity extends AppCompatActivity implements DialogCommunicat
         setRatesFromIntent();
         showDialog();
 
-
-
     }
 
     public void findViews() {
-        barChart = findViewById(R.id.bar_chart);
+        lineChart = findViewById(R.id.bar_chart);
+        progressBar = findViewById(R.id.progress_bar);
+        rootView = findViewById(R.id.root_view);
     }
 
 
@@ -94,28 +106,28 @@ public class ChartActivity extends AppCompatActivity implements DialogCommunicat
     }
 
     @Override
-    public void sendRequest(int code, String[] result) {
+    public void sendRequest(int code, String result) {
         if (code == 2) {
-            chosenNames = result;
+            chosenName = result;
             loadAndShowCurrencies();
         }
     }
 
     public void loadAndShowCurrencies() {
-        RxUrlParser rxUrlParser = new RxUrlParser(url);
-        Observable.create(rxUrlParser)
+        showOrHideProgress(true);
+        Observable.create(urlParser)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<CurrencyRatesData>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-
+                        compositeDisposable.add(d);
                     }
 
                     @Override
                     public void onNext(CurrencyRatesData data) {
                         listHistoryCurrencies.add(data);
-                        addDataToChart();
+                      //  addDataToChart(data);
                     }
 
                     @Override
@@ -125,13 +137,82 @@ public class ChartActivity extends AppCompatActivity implements DialogCommunicat
 
                     @Override
                     public void onComplete() {
-                        Log.i(TAG, "onComplete: ");
+                        processData();
+
+                 //       addCurrenciesToChart();
+
                     }
                 });
     }
 
-    public void addDataToChart() {
+//    private int count = 0;
+//    private ArrayList<String> timesList = new ArrayList<>();
+//    ArrayList<Entry> entries = new ArrayList<>();
+//    public void addDataToChart(CurrencyRatesData data) {
+//        for (int i = 0; i < chosenName.length; i++) {
+//            Entry entry = new Entry(count, data.getRate(chosenName[i]).floatValue());
+//            entries.add(entry);
+//            LineDataSet dataSet = new LineDataSet(entries,"Line Bar");
+//            LineData lineData = new LineData(dataSet);
+//            lineChart.setData(lineData);
+//        }
+//        count++;
+//        timesList.add(data.getTime());
+//        XAxis xAxis = lineChart.getXAxis();
+//        xAxis.setValueFormatter(new IndexAxisValueFormatter(timesList));
+//    }
 
+    public void processData() {
+        compositeDisposable.add(Observable.fromCallable(new Callable<LineData>() {
+            @Override
+            public LineData call() {
+                Collections.reverse(listHistoryCurrencies);
+                return addCurrenciesToChart();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<LineData>() {
+                    @Override
+                    public void accept(LineData lineData){
+                        lineChart.setData(lineData);
+                        XAxis xAxis = lineChart.getXAxis();
+                        xAxis.setValueFormatter(new IndexAxisValueFormatter(timesList));
+                        showOrHideProgress(false);
+                        lineChart.notifyDataSetChanged();
+                        lineChart.invalidate();
+                    }
+                }));
+
+    }
+
+
+    public LineData addCurrenciesToChart(){
+        ArrayList<ILineDataSet> lines = new ArrayList<> ();
+        LineDataSet lDataSet1 = new LineDataSet(null, "");
+            ArrayList<Entry> dataSet = new ArrayList<>();
+            for (int j = 0; j < listHistoryCurrencies.size(); j++) {
+                CurrencyRatesData data = listHistoryCurrencies.get(j);
+                Entry entry = new Entry(j, data.getRate(chosenName).floatValue());
+                dataSet.add(entry);
+                lDataSet1 = new LineDataSet(dataSet, chosenName);
+                lDataSet1.setCircleColor(R.color.green);
+            }
+            lines.add(lDataSet1);
+        for (CurrencyRatesData data: listHistoryCurrencies) {
+            timesList.add(data.getTime());
+        }
+
+        return new LineData(lines);
+    }
+
+    public void showOrHideProgress(Boolean show) {
+        if (show) {
+            progressBar.setVisibility(View.VISIBLE);
+            lineChart.setVisibility(View.INVISIBLE);
+        } else {
+            progressBar.setVisibility(View.INVISIBLE);
+            lineChart.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -139,78 +220,16 @@ public class ChartActivity extends AppCompatActivity implements DialogCommunicat
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
+
     @Override
-    public void loadingComplete(CurrencyRatesData currencyRatesData) {
-  //      this.listHistoryCurrencies = currencyRatesData;
-        ArrayList<Entry> entries = new ArrayList<>();
-                //listHistoryCurrencies.getChartData();
-        entries.add(new Entry(1985, 3f));
-        entries.add(new Entry(1986, 8f));
-        entries.add(new Entry(1987, 6f));
-        entries.add(new Entry(1988, 11f));
-        entries.add(new Entry(1989, 5f));
-        entries.add(new Entry(1990, 14f));
-        entries.add(new Entry(1991, 14f));
-        entries.add(new Entry(1992, 14f));
-        entries.add(new Entry(1993, 14f));
-        entries.add(new Entry(1994, 14f));
-        entries.add(new Entry(1995, 14f));
-        entries.add(new Entry(1996, 14f));
-        entries.add(new Entry(1997, 14f));
-        entries.add(new Entry(1998, 14f));
-        entries.add(new Entry(1999, 14f));
-        entries.add(new Entry(2000, 14f));
-        entries.add(new Entry(2001, 14f));
-        entries.add(new Entry(2002, 14f));
-        entries.add(new Entry(2003, 14f));
-        entries.add(new Entry(2004, 14f));
-        entries.add(new Entry(2005, 14f));
-        entries.add(new Entry(2006, 14f));
-        entries.add(new Entry(2007, 14f));
+    protected void onStop() {
+        super.onStop();
+        compositeDisposable.clear();
+    }
 
-
-
-        LineDataSet dataSet = new LineDataSet(entries,"Horizontal Bar");
-
-        LineData data = new LineData(dataSet);
-        barChart.setData(data);
-        barChart.invalidate();
-
-//        final ArrayList<String> xLabels = new ArrayList<>();
-//               //new ArrayList<>(Arrays.asList(listHistoryCurrencies.getCurrenciesList()));
-//        xLabels.add("January");
-//        xLabels.add("February");
-//        xLabels.add("March");
-//        xLabels.add("April");
-//        xLabels.add("May");
-//        xLabels.add("June");
-//        xLabels.add("o");
-//        xLabels.add("a");
-//        xLabels.add("b");
-//        xLabels.add("c");
-//        xLabels.add("d");
-//        xLabels.add("e");
-//        xLabels.add("f");
-//        xLabels.add("g");
-//        xLabels.add("h");
-//        xLabels.add("[");
-//        xLabels.add("p");
-//        xLabels.add("q");
-//        xLabels.add("r");
-//        xLabels.add("s");
-//        xLabels.add("t");
-//        xLabels.add("k");
-
-
-
-//        XAxis xAxis = barChart.getXAxis();
-//        xAxis.setValueFormatter(new IAxisValueFormatter() {
-//            @Override
-//            public String getFormattedValue(float value, AxisBase axis) {
-//                return xLabels.get((int) value);
-//            }
-//
-//        });
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        compositeDisposable.clear();
     }
 }
