@@ -3,6 +3,7 @@ package com.example.android.bookkeeping.repository;
 import com.example.android.bookkeeping.data.AccountDao;
 import com.example.android.bookkeeping.data.AccountSaver;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -36,6 +37,16 @@ public class AccountsDataSource implements AccountsRepository{
         });
     }
 
+    @Override
+    public Single<long[]> insertList(final List<AccountSaver> list) {
+        return Single.fromCallable(new Callable<long[]>() {
+            @Override
+            public long[] call() {
+                return accountDao.insertList(list);
+            }
+        });
+    }
+
     public Completable update(final AccountSaver accountSaver) {
         return Completable.fromAction(new Action() {
             @Override
@@ -54,4 +65,13 @@ public class AccountsDataSource implements AccountsRepository{
         });
     }
 
+    @Override
+    public Completable deleteAll() {
+        return Completable.fromAction(new Action() {
+            @Override
+            public void run() {
+                accountDao.deleteAll();
+            }
+        });
+    }
 }

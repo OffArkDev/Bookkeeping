@@ -1,11 +1,9 @@
-package com.example.android.bookkeeping.firebase;
+package com.example.android.bookkeeping.ui.cloud;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.BaseTransientBottomBar;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 
 import android.util.Log;
@@ -15,15 +13,11 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.android.bookkeeping.R;
-import com.example.android.bookkeeping.repository.AccountsRepository;
-import com.example.android.bookkeeping.repository.TransactionsRepository;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
-import javax.inject.Inject;
 
 
 public class FirebaseStartActivity extends AppCompatActivity {

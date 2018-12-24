@@ -1,4 +1,4 @@
-package com.example.android.bookkeeping.cloud;
+package com.example.android.bookkeeping.data;
 
 import com.example.android.bookkeeping.data.AccountSaver;
 import com.example.android.bookkeeping.data.TransactionSaver;

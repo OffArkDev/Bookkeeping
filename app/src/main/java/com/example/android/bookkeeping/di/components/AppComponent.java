@@ -18,10 +18,9 @@ import dagger.Component;
 )
 public interface AppComponent {
     AccountComponent newAccountComponent(ActivityModule activityModule, StorageModule storageModule, UrlParserModule urlParserModule);
-
     TransactionComponent newTransactionComponent(ActivityModule activityModule, StorageModule storageModule);
-
     ChartComponent newChartComponent(ActivityModule activityModule, UrlParserModule urlParserModule);
+    CloudComponent newCloudComponent(ActivityModule activityModule, StorageModule storageModule);
 
 
 }

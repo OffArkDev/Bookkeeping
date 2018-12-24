@@ -17,10 +17,13 @@ public interface AccountsRepository {
 
     Single<Long> insert(final AccountSaver accountSaver);
 
+    Single<long[]> insertList(List<AccountSaver> list);
+
     Completable update(final AccountSaver accountSaver);
 
     Completable delete(final AccountSaver accountSaver);
 
+    Completable deleteAll();
 }
 
 

@@ -17,6 +17,8 @@ import com.example.android.bookkeeping.currency.UrlParser;
 import com.example.android.bookkeeping.di.components.ChartComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.di.modules.UrlParserModule;
+import com.example.android.bookkeeping.ui.dialogs.CurrenciesHistoryDialog;
+import com.example.android.bookkeeping.ui.dialogs.DialogCommunicator;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;

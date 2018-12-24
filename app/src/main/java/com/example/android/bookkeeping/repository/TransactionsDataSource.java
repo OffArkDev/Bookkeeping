@@ -39,6 +39,16 @@ public class TransactionsDataSource implements TransactionsRepository {
         });
     }
 
+    @Override
+    public Single<long[]> insertList(final List<TransactionSaver> list) {
+        return Single.fromCallable(new Callable<long[]>() {
+            @Override
+            public long[] call() {
+                return transactionDao.insertList(list);
+            }
+        });
+    }
+
     public Completable update(final TransactionSaver transactionSaver) {
         return Completable.fromAction(new Action() {
             @Override
@@ -53,6 +63,16 @@ public class TransactionsDataSource implements TransactionsRepository {
             @Override
             public void run() throws Exception {
                 transactionDao.delete(transactionSaver);
+            }
+        });
+    }
+
+    @Override
+    public Completable deleteAll() {
+        return Completable.fromAction(new Action() {
+            @Override
+            public void run() {
+                transactionDao.deleteAll();
             }
         });
     }

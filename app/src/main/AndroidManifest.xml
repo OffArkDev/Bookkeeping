@@ -13,7 +13,7 @@
         android:name=".MyApplication"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.AccountsActivity"
+        <activity android:name=".ui.account.AccountsActivity"
             android:theme="@style/AppTheme.NoActionBar"
 
             >
@@ -22,29 +22,29 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.CreateAccountActivity"
+        <activity android:name=".ui.account.CreateAccountActivity"
             android:label="@string/create_account"
             >
 
         </activity>
-        <activity android:name=".ui.TransactionsActivity"
+        <activity android:name=".ui.transaction.TransactionsActivity"
             android:label="@string/transactions"
             >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.CreateTransactionActivity"
+        <activity android:name=".ui.transaction.CreateTransactionActivity"
             android:label="@string/create_transaction">
 
 
         </activity>
-        <activity android:name=".firebase.FirebaseStartActivity"
+        <activity android:name=".ui.cloud.FirebaseStartActivity"
             android:label="@string/cloud"
             >
 
         </activity>
-        <activity android:name=".firebase.FirebaseStorageActivity"
+        <activity android:name=".ui.cloud.FirebaseStorageActivity"
             android:label="@string/cloud_storage"
             >
         </activity>

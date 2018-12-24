@@ -23,12 +23,17 @@ public interface AccountDao {
     @Insert (onConflict = OnConflictStrategy.REPLACE)
     long insert(AccountSaver accountSaver);
 
+    @Insert (onConflict = OnConflictStrategy.REPLACE)
+    long[] insertList(List<AccountSaver> list);
+
     @Update
     void update(AccountSaver accountSaver);
 
     @Delete
     void delete(AccountSaver accountSaver);
 
+    @Query("DELETE FROM AccountSaver")
+    void deleteAll();
 
 
 }

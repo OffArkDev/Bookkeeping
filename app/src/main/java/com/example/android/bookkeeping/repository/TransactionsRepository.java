@@ -18,7 +18,12 @@ public interface TransactionsRepository {
 
     Single<Long> insert(final TransactionSaver transactionSaver);
 
+    Single<long[]> insertList(List<TransactionSaver> list);
+
+
     Completable update(final TransactionSaver transactionSaver);
 
     Completable delete(final TransactionSaver transactionSaver);
+
+    Completable deleteAll();
 }

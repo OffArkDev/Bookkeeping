@@ -27,9 +27,15 @@ public interface TransactionDao {
     @Insert (onConflict = OnConflictStrategy.REPLACE)
     long insert(TransactionSaver transactionSaver);
 
+    @Insert (onConflict = OnConflictStrategy.REPLACE)
+    long[] insertList(List<TransactionSaver> list);
+
     @Update
     void update(TransactionSaver transactionSaver);
 
     @Delete
     void delete(TransactionSaver transactionSaver);
+
+    @Query("DELETE FROM AccountSaver")
+    void deleteAll();
 }

@@ -1,18 +1,13 @@
 package com.example.android.bookkeeping.di.components;
 
+
 import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.di.modules.StorageModule;
-import com.example.android.bookkeeping.ui.transaction.TransactionsActivity;
-
-import javax.inject.Singleton;
+import com.example.android.bookkeeping.ui.cloud.FirebaseStorageActivity;
 
 import dagger.Subcomponent;
 
-
-@Singleton
 @Subcomponent(modules = {ActivityModule.class, StorageModule.class})
-public interface TransactionComponent {
-    void inject(TransactionsActivity transactionsActivity);
-
-
+public interface CloudComponent {
+    void inject(FirebaseStorageActivity firebaseStorageActivity);
 }

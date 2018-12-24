@@ -1,4 +1,4 @@
-package com.example.android.bookkeeping.ui;
+package com.example.android.bookkeeping.ui.transaction;
 
 import android.content.Context;
 import android.content.Intent;
@@ -78,7 +78,7 @@ public class TransactionsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_transactions_list);
         getTransactionComponent().inject(this);
         findViews();
-        setRatesFromIntent();
+        getRatesFromIntent();
         compositeDisposable.add(getTransactionsFromDatabase());
         setAdapter();
         setOnClickListeners();
@@ -131,12 +131,12 @@ public class TransactionsActivity extends AppCompatActivity {
         listView.setAdapter(transactionsListAdapter);
     }
 
-    public void setRatesFromIntent() {
+    public void getRatesFromIntent() {
         Intent intent = getIntent();
         accountId = intent.getLongExtra("accountId", 0L);
         Gson gson = new Gson();
         currencyRatesData = gson.fromJson(intent.getStringExtra("currencyRates"), CurrencyRatesData.class);
-        Log.i(TAG, "setRatesFromIntent: " + currencyRatesData.getTime());
+        Log.i(TAG, "getRatesFromIntent: " + currencyRatesData.getTime());
 
     }
 
