@@ -1,8 +1,5 @@
 package com.example.android.bookkeeping.data;
 
-import com.example.android.bookkeeping.data.AccountSaver;
-import com.example.android.bookkeeping.data.TransactionSaver;
-
 import java.util.List;
 
 public class DataPOJO {

@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.android.bookkeeping.Constants;
 import com.example.android.bookkeeping.MyApplication;
 import com.example.android.bookkeeping.R;
 import com.example.android.bookkeeping.data.AccountSaver;
@@ -154,7 +155,7 @@ public class FirebaseStorageActivity extends AppCompatActivity {
     public void saveToCloud() {
         showOrHideProgressBar(true);
         FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
-        StorageReference storageRef = firebaseStorage.getReference().child("data/" + email);
+        StorageReference storageRef = firebaseStorage.getReference().child(Constants.CLOUD_DATA_PATH + email);
 
         Gson gson = new Gson();
         String json = gson.toJson(dataPOJO);
@@ -172,7 +173,7 @@ public class FirebaseStorageActivity extends AppCompatActivity {
                 new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Toast.makeText(context, "Save success", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.saved_success, Toast.LENGTH_SHORT).show();
                 showOrHideProgressBar(false);
 
             }
@@ -183,13 +184,13 @@ public class FirebaseStorageActivity extends AppCompatActivity {
         showOrHideProgressBar(true);
 
         FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
-        StorageReference storageRef = firebaseStorage.getReference().child("data/" + email);
+        StorageReference storageRef = firebaseStorage.getReference().child(Constants.CLOUD_DATA_PATH + email);
         final long maxDownLoadSize = 5 * 1024 * 1024;
         storageRef.getBytes(maxDownLoadSize).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
                 if (bytes == null) {
-                    Toast.makeText(context, "no data in the cloud", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, R.string.no_data_cloud, Toast.LENGTH_SHORT).show();
                 } else {
                     String strData = new String(bytes);
                     Gson gson = new Gson();
@@ -202,7 +203,7 @@ public class FirebaseStorageActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Exception exception) {
                 Log.i(TAG, "onFailure: " + exception.getMessage());
-                Toast.makeText(context, "Loading failed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.loading_failed, Toast.LENGTH_SHORT).show();
                 showOrHideProgressBar(false);
             }
         });
@@ -219,13 +220,13 @@ public class FirebaseStorageActivity extends AppCompatActivity {
                 .subscribe(new Action() {
                                @Override
                                public void run() {
-                                   Log.i(TAG, "delete account complete");
+                                   Log.i(TAG, "account deletion completed");
                                        loadAccountsToInternal();
                                }
                            }, new Consumer<Throwable>() {
                                @Override
                                public void accept(Throwable throwable)  {
-                                   Log.e(TAG, "delete account fail " + throwable.getMessage());
+                                   Log.e(TAG, "account deletion failed " + throwable.getMessage());
                                }
                            }
                 ));
@@ -236,13 +237,13 @@ public class FirebaseStorageActivity extends AppCompatActivity {
                 .subscribe(new Action() {
                                @Override
                                public void run() {
-                                   Log.i(TAG, "delete account complete");
+                                   Log.i(TAG, "account deletion completed");
                                        loadTransactionsToInternal();
                                }
                            }, new Consumer<Throwable>() {
                                @Override
                                public void accept(Throwable throwable)  {
-                                   Log.e(TAG, "delete account fail " + throwable.getMessage());
+                                   Log.e(TAG, "account deletion failed " + throwable.getMessage());
                                }
                            }
                 ));
@@ -261,7 +262,7 @@ public class FirebaseStorageActivity extends AppCompatActivity {
                         Log.i(TAG, "insert accounts success");
                         if (isOneFlowLoaded) {
                             showOrHideProgressBar(false);
-                            Toast.makeText(context, "Loading from database success", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, R.string.loading_database_success, Toast.LENGTH_SHORT).show();
                             setResult(RESULT_OK);
                         } else isOneFlowLoaded = true;
                     }
@@ -280,7 +281,7 @@ public class FirebaseStorageActivity extends AppCompatActivity {
                         Log.i(TAG, "insert transactions success");
                         if (isOneFlowLoaded) {
                             showOrHideProgressBar(false);
-                            Toast.makeText(context, "Loading from database success", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context,  R.string.loading_database_success, Toast.LENGTH_SHORT).show();
                             setResult(RESULT_OK);
                         } else isOneFlowLoaded = true;
                     }

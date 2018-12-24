@@ -41,6 +41,16 @@
     <string name="cloud_storage">Cloud storage</string>
     <string name="cancel">Cancel</string>
     <string name="description">Choose any currency that will be drawn on the chart</string>
+    <string name="auth_fail">Authorization fail</string>
+    <string name="reg_success">Registration successful</string>
+    <string name="reg_fail">Registration fail</string>
+    <string name="password_longer">Password must be at least 6 characters long</string>
+    <string name="saved_success">Saved successfully</string>
+    <string name="no_data_cloud">no data in the cloud</string>
+    <string name="loading_failed">Loading failed</string>
+    <string name="loading_database_success">Loading from database success</string>
+    <string name="click_on_transaction_to_delete">click on transaction to delete</string>
+    <string name="click_account_to_delete">click on account to delete</string>
 
 
 </resources>

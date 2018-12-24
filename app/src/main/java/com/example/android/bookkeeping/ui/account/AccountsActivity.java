@@ -63,7 +63,6 @@ public class AccountsActivity extends AppCompatActivity{
 
     private CurrencyRatesData currencyRatesData;
 
-
     private boolean isDeleteClicked = false;
 
     @Inject
@@ -151,7 +150,7 @@ public class AccountsActivity extends AppCompatActivity{
                     listView.setOnItemClickListener(accountTransactionsClick);
                 } else {
                     isDeleteClicked = true;
-                    Toast.makeText(context, "click on account to delete", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, R.string.click_account_to_delete, Toast.LENGTH_LONG).show();
                     btnDeleteAccount.setBackground(ContextCompat.getDrawable(context, R.drawable.paint_button));
                     listView.setOnItemClickListener(accountDeleteClick);
                 }

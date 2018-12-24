@@ -1,18 +1,10 @@
 package com.example.android.bookkeeping.currency;
 
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
-import com.google.gson.Gson;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.List;
 
 
-/** Using list of pairs, can convert currency **/
 
 public class CurrencyRatesData {
     String time;

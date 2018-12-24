@@ -74,7 +74,7 @@ public class FirebaseAuthActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (etPassword.getText().length() < 6) {
-                    Toast.makeText(FirebaseAuthActivity.this, "Password must be at least 6 characters long ", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FirebaseAuthActivity.this, R.string.password_longer, Toast.LENGTH_SHORT).show();
                 } else {
                     registration(etEmail.getText().toString(), etPassword.getText().toString());
                 }
@@ -105,7 +105,7 @@ public class FirebaseAuthActivity extends AppCompatActivity {
                     showOrHideProgress(false);
                 }
                 else {
-                    Toast.makeText(FirebaseAuthActivity.this, "Authorization fail", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FirebaseAuthActivity.this, R.string.auth_fail, Toast.LENGTH_SHORT).show();
                     showOrHideProgress(false);
                 }
             }
@@ -118,14 +118,16 @@ public class FirebaseAuthActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful())
                 {
-                    Toast.makeText(FirebaseAuthActivity.this, "Registration successfull", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FirebaseAuthActivity.this, R.string.reg_success, Toast.LENGTH_SHORT).show();
                     showOrHideProgress(false);
 
                 }
                 else {
-                    Log.i(TAG, task.getException().getMessage());
-                    Log.i(TAG, task.getException().toString());
-                    Toast.makeText(FirebaseAuthActivity.this, "Registration fail", Toast.LENGTH_SHORT).show();
+                    if (task.getException() != null) {
+                        Log.i(TAG, task.getException().getMessage());
+                        Log.i(TAG, task.getException().toString());
+                    }
+                    Toast.makeText(FirebaseAuthActivity.this, R.string.reg_fail, Toast.LENGTH_SHORT).show();
                     showOrHideProgress(false);
                 }
             }

@@ -44,9 +44,6 @@ public class TransactionsActivity extends AppCompatActivity {
 
     private final static String TAG = "myTransactionsList";
 
-
-    private final String url = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
-
     private Button btnCreateTransaction;
     private ListView listView;
     private Button btnDeleteTransaction;
@@ -113,7 +110,7 @@ public class TransactionsActivity extends AppCompatActivity {
                     listView.setOnItemClickListener(null);
                 } else {
                     isDeleteClicked = true;
-                    Toast.makeText(context, "click on account to delete", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, R.string.click_on_transaction_to_delete, Toast.LENGTH_LONG).show();
                     btnDeleteTransaction.setBackground(ContextCompat.getDrawable(context, R.drawable.paint_button));
                     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
