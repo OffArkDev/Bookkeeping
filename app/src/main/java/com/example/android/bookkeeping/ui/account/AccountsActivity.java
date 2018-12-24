@@ -164,7 +164,7 @@ public class AccountsActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, FirebaseStartActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, 2);
             }
         });
 
@@ -278,9 +278,8 @@ public class AccountsActivity extends AppCompatActivity{
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (data != null) {
             if (requestCode == 1) {
-                if (resultCode == RESULT_OK) {
+                if (resultCode == RESULT_OK && data != null) {
                     String name = data.getStringExtra("name");
                     String value = data.getStringExtra("value");
                     String currency = data.getStringExtra("currency");
@@ -305,11 +304,13 @@ public class AccountsActivity extends AppCompatActivity{
                                 }
                             }));
                 }
+            } else  if (requestCode == 2) {
+                if (resultCode == RESULT_OK) {
+                    getAccountsFromDatabase();
+                }
             }
-        }
+
     }
-
-
 
 }
 

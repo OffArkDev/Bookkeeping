@@ -100,8 +100,10 @@ public class FirebaseStartActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()) {
                     Intent intent = new Intent(context, FirebaseStorageActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
                     intent.putExtra("email", email);
                     startActivity(intent);
+                    finish();
                     showOrHideProgress(false);
                 }
                 else {

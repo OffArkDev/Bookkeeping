@@ -13,8 +13,8 @@ import android.widget.Toast;
 
 import com.example.android.bookkeeping.MyApplication;
 import com.example.android.bookkeeping.R;
-import com.example.android.bookkeeping.data.DataPOJO;
 import com.example.android.bookkeeping.data.AccountSaver;
+import com.example.android.bookkeeping.data.DataPOJO;
 import com.example.android.bookkeeping.data.TransactionSaver;
 import com.example.android.bookkeeping.di.components.CloudComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
@@ -53,6 +53,7 @@ public class FirebaseStorageActivity extends AppCompatActivity {
 
     private boolean isOneFlowLoaded = false;
 
+
     @Inject
     public Context context;
 
@@ -72,6 +73,7 @@ public class FirebaseStorageActivity extends AppCompatActivity {
         getCloudComponent().inject(this);
         findViews();
         email = getIntent().getStringExtra("email");
+
         getDataFromDatabase();
         setClickListeners();
     }
@@ -167,7 +169,8 @@ public class FirebaseStorageActivity extends AppCompatActivity {
                 showOrHideProgressBar(false);
 
             }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+        }).addOnSuccessListener(
+                new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Toast.makeText(context, "Save success", Toast.LENGTH_SHORT).show();
@@ -182,8 +185,8 @@ public class FirebaseStorageActivity extends AppCompatActivity {
 
         FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
         StorageReference storageRef = firebaseStorage.getReference().child("data/" + email);
-        final long MEGABYTE = 1024 * 1024;
-        storageRef.getBytes(MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+        final long maxDownLoadSize = 5 * 1024 * 1024;
+        storageRef.getBytes(maxDownLoadSize).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
                 if (bytes == null) {
@@ -257,10 +260,10 @@ public class FirebaseStorageActivity extends AppCompatActivity {
                     @Override
                     public void accept(long[] aLong) {
                         Log.i(TAG, "insert accounts success");
-                        //no need to save id cause dataPOJO already have it
                         if (isOneFlowLoaded) {
                             showOrHideProgressBar(false);
                             Toast.makeText(context, "Loading from database success", Toast.LENGTH_SHORT).show();
+                            setResult(RESULT_OK);
                         } else isOneFlowLoaded = true;
                     }
                 }));
@@ -279,6 +282,7 @@ public class FirebaseStorageActivity extends AppCompatActivity {
                         if (isOneFlowLoaded) {
                             showOrHideProgressBar(false);
                             Toast.makeText(context, "Loading from database success", Toast.LENGTH_SHORT).show();
+                            setResult(RESULT_OK);
                         } else isOneFlowLoaded = true;
                     }
                 }));
