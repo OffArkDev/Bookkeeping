@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.android.bookkeeping.Constants;
 import com.example.android.bookkeeping.MyApplication;
 import com.example.android.bookkeeping.R;
 import com.example.android.bookkeeping.currency.CurrencyRatesData;
@@ -25,7 +26,7 @@ import com.example.android.bookkeeping.di.modules.UrlParserModule;
 import com.example.android.bookkeeping.di.modules.StorageModule;
 import com.example.android.bookkeeping.repository.AccountsRepository;
 import com.example.android.bookkeeping.ui.ChartActivity;
-import com.example.android.bookkeeping.ui.cloud.FirebaseStartActivity;
+import com.example.android.bookkeeping.ui.cloud.FirebaseAuthActivity;
 import com.example.android.bookkeeping.ui.transaction.TransactionsActivity;
 import com.example.android.bookkeeping.ui.adapters.AccountsListAdapter;
 import com.google.gson.Gson;
@@ -62,7 +63,6 @@ public class AccountsActivity extends AppCompatActivity{
 
     private CurrencyRatesData currencyRatesData;
 
-    private final String url = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
 
     private boolean isDeleteClicked = false;
 
@@ -93,7 +93,7 @@ public class AccountsActivity extends AppCompatActivity{
     public AccountComponent getAccountComponent() {
         return ((MyApplication) getApplication())
                 .getApplicationComponent()
-                .newAccountComponent(new ActivityModule(this), new StorageModule(this), new UrlParserModule(url));
+                .newAccountComponent(new ActivityModule(this), new StorageModule(this), new UrlParserModule(Constants.URL_DAILY));
     }
 
     public void findViews() {
@@ -163,7 +163,7 @@ public class AccountsActivity extends AppCompatActivity{
         btnCloud.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, FirebaseStartActivity.class);
+                Intent intent = new Intent(context, FirebaseAuthActivity.class);
                 startActivityForResult(intent, 2);
             }
         });

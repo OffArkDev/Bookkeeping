@@ -18,6 +18,7 @@ public class UrlParserModule {
     }
 
 
+    @Singleton
     @Provides
     UrlParser providesRxUrlParser() {
         return urlParser;

@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.example.android.bookkeeping.Constants;
 import com.example.android.bookkeeping.MyApplication;
 import com.example.android.bookkeeping.R;
 import com.example.android.bookkeeping.currency.CurrencyRatesData;
@@ -48,7 +49,6 @@ public class ChartActivity extends AppCompatActivity implements DialogCommunicat
     private LineChart lineChart;
     private ProgressBar progressBar;
 
-    private final String url = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist.xml";
     private ArrayList<CurrencyRatesData> listHistoryCurrencies = new ArrayList<>();
     private CurrenciesHistoryDialog currenciesDialog;
 
@@ -81,7 +81,7 @@ public class ChartActivity extends AppCompatActivity implements DialogCommunicat
     public ChartComponent getChartComponent() {
         return ((MyApplication) getApplication())
                 .getApplicationComponent()
-                .newChartComponent(new ActivityModule(this), new UrlParserModule(url));
+                .newChartComponent(new ActivityModule(this), new UrlParserModule(Constants.URL_HISTORY));
     }
 
     public void findViews() {

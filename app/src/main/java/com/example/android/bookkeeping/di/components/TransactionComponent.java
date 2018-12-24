@@ -14,5 +14,4 @@ import dagger.Subcomponent;
 public interface TransactionComponent {
     void inject(TransactionsActivity transactionsActivity);
 
-
 }

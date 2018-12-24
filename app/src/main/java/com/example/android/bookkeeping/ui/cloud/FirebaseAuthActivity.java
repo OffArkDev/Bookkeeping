@@ -13,20 +13,23 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.android.bookkeeping.MyApplication;
 import com.example.android.bookkeeping.R;
+import com.example.android.bookkeeping.di.components.CloudAuthComponent;
+import com.example.android.bookkeeping.di.modules.ActivityModule;
+import com.example.android.bookkeeping.di.modules.FirebaseModule;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import javax.inject.Inject;
 
-public class FirebaseStartActivity extends AppCompatActivity {
 
-    private static final String TAG = "myfirebasestart";
+public class FirebaseAuthActivity extends AppCompatActivity {
 
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
+    private static final String TAG = "myfirebaseauth";
 
     private EditText etEmail;
     private EditText etPassword;
@@ -34,34 +37,29 @@ public class FirebaseStartActivity extends AppCompatActivity {
     private Button btnReg;
     private Button btnAuth;
 
-    private Context context = this;
-
     private ProgressBar pbProgress;
+
+    @Inject
+    public Context context;
+
+    @Inject
+    public FirebaseAuth mAuth;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_firebase);
-
+        getCloudComponent().inject(this);
         findViews();
-
-        mAuth = FirebaseAuth.getInstance();
-
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    Log.i(TAG, "firebase auth success");
-                } else {
-                    Toast.makeText(FirebaseStartActivity.this, "Firebase auth failed", Toast.LENGTH_SHORT).show();
-                }
-            }
-        };
-
         setOnClickListeners();
     }
 
+    public CloudAuthComponent getCloudComponent() {
+        return ((MyApplication) getApplication())
+                .getApplicationComponent()
+                .newCloudAuthComponent(new ActivityModule(this), new FirebaseModule());
+    }
 
     public void findViews() {
         etEmail =  findViewById(R.id.et_email);
@@ -76,7 +74,7 @@ public class FirebaseStartActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (etPassword.getText().length() < 6) {
-                    Toast.makeText(FirebaseStartActivity.this, "Password must be at least 6 characters long ", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FirebaseAuthActivity.this, "Password must be at least 6 characters long ", Toast.LENGTH_SHORT).show();
                 } else {
                     registration(etEmail.getText().toString(), etPassword.getText().toString());
                 }
@@ -107,7 +105,7 @@ public class FirebaseStartActivity extends AppCompatActivity {
                     showOrHideProgress(false);
                 }
                 else {
-                    Toast.makeText(FirebaseStartActivity.this, "Authorization fail", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FirebaseAuthActivity.this, "Authorization fail", Toast.LENGTH_SHORT).show();
                     showOrHideProgress(false);
                 }
             }
@@ -120,14 +118,14 @@ public class FirebaseStartActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful())
                 {
-                    Toast.makeText(FirebaseStartActivity.this, "Registration successfull", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FirebaseAuthActivity.this, "Registration successfull", Toast.LENGTH_SHORT).show();
                     showOrHideProgress(false);
 
                 }
                 else {
                     Log.i(TAG, task.getException().getMessage());
                     Log.i(TAG, task.getException().toString());
-                    Toast.makeText(FirebaseStartActivity.this, "Registration fail", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FirebaseAuthActivity.this, "Registration fail", Toast.LENGTH_SHORT).show();
                     showOrHideProgress(false);
                 }
             }

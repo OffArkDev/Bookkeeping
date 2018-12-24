@@ -39,7 +39,7 @@
 
 
         </activity>
-        <activity android:name=".ui.cloud.FirebaseStartActivity"
+        <activity android:name=".ui.cloud.FirebaseAuthActivity"
             android:label="@string/cloud"
             >
 

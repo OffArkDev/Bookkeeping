@@ -16,7 +16,7 @@ import com.example.android.bookkeeping.R;
 import com.example.android.bookkeeping.data.AccountSaver;
 import com.example.android.bookkeeping.data.DataPOJO;
 import com.example.android.bookkeeping.data.TransactionSaver;
-import com.example.android.bookkeeping.di.components.CloudComponent;
+import com.example.android.bookkeeping.di.components.CloudStorageComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.di.modules.StorageModule;
 import com.example.android.bookkeeping.repository.AccountsRepository;
@@ -73,15 +73,14 @@ public class FirebaseStorageActivity extends AppCompatActivity {
         getCloudComponent().inject(this);
         findViews();
         email = getIntent().getStringExtra("email");
-
         getDataFromDatabase();
         setClickListeners();
     }
 
-    public CloudComponent getCloudComponent() {
+    public CloudStorageComponent getCloudComponent() {
         return ((MyApplication) getApplication())
                 .getApplicationComponent()
-                .newCloudComponent(new ActivityModule(this), new StorageModule(this));
+                .newCloudStorageComponent(new ActivityModule(this), new StorageModule(this));
     }
 
     public void setClickListeners() {

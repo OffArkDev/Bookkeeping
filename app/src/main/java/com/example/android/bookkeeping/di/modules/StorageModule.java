@@ -12,9 +12,10 @@ import com.example.android.bookkeeping.repository.BookkeepingDatabase;
 import com.example.android.bookkeeping.repository.TransactionsDataSource;
 import com.example.android.bookkeeping.repository.TransactionsRepository;
 
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
-import io.reactivex.disposables.CompositeDisposable;
 
 @Module
 public class StorageModule {
@@ -26,6 +27,7 @@ public class StorageModule {
         bookkeepingDatabase = Room.databaseBuilder(context, BookkeepingDatabase.class, "database").build();
     }
 
+    @Singleton
     @Provides
     BookkeepingDatabase providesAccountsDataBase() {
         return bookkeepingDatabase;
@@ -36,17 +38,19 @@ public class StorageModule {
         return bookkeepingDatabase.accountDao();
     }
 
+    @Singleton
     @Provides
     AccountsRepository providesAccountRepository(AccountDao accountDao) {
         return new AccountsDataSource(accountDao);
     }
 
-
+    @Singleton
     @Provides
     TransactionDao providesTransactionDao(BookkeepingDatabase bookkeepingDatabase) {
         return bookkeepingDatabase.transactionDao();
     }
 
+    @Singleton
     @Provides
     TransactionsRepository providesTransactionRepository(TransactionDao transactionDao) {
         return new TransactionsDataSource(transactionDao);
