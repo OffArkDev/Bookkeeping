@@ -1,98 +1,134 @@
 package com.example.android.bookkeeping.firebase;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 
 import com.example.android.bookkeeping.R;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.example.android.bookkeeping.cloud.DataPOJO;
+import com.example.android.bookkeeping.data.AccountSaver;
+import com.example.android.bookkeeping.data.TransactionSaver;
+import com.example.android.bookkeeping.repository.AccountsRepository;
+import com.example.android.bookkeeping.repository.TransactionsRepository;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.google.gson.Gson;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
 
 public class FirebaseStorageActivity extends AppCompatActivity {
 
-    private final static String LOG_TAG = "mystorage";
+    private final static String TAG = "mystorage";
+
+    private Button btnSave;
+    private Button btnLoad;
+    private ProgressBar progressBar;
+    private View vButtons;
+
+    private String email;
+
+    private DataPOJO dataPOJO = new DataPOJO();
+
+    private boolean isFlowLoaded = false;
+
+ //   @Inject
+    public Context context;
+
+  //  @Inject
+    public AccountsRepository accountsRepository;
+
+  //  @Inject
+    public TransactionsRepository transactionsRepository;
+
+  //  @Inject
+    public CompositeDisposable compositeDisposable;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_storage_firebase);
+//        DaggerParserComponent.builder()
+//                .appModule(new AppModule(getApplication()))
+//                .storageModule(new StorageModule(getApplication()))
+//                .urlParserModule(new UrlParserModule(null))
+//                .build()
+//                .injectFirebaseStorageActivity(this);
 
-        Button buttonSave = findViewById(R.id.button_cloud_save);
-        Button buttonLoad = findViewById(R.id.button_cloud_load);
+        findViews();
+        email = getIntent().getStringExtra("email");
+        getDataFromDatabase();
 
-        buttonSave.setOnClickListener(new View.OnClickListener() {
+        setClickListeners();
+    }
+
+    public void setClickListeners() {
+
+        btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-              // ArrayList<AccountData> dataList = new ArrayList<>();
 
-//                if(dataList.size() > 0 ){
-//                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("data/");
-//                    ref.push().setValue(dataList);
-//                }
+                showOrHideProgressBar(true);
+                FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+                StorageReference storageRef = firebaseStorage.getReference().child("data/" + email);
+
+                Gson gson = new Gson();
+                String json = gson.toJson(dataPOJO);
+                byte[] data = json.getBytes();
+
+                UploadTask uploadTask = storageRef.putBytes(data);
+                uploadTask.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        Log.i(TAG, "onFailure: " + exception.getMessage());
+                        showOrHideProgressBar(false);
+
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Log.i(TAG, "onSuccess:");
+                        showOrHideProgressBar(false);
+
+                    }
+                });
 
             }
         });
 
-        buttonLoad.setOnClickListener(new View.OnClickListener() {
+        btnLoad.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-             //   ArrayList<AccountData> dataList = new ArrayList<>();
-                DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("data/");
+                showOrHideProgressBar(true);
 
-                ref.addValueEventListener(new ValueEventListener() {
+                FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+                StorageReference storageRef = firebaseStorage.getReference().child("data/" + email);
+                final long THREE_MEGABYTE = 3*1024 * 1024;
+                storageRef.getBytes(THREE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                         HashMap<String ,  Object > value = (HashMap<String, Object >) dataSnapshot.getValue();
+                    public void onSuccess(byte[] bytes) {
+                        Log.i(TAG, "success: " + new String(bytes));
+                        showOrHideProgressBar(false);
 
-                         for(Map.Entry<String, Object > entry : value.entrySet()) {
-                            String key = entry.getKey();
-                             Object v = entry.getValue();
-                             Log.i(LOG_TAG, v.getClass().getName());
-                             if (v instanceof List) {                                                              //ArrayList <Account>
-                                 ArrayList<HashMap<String, Object>> list = (ArrayList<HashMap<String, Object>>)v;
-
-
-                                 for (HashMap<String, Object> ac : list) {
-                                     Log.i(LOG_TAG, "name " + ac.get("name") +
-                                                            "value " +ac.get(" value") +
-                                     " currency " + ac.get("currency") + " valueRUB " + ac.get("valueRUB"));
-
-
-                                 }
-
-                             } else if (v instanceof Map) {
-                                 Log.i(LOG_TAG, "hmmmm ");
-                                 HashMap<String, Object> map = (HashMap<String, Object>)v;
-
-                                 for(Map.Entry<String, Object > en : map.entrySet()) {
-                                     Log.i(LOG_TAG, en.getKey());     //    name    valueRUB  value  lastTransaction    currency
-
-                                     }
-
-                             } else {
-                                 Log.i(LOG_TAG, "hmmmm ");
-                             }
-
-                          //   Log.i(LOG_TAG, "key " + key + "object " + list.get(0).getName() + " tr " +  list.get(0).getTransactions().get(0).getName());
-                            // key -LH6wPM03-hBADMFHh7gobject [{name=account , valueRUB=1453,54, value=20, lastTransaction=Date 24-05-06, value 25, currency USD, comment comment , currency=EUR}]
-                        }
                     }
-
+                }).addOnFailureListener(new OnFailureListener() {
                     @Override
-                    public void onCancelled(DatabaseError error) {
-                        // Failed to read value
-                        Log.w(LOG_TAG, "Failed to read value.", error.toException());
+                    public void onFailure(@NonNull Exception exception) {
+                        Log.i(TAG, "onFailure: " + exception.getMessage());
+                        showOrHideProgressBar(false);
+
                     }
                 });
 
@@ -101,5 +137,66 @@ public class FirebaseStorageActivity extends AppCompatActivity {
 
     }
 
+    public void findViews() {
+        btnSave = findViewById(R.id.button_cloud_save);
+        btnLoad = findViewById(R.id.button_cloud_load);
+        progressBar = findViewById(R.id.progress_bar);
+        vButtons = findViewById(R.id.button_layer);
+    }
 
+    public void getDataFromDatabase() {
+        showOrHideProgressBar(true);
+
+        compositeDisposable.add(accountsRepository.getAll()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<List<AccountSaver>>() {
+                    @Override
+                    public void accept(List<AccountSaver> accountSavers) {
+                        dataPOJO.setAccountsList(accountSavers);
+                        hideBarIfFlowLoaded();
+                    }
+                }));
+
+        compositeDisposable.add(transactionsRepository.getAll()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<List<TransactionSaver>>() {
+                    @Override
+                    public void accept(List<TransactionSaver> transactionSavers) {
+                        dataPOJO.setTransactionList(transactionSavers);
+                        hideBarIfFlowLoaded();
+                    }
+                }));
+    }
+
+    public void hideBarIfFlowLoaded() {
+        if (!isFlowLoaded) {
+            isFlowLoaded = true;
+        } else {
+            showOrHideProgressBar(false);
+        }
+    }
+
+    public void showOrHideProgressBar(Boolean show) {
+        if (show) {
+            vButtons.setVisibility(View.INVISIBLE);
+            progressBar.setVisibility(View.VISIBLE);
+        } else {
+            vButtons.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.INVISIBLE);
+        }
+    }
+
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        compositeDisposable.dispose();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        compositeDisposable.dispose();
+    }
 }

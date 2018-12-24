@@ -15,11 +15,9 @@ import com.example.android.bookkeeping.R;
 
 public class CreateTransactionActivity extends AppCompatActivity implements DialogCommunicator {
 
-    private final static String LOG_TAG = "myCreateTransaction";
-
-    private EditText nameTransaction;
-    private EditText valueTransaction;
-    private EditText commentTransaction;
+    private EditText etName;
+    private EditText etValue;
+    private EditText etComment;
     private Button btnCurrency;
     private Spinner spinnerType;
     private Button btnCreate;
@@ -40,9 +38,9 @@ public class CreateTransactionActivity extends AppCompatActivity implements Dial
     }
 
     public void findViews() {
-        nameTransaction = findViewById(R.id.edit_name_transaction);
-        valueTransaction = findViewById(R.id.edit_value_transaction);
-        commentTransaction = findViewById(R.id.edit_transaction_comment);
+        etName = findViewById(R.id.edit_name_transaction);
+        etValue = findViewById(R.id.edit_value_transaction);
+        etComment = findViewById(R.id.edit_transaction_comment);
         btnCurrency = findViewById(R.id.transaction_currency_btn);
         spinnerType = findViewById(R.id.transaction_type_spinner);
         btnCreate = findViewById(R.id.button_done_create_transaction);
@@ -69,9 +67,9 @@ public class CreateTransactionActivity extends AppCompatActivity implements Dial
         btnCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                        String name = nameTransaction.getText().toString();
-                        String value = valueTransaction.getText().toString();
-                        String comment = commentTransaction.getText().toString();
+                        String name = etName.getText().toString();
+                        String value = etValue.getText().toString();
+                        String comment = etComment.getText().toString();
                         String currency = btnCurrency.getText().toString();
                         String type = spinnerType.getSelectedItem().toString();
 

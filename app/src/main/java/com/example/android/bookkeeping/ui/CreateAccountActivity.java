@@ -5,10 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.android.bookkeeping.R;
@@ -22,7 +20,6 @@ public class CreateAccountActivity extends AppCompatActivity implements DialogCo
 
     private String[] ratesNames;
 
-    private ArrayAdapter<String> adapter;
     private CurrenciesDialog currenciesDialog;
 
     @Override

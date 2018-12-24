@@ -19,6 +19,7 @@
         android:text="@string/cloud_message"/>
 
     <LinearLayout
+        android:id="@+id/buttons_layer"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_marginTop="32dp"
@@ -31,6 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:visibility="visible"
         android:text="@string/button_cloud_save"/>
 
     <Button
@@ -38,8 +40,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="@string/button_cloud_load"/>
+        android:text="@string/button_cloud_load"
+        android:visibility="visible"
+        />
+
 
     </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="invisible"
+        />
 
 </LinearLayout>

@@ -1,9 +1,8 @@
-package com.example.android.bookkeeping.di;
+package com.example.android.bookkeeping.di.modules;
 
 import android.app.Application;
-import android.content.Context;
 
-import javax.inject.Singleton;
+import com.example.android.bookkeeping.di.scopes.AppScope;
 
 import dagger.Module;
 import dagger.Provides;
@@ -18,11 +17,13 @@ public class AppModule {
         this.mApplication = application;
     }
 
-    @Singleton
+    @AppScope
     @Provides
-    Context providesContext() {
+    Application providesApplication() {
         return mApplication;
     }
+
+
 
 
 }

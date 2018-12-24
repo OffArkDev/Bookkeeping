@@ -9,13 +9,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.example.android.bookkeeping.MyApplication;
 import com.example.android.bookkeeping.R;
 import com.example.android.bookkeeping.currency.CurrencyRatesData;
 import com.example.android.bookkeeping.currency.UrlParser;
-import com.example.android.bookkeeping.di.AppModule;
-import com.example.android.bookkeeping.di.DaggerAppComponent;
-import com.example.android.bookkeeping.di.StorageModule;
-import com.example.android.bookkeeping.di.UrlParserModule;
+
+import com.example.android.bookkeeping.di.components.ChartComponent;
+import com.example.android.bookkeeping.di.modules.ActivityModule;
+import com.example.android.bookkeeping.di.modules.UrlParserModule;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
@@ -44,14 +45,13 @@ public class ChartActivity extends AppCompatActivity implements DialogCommunicat
 
     private LineChart lineChart;
     private ProgressBar progressBar;
-    private View rootView;
 
     private final String url = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist.xml";
     private ArrayList<CurrencyRatesData> listHistoryCurrencies = new ArrayList<>();
     private CurrenciesHistoryDialog currenciesDialog;
 
     private String[] ratesNames;
-    private String chosenName;
+    private String chosenCurrency;
 
     private ArrayList<String> timesList = new ArrayList<>();
 
@@ -68,12 +68,7 @@ public class ChartActivity extends AppCompatActivity implements DialogCommunicat
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chart);
-        DaggerAppComponent.builder()
-                .appModule(new AppModule(getApplication()))
-                .storageModule(new StorageModule(getApplication()))
-                .urlParserModule(new UrlParserModule(url))
-                .build()
-                .injectChartActivity(this);
+        getChartComponent().inject(this);
         findViews();
         setDialog();
         setRatesFromIntent();
@@ -81,10 +76,15 @@ public class ChartActivity extends AppCompatActivity implements DialogCommunicat
 
     }
 
+    public ChartComponent getChartComponent() {
+        return ((MyApplication) getApplication())
+                .getApplicationComponent()
+                .newChartComponent(new ActivityModule(this), new UrlParserModule(url));
+    }
+
     public void findViews() {
         lineChart = findViewById(R.id.bar_chart);
         progressBar = findViewById(R.id.progress_bar);
-        rootView = findViewById(R.id.root_view);
     }
 
 
@@ -108,7 +108,7 @@ public class ChartActivity extends AppCompatActivity implements DialogCommunicat
     @Override
     public void sendRequest(int code, String result) {
         if (code == 2) {
-            chosenName = result;
+            chosenCurrency = result;
             loadAndShowCurrencies();
         }
     }
@@ -127,7 +127,6 @@ public class ChartActivity extends AppCompatActivity implements DialogCommunicat
                     @Override
                     public void onNext(CurrencyRatesData data) {
                         listHistoryCurrencies.add(data);
-                      //  addDataToChart(data);
                     }
 
                     @Override
@@ -138,29 +137,9 @@ public class ChartActivity extends AppCompatActivity implements DialogCommunicat
                     @Override
                     public void onComplete() {
                         processData();
-
-                 //       addCurrenciesToChart();
-
                     }
                 });
     }
-
-//    private int count = 0;
-//    private ArrayList<String> timesList = new ArrayList<>();
-//    ArrayList<Entry> entries = new ArrayList<>();
-//    public void addDataToChart(CurrencyRatesData data) {
-//        for (int i = 0; i < chosenName.length; i++) {
-//            Entry entry = new Entry(count, data.getRate(chosenName[i]).floatValue());
-//            entries.add(entry);
-//            LineDataSet dataSet = new LineDataSet(entries,"Line Bar");
-//            LineData lineData = new LineData(dataSet);
-//            lineChart.setData(lineData);
-//        }
-//        count++;
-//        timesList.add(data.getTime());
-//        XAxis xAxis = lineChart.getXAxis();
-//        xAxis.setValueFormatter(new IndexAxisValueFormatter(timesList));
-//    }
 
     public void processData() {
         compositeDisposable.add(Observable.fromCallable(new Callable<LineData>() {
@@ -192,9 +171,9 @@ public class ChartActivity extends AppCompatActivity implements DialogCommunicat
             ArrayList<Entry> dataSet = new ArrayList<>();
             for (int j = 0; j < listHistoryCurrencies.size(); j++) {
                 CurrencyRatesData data = listHistoryCurrencies.get(j);
-                Entry entry = new Entry(j, data.getRate(chosenName).floatValue());
+                Entry entry = new Entry(j, data.getRate(chosenCurrency).floatValue());
                 dataSet.add(entry);
-                lDataSet1 = new LineDataSet(dataSet, chosenName);
+                lDataSet1 = new LineDataSet(dataSet, chosenCurrency);
                 lDataSet1.setCircleColor(R.color.green);
             }
             lines.add(lDataSet1);

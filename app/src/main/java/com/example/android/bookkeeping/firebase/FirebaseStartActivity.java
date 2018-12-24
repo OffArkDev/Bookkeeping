@@ -4,7 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.support.design.widget.BaseTransientBottomBar;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 
 import android.util.Log;
@@ -14,32 +15,38 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.android.bookkeeping.R;
+import com.example.android.bookkeeping.repository.AccountsRepository;
+import com.example.android.bookkeeping.repository.TransactionsRepository;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import javax.inject.Inject;
+
 
 public class FirebaseStartActivity extends AppCompatActivity {
-    private static final String LOG_TAG = "myfirebasestart";
+
+    private static final String TAG = "myfirebasestart";
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
-    private EditText ETemail;
-    private EditText ETpassword;
+    private EditText etEmail;
+    private EditText etPassword;
 
     private Button buttonReg;
     private Button buttonAuth;
 
-    final Context context = this;
+    private Context context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_firebase);
 
+        findViews();
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -48,54 +55,29 @@ public class FirebaseStartActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-
-
-
+                    Log.i(TAG, "firebase auth success");
                 } else {
-                    Toast.makeText(FirebaseStartActivity.this, "Registration failed", Toast.LENGTH_SHORT).show();
-
+                    Toast.makeText(FirebaseStartActivity.this, "Firebase auth failed", Toast.LENGTH_SHORT).show();
                 }
-
             }
         };
 
-        ETemail =  findViewById(R.id.et_email);
-        ETpassword =  findViewById(R.id.et_password);
-        buttonReg = findViewById(R.id.btn_registration);
-        buttonAuth = findViewById(R.id.btn_sign_in);
 
-
-        buttonReg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (ETpassword.getText().length() < 6) {
-                    Toast.makeText(FirebaseStartActivity.this, "Password must be at least 6 characters long ", Toast.LENGTH_SHORT).show();
-                } else {
-                    registration(ETemail.getText().toString(), ETpassword.getText().toString());
-                }
-            }
-        });
-
-        buttonAuth.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                    signin(ETemail.getText().toString().trim(), ETpassword.getText().toString());
-            }
-        });
-
-
+        setOnClickListeners();
     }
 
 
-    public void signin(String email , String password)
+    public void signIn(final String email , String password)
     {
         mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()) {
                     Intent intent = new Intent(context, FirebaseStorageActivity.class);
+                    intent.putExtra("email", email);
                     startActivity(intent);
-                }else
+                }
+                else
                     Toast.makeText(FirebaseStartActivity.this, "Authorization fail", Toast.LENGTH_SHORT).show();
 
             }
@@ -110,11 +92,39 @@ public class FirebaseStartActivity extends AppCompatActivity {
                     Toast.makeText(FirebaseStartActivity.this, "Registration successfull", Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    Log.i(LOG_TAG, task.getException().getMessage());
-                    Log.i(LOG_TAG, task.getException().toString());
+                    Log.i(TAG, task.getException().getMessage());
+                    Log.i(TAG, task.getException().toString());
                     Toast.makeText(FirebaseStartActivity.this, "Registration fail", Toast.LENGTH_SHORT).show();
                 }
             }
         });
+    }
+
+    public void findViews() {
+        etEmail =  findViewById(R.id.et_email);
+        etPassword =  findViewById(R.id.et_password);
+        buttonReg = findViewById(R.id.btn_registration);
+        buttonAuth = findViewById(R.id.btn_sign_in);
+    }
+
+    public void setOnClickListeners() {
+        buttonReg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (etPassword.getText().length() < 6) {
+                    Toast.makeText(FirebaseStartActivity.this, "Password must be at least 6 characters long ", Toast.LENGTH_SHORT).show();
+                } else {
+                    registration(etEmail.getText().toString(), etPassword.getText().toString());
+                }
+            }
+        });
+
+        buttonAuth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                signIn(etEmail.getText().toString().trim(), etPassword.getText().toString());
+            }
+        });
+
     }
 }

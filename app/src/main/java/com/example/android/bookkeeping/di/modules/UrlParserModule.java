@@ -1,4 +1,4 @@
-package com.example.android.bookkeeping.di;
+package com.example.android.bookkeeping.di.modules;
 
 
 import com.example.android.bookkeeping.currency.UrlParser;
@@ -19,7 +19,6 @@ public class UrlParserModule {
 
 
     @Provides
-    @Singleton
     UrlParser providesRxUrlParser() {
         return urlParser;
     }

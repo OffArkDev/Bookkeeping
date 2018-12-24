@@ -14,14 +14,15 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.android.bookkeeping.MyApplication;
 import com.example.android.bookkeeping.R;
 import com.example.android.bookkeeping.currency.CurrencyRatesData;
 import com.example.android.bookkeeping.currency.UrlParser;
 import com.example.android.bookkeeping.data.AccountSaver;
-import com.example.android.bookkeeping.di.AppModule;
-import com.example.android.bookkeeping.di.DaggerAppComponent;
-import com.example.android.bookkeeping.di.StorageModule;
-import com.example.android.bookkeeping.di.UrlParserModule;
+import com.example.android.bookkeeping.di.components.AccountComponent;
+import com.example.android.bookkeeping.di.modules.ActivityModule;
+import com.example.android.bookkeeping.di.modules.UrlParserModule;
+import com.example.android.bookkeeping.di.modules.StorageModule;
 import com.example.android.bookkeeping.firebase.FirebaseStartActivity;
 import com.example.android.bookkeeping.repository.AccountsRepository;
 import com.example.android.bookkeeping.ui.adapters.AccountsListAdapter;
@@ -79,18 +80,18 @@ public class AccountsActivity extends AppCompatActivity{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accounts_list);
-        DaggerAppComponent.builder()
-                .appModule(new AppModule(getApplication()))
-                .storageModule(new StorageModule(getApplication()))
-                .urlParserModule(new UrlParserModule(url))
-                .build()
-                .injectAccountsActivity(this);
-
+        getAccountComponent().inject(this);
         findViews();
         parseUrl();
         getAccountsFromDatabase();
         setAdapter();
         setOnClickListeners();
+    }
+
+    public AccountComponent getAccountComponent() {
+        return ((MyApplication) getApplication())
+                .getApplicationComponent()
+                .newAccountComponent(new ActivityModule(this), new StorageModule(this), new UrlParserModule(url));
     }
 
     public void findViews() {
@@ -184,8 +185,8 @@ public class AccountsActivity extends AppCompatActivity{
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<List<AccountSaver>>() {
                     @Override
-                    public void accept(List<AccountSaver> transactionSavers) {
-                        listAccounts = transactionSavers;
+                    public void accept(List<AccountSaver> accountSavers) {
+                        listAccounts = accountSavers;
                         setAdapter();
                     }
                 }));
@@ -278,11 +279,9 @@ public class AccountsActivity extends AppCompatActivity{
         if (data != null) {
             if (requestCode == 1) {
                 if (resultCode == RESULT_OK) {
-                    //getting data of new account from intent
                     String name = data.getStringExtra("name");
                     String value = data.getStringExtra("value");
                     String currency = data.getStringExtra("currency");
-                    //convert value to value in rubles
                     String valueRUB = "";
                     if (currency.equals("RUB")) {
                         valueRUB = value;
@@ -290,7 +289,6 @@ public class AccountsActivity extends AppCompatActivity{
                     if (!value.equals("") && !currency.equals("")) {
                         valueRUB = currencyRatesData.convertCurrency(new BigDecimal(value), currency, "RUB").toString();
                     }
-                    //save result to listAccounts and database
                     final AccountSaver newAccount = new AccountSaver(name, value, valueRUB, currency);
                     compositeDisposable.add(accountsRepository.insert(newAccount)
                             .subscribeOn(Schedulers.io())
@@ -304,11 +302,12 @@ public class AccountsActivity extends AppCompatActivity{
                                     setAdapter();
                                 }
                             }));
-
                 }
-
             }
         }
     }
+
+
+
 }
 

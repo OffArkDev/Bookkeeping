@@ -13,13 +13,13 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.android.bookkeeping.MyApplication;
 import com.example.android.bookkeeping.R;
 import com.example.android.bookkeeping.currency.CurrencyRatesData;
 import com.example.android.bookkeeping.data.TransactionSaver;
-import com.example.android.bookkeeping.di.AppModule;
-import com.example.android.bookkeeping.di.DaggerAppComponent;
-import com.example.android.bookkeeping.di.StorageModule;
-import com.example.android.bookkeeping.di.UrlParserModule;
+import com.example.android.bookkeeping.di.components.TransactionComponent;
+import com.example.android.bookkeeping.di.modules.ActivityModule;
+import com.example.android.bookkeeping.di.modules.StorageModule;
 import com.example.android.bookkeeping.repository.TransactionsRepository;
 import com.example.android.bookkeeping.ui.adapters.TransactionsListAdapter;
 import com.google.gson.Gson;
@@ -53,6 +53,8 @@ public class TransactionsActivity extends AppCompatActivity {
 
     private List<TransactionSaver> listTransactions = new ArrayList<>();
 
+    private TransactionsListAdapter transactionsListAdapter;
+
     private long accountId;
 
     private CurrencyRatesData currencyRatesData;
@@ -74,18 +76,18 @@ public class TransactionsActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transactions_list);
-        DaggerAppComponent.builder()
-                .appModule(new AppModule(getApplication()))
-                .storageModule(new StorageModule(getApplication()))
-                .urlParserModule(new UrlParserModule(url))
-                .build()
-                .injectTransactionsActivity(this);
-
+        getTransactionComponent().inject(this);
         findViews();
         setRatesFromIntent();
         compositeDisposable.add(getTransactionsFromDatabase());
         setAdapter();
         setOnClickListeners();
+    }
+
+    public TransactionComponent getTransactionComponent() {
+        return ((MyApplication) getApplication())
+                .getApplicationComponent()
+                .newTransactionComponent(new ActivityModule(this), new StorageModule(this));
     }
 
     public void findViews() {
@@ -125,7 +127,7 @@ public class TransactionsActivity extends AppCompatActivity {
     }
 
     public void setAdapter() {
-        final TransactionsListAdapter transactionsListAdapter = new TransactionsListAdapter(this, listTransactions);
+        transactionsListAdapter = new TransactionsListAdapter(this, listTransactions);
         listView.setAdapter(transactionsListAdapter);
     }
 
@@ -216,7 +218,6 @@ public class TransactionsActivity extends AppCompatActivity {
                     }
 
                     final TransactionSaver newTransactionSaver = new TransactionSaver(accountId, type, name, date, value, valueRUB, currency, comment);
-
                     compositeDisposable.add(transactionsRepository.insert(newTransactionSaver)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
