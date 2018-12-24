@@ -19,7 +19,7 @@
         android:text="@string/cloud_message"/>
 
     <LinearLayout
-        android:id="@+id/buttons_layer"
+        android:id="@+id/button_layer"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_marginTop="32dp"

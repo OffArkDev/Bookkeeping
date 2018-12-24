@@ -8,9 +8,13 @@
     tools:context=".ui.cloud.FirebaseStartActivity">
 
 
-    <EditText android:layout_width="match_parent"
-        android:layout_height="50dp"
+
+
+
+    <EditText
         android:id="@+id/et_email"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
         android:layout_centerHorizontal="true"
         android:inputType="textEmailAddress"
         android:imeOptions="actionNext"
@@ -38,12 +42,24 @@
             android:layout_height="match_parent"
             android:text="@string/firebase_authorization"
             android:layout_weight="1"
-            android:id="@+id/btn_sign_in"/>
+            android:id="@+id/btn_sign_in"
+            android:visibility="visible"
+            />
         <Button android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="@string/firebase_registration"
-            android:id="@+id/btn_registration"/>
+            android:id="@+id/btn_registration"
+            android:visibility="visible"
+            />
 
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone"
+            />
     </LinearLayout>
+
 </RelativeLayout>

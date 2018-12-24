@@ -170,7 +170,7 @@ public class FirebaseStorageActivity extends AppCompatActivity {
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Log.i(TAG, "onSuccess:");
+                Toast.makeText(context, "Save success", Toast.LENGTH_SHORT).show();
                 showOrHideProgressBar(false);
 
             }

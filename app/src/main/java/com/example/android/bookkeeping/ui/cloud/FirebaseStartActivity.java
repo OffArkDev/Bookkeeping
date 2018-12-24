@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.android.bookkeeping.R;
@@ -30,10 +31,12 @@ public class FirebaseStartActivity extends AppCompatActivity {
     private EditText etEmail;
     private EditText etPassword;
 
-    private Button buttonReg;
-    private Button buttonAuth;
+    private Button btnReg;
+    private Button btnAuth;
 
     private Context context = this;
+
+    private ProgressBar pbProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,53 +59,20 @@ public class FirebaseStartActivity extends AppCompatActivity {
             }
         };
 
-
         setOnClickListeners();
     }
 
 
-    public void signIn(final String email , String password)
-    {
-        mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()) {
-                    Intent intent = new Intent(context, FirebaseStorageActivity.class);
-                    intent.putExtra("email", email);
-                    startActivity(intent);
-                }
-                else
-                    Toast.makeText(FirebaseStartActivity.this, "Authorization fail", Toast.LENGTH_SHORT).show();
-
-            }
-        });
-    }
-    public void registration (String email , String password){
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful())
-                {
-                    Toast.makeText(FirebaseStartActivity.this, "Registration successfull", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    Log.i(TAG, task.getException().getMessage());
-                    Log.i(TAG, task.getException().toString());
-                    Toast.makeText(FirebaseStartActivity.this, "Registration fail", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-
     public void findViews() {
         etEmail =  findViewById(R.id.et_email);
         etPassword =  findViewById(R.id.et_password);
-        buttonReg = findViewById(R.id.btn_registration);
-        buttonAuth = findViewById(R.id.btn_sign_in);
+        btnReg = findViewById(R.id.btn_registration);
+        btnAuth = findViewById(R.id.btn_sign_in);
+        pbProgress = findViewById(R.id.progress_bar);
     }
 
     public void setOnClickListeners() {
-        buttonReg.setOnClickListener(new View.OnClickListener() {
+        btnReg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (etPassword.getText().length() < 6) {
@@ -113,7 +83,7 @@ public class FirebaseStartActivity extends AppCompatActivity {
             }
         });
 
-        buttonAuth.setOnClickListener(new View.OnClickListener() {
+        btnAuth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 signIn(etEmail.getText().toString().trim(), etPassword.getText().toString());
@@ -121,4 +91,58 @@ public class FirebaseStartActivity extends AppCompatActivity {
         });
 
     }
+
+    public void signIn(final String email , String password)
+    {
+        showOrHideProgress(true);
+        mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(task.isSuccessful()) {
+                    Intent intent = new Intent(context, FirebaseStorageActivity.class);
+                    intent.putExtra("email", email);
+                    startActivity(intent);
+                    showOrHideProgress(false);
+                }
+                else {
+                    Toast.makeText(FirebaseStartActivity.this, "Authorization fail", Toast.LENGTH_SHORT).show();
+                    showOrHideProgress(false);
+                }
+            }
+        });
+    }
+    public void registration (String email , String password){
+        showOrHideProgress(true);
+        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(task.isSuccessful())
+                {
+                    Toast.makeText(FirebaseStartActivity.this, "Registration successfull", Toast.LENGTH_SHORT).show();
+                    showOrHideProgress(false);
+
+                }
+                else {
+                    Log.i(TAG, task.getException().getMessage());
+                    Log.i(TAG, task.getException().toString());
+                    Toast.makeText(FirebaseStartActivity.this, "Registration fail", Toast.LENGTH_SHORT).show();
+                    showOrHideProgress(false);
+                }
+            }
+        });
+    }
+
+    public void showOrHideProgress(Boolean show) {
+        if (show) {
+            pbProgress.setVisibility(View.VISIBLE);
+            btnAuth.setVisibility(View.GONE);
+            btnReg.setVisibility(View.GONE);
+        } else {
+            pbProgress.setVisibility(View.GONE);
+            btnAuth.setVisibility(View.VISIBLE);
+            btnReg.setVisibility(View.VISIBLE);
+        }
+    }
+
+
 }
