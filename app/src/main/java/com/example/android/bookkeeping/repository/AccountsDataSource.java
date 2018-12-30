@@ -1,9 +1,8 @@
 package com.example.android.bookkeeping.repository;
 
 import com.example.android.bookkeeping.data.AccountDao;
-import com.example.android.bookkeeping.data.AccountSaver;
+import com.example.android.bookkeeping.data.model.AccountSaver;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 

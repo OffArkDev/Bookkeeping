@@ -1,4 +1,4 @@
-package com.example.android.bookkeeping.data;
+package com.example.android.bookkeeping.data.model;
 
 
 import android.arch.persistence.room.ColumnInfo;
@@ -6,6 +6,8 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
+
+import com.example.android.bookkeeping.data.model.AccountSaver;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 

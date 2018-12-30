@@ -16,7 +16,7 @@ import android.widget.Toast;
 import com.example.android.bookkeeping.MyApplication;
 import com.example.android.bookkeeping.R;
 import com.example.android.bookkeeping.currency.CurrencyRatesData;
-import com.example.android.bookkeeping.data.TransactionSaver;
+import com.example.android.bookkeeping.data.model.TransactionSaver;
 import com.example.android.bookkeeping.di.components.TransactionComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.di.modules.StorageModule;

@@ -14,9 +14,9 @@ import android.widget.Toast;
 import com.example.android.bookkeeping.Constants;
 import com.example.android.bookkeeping.MyApplication;
 import com.example.android.bookkeeping.R;
-import com.example.android.bookkeeping.data.AccountSaver;
-import com.example.android.bookkeeping.data.DataPOJO;
-import com.example.android.bookkeeping.data.TransactionSaver;
+import com.example.android.bookkeeping.data.model.AccountSaver;
+import com.example.android.bookkeeping.data.model.DataCloud;
+import com.example.android.bookkeeping.data.model.TransactionSaver;
 import com.example.android.bookkeeping.di.components.CloudStorageComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.di.modules.StorageModule;
@@ -50,7 +50,7 @@ public class FirebaseStorageActivity extends AppCompatActivity {
 
     private String email;
 
-    private DataPOJO dataPOJO = new DataPOJO();
+    private DataCloud dataCloud = new DataCloud();
 
     private boolean isOneFlowLoaded = false;
 
@@ -117,7 +117,7 @@ public class FirebaseStorageActivity extends AppCompatActivity {
                 .subscribe(new Consumer<List<AccountSaver>>() {
                     @Override
                     public void accept(List<AccountSaver> accountSavers) {
-                        dataPOJO.setAccountsList(accountSavers);
+                        dataCloud.setAccountsList(accountSavers);
                         hideBarIfFlowLoaded();
                     }
                 }));
@@ -127,7 +127,7 @@ public class FirebaseStorageActivity extends AppCompatActivity {
                 .subscribe(new Consumer<List<TransactionSaver>>() {
                     @Override
                     public void accept(List<TransactionSaver> transactionSavers) {
-                        dataPOJO.setTransactionList(transactionSavers);
+                        dataCloud.setTransactionList(transactionSavers);
                         hideBarIfFlowLoaded();
                     }
                 }));
@@ -158,7 +158,7 @@ public class FirebaseStorageActivity extends AppCompatActivity {
         StorageReference storageRef = firebaseStorage.getReference().child(Constants.CLOUD_DATA_PATH + email);
 
         Gson gson = new Gson();
-        String json = gson.toJson(dataPOJO);
+        String json = gson.toJson(dataCloud);
         byte[] data = json.getBytes();
 
         UploadTask uploadTask = storageRef.putBytes(data);
@@ -194,7 +194,7 @@ public class FirebaseStorageActivity extends AppCompatActivity {
                 } else {
                     String strData = new String(bytes);
                     Gson gson = new Gson();
-                    dataPOJO = gson.fromJson(strData, DataPOJO.class);
+                    dataCloud = gson.fromJson(strData, DataCloud.class);
                     updateData();
 
                 }
@@ -251,7 +251,7 @@ public class FirebaseStorageActivity extends AppCompatActivity {
     }
 
     public void loadAccountsToInternal() {
-        List<AccountSaver> listAccounts = dataPOJO.getAccountsList();
+        List<AccountSaver> listAccounts = dataCloud.getAccountsList();
 
         compositeDisposable.add(accountsRepository.insertList(listAccounts)
                 .subscribeOn(Schedulers.io())
@@ -270,7 +270,7 @@ public class FirebaseStorageActivity extends AppCompatActivity {
     }
 
     public void loadTransactionsToInternal() {
-        List<TransactionSaver> listTransactions = dataPOJO.getTransactionList();
+        List<TransactionSaver> listTransactions = dataCloud.getTransactionList();
 
         compositeDisposable.add(transactionsRepository.insertList(listTransactions)
                 .subscribeOn(Schedulers.io())

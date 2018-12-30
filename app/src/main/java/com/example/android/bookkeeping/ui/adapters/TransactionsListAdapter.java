@@ -8,9 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.example.android.bookkeeping.R;
-import com.example.android.bookkeeping.data.TransactionSaver;
+import com.example.android.bookkeeping.data.model.TransactionSaver;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class TransactionsListAdapter extends BaseAdapter {

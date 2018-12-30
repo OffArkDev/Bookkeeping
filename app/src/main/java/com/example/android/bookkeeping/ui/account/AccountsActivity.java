@@ -19,7 +19,7 @@ import com.example.android.bookkeeping.MyApplication;
 import com.example.android.bookkeeping.R;
 import com.example.android.bookkeeping.currency.CurrencyRatesData;
 import com.example.android.bookkeeping.currency.UrlParser;
-import com.example.android.bookkeeping.data.AccountSaver;
+import com.example.android.bookkeeping.data.model.AccountSaver;
 import com.example.android.bookkeeping.di.components.AccountComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.di.modules.UrlParserModule;
@@ -27,6 +27,8 @@ import com.example.android.bookkeeping.di.modules.StorageModule;
 import com.example.android.bookkeeping.repository.AccountsRepository;
 import com.example.android.bookkeeping.ui.ChartActivity;
 import com.example.android.bookkeeping.ui.cloud.FirebaseAuthActivity;
+import com.example.android.bookkeeping.ui.mvp.BaseActivity;
+import com.example.android.bookkeeping.ui.mvp.MvpView;
 import com.example.android.bookkeeping.ui.transaction.TransactionsActivity;
 import com.example.android.bookkeeping.ui.adapters.AccountsListAdapter;
 import com.google.gson.Gson;
@@ -46,7 +48,7 @@ import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-public class AccountsActivity extends AppCompatActivity{
+public class AccountsActivity extends BaseActivity implements MvpView {
 
     final String TAG = "myAccountsList";
 

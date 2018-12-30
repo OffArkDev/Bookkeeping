@@ -1,7 +1,7 @@
 package com.example.android.bookkeeping.repository;
 
 import com.example.android.bookkeeping.data.TransactionDao;
-import com.example.android.bookkeeping.data.TransactionSaver;
+import com.example.android.bookkeeping.data.model.TransactionSaver;
 
 import java.util.List;
 import java.util.concurrent.Callable;
