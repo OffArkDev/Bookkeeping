@@ -8,6 +8,8 @@ public interface MvpView {
 
     void hideLoading();
 
+    void setOnClickListeners();
+
     void onError(@StringRes int resId);
 
     void onError(String message);

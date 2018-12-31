@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -18,37 +17,28 @@ import com.example.android.bookkeeping.Constants;
 import com.example.android.bookkeeping.MyApplication;
 import com.example.android.bookkeeping.R;
 import com.example.android.bookkeeping.currency.CurrencyRatesData;
-import com.example.android.bookkeeping.currency.UrlParser;
 import com.example.android.bookkeeping.data.model.AccountSaver;
 import com.example.android.bookkeeping.di.components.AccountComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.di.modules.UrlParserModule;
 import com.example.android.bookkeeping.di.modules.StorageModule;
-import com.example.android.bookkeeping.repository.AccountsRepository;
 import com.example.android.bookkeeping.ui.ChartActivity;
 import com.example.android.bookkeeping.ui.cloud.FirebaseAuthActivity;
 import com.example.android.bookkeeping.ui.mvp.BaseActivity;
-import com.example.android.bookkeeping.ui.mvp.MvpView;
 import com.example.android.bookkeeping.ui.transaction.TransactionsActivity;
 import com.example.android.bookkeeping.ui.adapters.AccountsListAdapter;
 import com.google.gson.Gson;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.Observable;
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-public class AccountsActivity extends BaseActivity implements MvpView {
+public class AccountsActivity extends BaseActivity implements AccountsMvpView {
 
     final String TAG = "myAccountsList";
 
@@ -60,35 +50,36 @@ public class AccountsActivity extends BaseActivity implements MvpView {
     private ProgressBar progressBar;
     private ImageView ivChartButton;
 
+    @Inject
     private AccountsListAdapter accountsListAdapter;
-    private List<AccountSaver> listAccounts = new ArrayList<>();
-
-    private CurrencyRatesData currencyRatesData;
 
     private boolean isDeleteClicked = false;
 
     @Inject
-    public Context context;
+    AccountsMvpPresenter<AccountsMvpView> mPresenter;
 
-    @Inject
-    public AccountsRepository accountsRepository;
-
-    @Inject
-    public UrlParser urlParser;
-
-    @Inject
-    public CompositeDisposable compositeDisposable;
+    public static Intent getStartIntent(Context context) {
+        Intent intent = new Intent(context, AccountsActivity.class);
+        return intent;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accounts_list);
+
         getAccountComponent().inject(this);
+
         findViews();
-        parseUrl();
-        getAccountsFromDatabase();
-        setAdapter();
         setOnClickListeners();
+        mPresenter.onAttach(this);
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        mPresenter.onDetach();
+        super.onDestroy();
     }
 
     public AccountComponent getAccountComponent() {
@@ -107,211 +98,142 @@ public class AccountsActivity extends BaseActivity implements MvpView {
         ivChartButton = findViewById(R.id.chart_btn);
     }
 
-    public void setAdapter() {
-        accountsListAdapter = new AccountsListAdapter(this, listAccounts);
-        listView.setAdapter(accountsListAdapter);
-    }
 
-
-
+    @Override
     public void setOnClickListeners() {
         btnCreateAccount.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                createAccount();
+            public void onClick(View v) {
+                mPresenter.btnCreateAccountClick();
             }
         });
-
-
-        final AdapterView.OnItemClickListener accountTransactionsClick = new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intentTransactions = new Intent(context, TransactionsActivity.class);
-                intentTransactions.putExtra("accountId", listAccounts.get((int)id).getId());
-                Gson gson = new Gson();
-                String json = gson.toJson(currencyRatesData);
-                intentTransactions.putExtra("currencyRates", json);
-                startActivity(intentTransactions);
-            }
-        };
-
-        final AdapterView.OnItemClickListener accountDeleteClick = new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //There is no chance that the number of accounts will be greater than max int. So we can use this unsafely typecasting.
-                deleteAccount((int)id);
-            }
-        };
-
-        btnDeleteAccount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (isDeleteClicked) {
-                    isDeleteClicked = false;
-                    btnDeleteAccount.setBackground(ContextCompat.getDrawable(context, R.drawable.empty_button));
-                    listView.setOnItemClickListener(accountTransactionsClick);
-                } else {
-                    isDeleteClicked = true;
-                    Toast.makeText(context, R.string.click_account_to_delete, Toast.LENGTH_LONG).show();
-                    btnDeleteAccount.setBackground(ContextCompat.getDrawable(context, R.drawable.paint_button));
-                    listView.setOnItemClickListener(accountDeleteClick);
-                }
-            }
-        });
-
-        listView.setOnItemClickListener(accountTransactionsClick);
 
         btnCloud.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(context, FirebaseAuthActivity.class);
-                startActivityForResult(intent, 2);
+            public void onClick(View v) {
+                mPresenter.btnCloudClick();
             }
         });
-
 
 
         ivChartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, ChartActivity.class);
-                intent.putExtra("rates", currencyRatesData.getCurrenciesList());
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                mPresenter.btnChartClick();
             }
         });
+
+        btnDeleteAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeDeleteButtonSate();
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mPresenter.itemAccountsClick((int) id, isDeleteClicked);
+            }
+        });
+
     }
 
 
-    public void getAccountsFromDatabase() {
-        compositeDisposable.add(accountsRepository.getAll()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<AccountSaver>>() {
-                    @Override
-                    public void accept(List<AccountSaver> accountSavers) {
-                        listAccounts = accountSavers;
-                        setAdapter();
-                    }
-                }));
-    }
-
-    public void parseUrl() {
-        showOrHideProgressBar(true);
-        Observable.create(urlParser)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<CurrencyRatesData>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        compositeDisposable.add(d);
-                    }
-
-                    @Override
-                    public void onNext(CurrencyRatesData data) {
-                        currencyRatesData = data;
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.i(TAG, "onError: " + e.getMessage());
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        showOrHideProgressBar(false);
-                    }
-                });
+    public void updateListView() {
+        accountsListAdapter.notifyDataSetChanged();
     }
 
 
-    public void showOrHideProgressBar(boolean show) {
-        if (show) {
-            vButtonsLayer.setVisibility(View.INVISIBLE);
-            ivChartButton.setVisibility(View.INVISIBLE);
-            progressBar.setVisibility(View.VISIBLE);
-        } else {
-            vButtonsLayer.setVisibility(View.VISIBLE);
-            ivChartButton.setVisibility(View.VISIBLE);
-            progressBar.setVisibility(View.INVISIBLE);
-        }
+    @Override
+    public void showLoading() {
+        vButtonsLayer.setVisibility(View.INVISIBLE);
+        ivChartButton.setVisibility(View.INVISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
     }
 
-    public void createAccount() {
-        Intent intent = new Intent(this, CreateAccountActivity.class);
-        intent.putExtra("rates", currencyRatesData.getCurrenciesList());
+    @Override
+    public void hideLoading() {
+        vButtonsLayer.setVisibility(View.VISIBLE);
+        ivChartButton.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void onError(int resId) {
+
+    }
+
+    @Override
+    public void onError(String message) {
+
+    }
+
+    @Override
+    public void showMessage(String message) {
+
+    }
+
+    @Override
+    public void showMessage(int resId) {
+
+    }
+
+    @Override
+    public void openCreateAccountActivity(CurrencyRatesData currencyRatesData) {
+        Intent intent = CreateAccountActivity.getStartIntent(this, currencyRatesData);
         startActivityForResult(intent, 1);
     }
 
-    public void deleteAccount (final int id) {
-        compositeDisposable.add(accountsRepository.delete(listAccounts.get(id))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action() {
-                               @Override
-                               public void run() {
-                                   Log.i(TAG, "delete account complete");
-                                   listAccounts.remove(id);
-                                   setAdapter();
-                               }
-                           }, new Consumer<Throwable>() {
-                               @Override
-                               public void accept(Throwable throwable)  {
-                                   Log.e(TAG, "delete account fail " + throwable.getMessage());
-                               }
-                           }
-                ));
+    @Override
+    public void openTransactionsActivity(int accountId, List<AccountSaver> listAccounts, CurrencyRatesData currencyRatesData) {
+        Intent intentTransactions = TransactionsActivity.getStartIntent(this, accountId, listAccounts, currencyRatesData);
+        startActivity(intentTransactions);
+    }
+
+    @Override
+    public void changeDeleteButtonSate() {
+        if (isDeleteClicked) {
+            isDeleteClicked = false;
+            btnDeleteAccount.setBackground(ContextCompat.getDrawable(this, R.drawable.empty_button));
+        } else {
+            isDeleteClicked = true;
+            Toast.makeText(this, R.string.click_account_to_delete, Toast.LENGTH_LONG).show();
+            btnDeleteAccount.setBackground(ContextCompat.getDrawable(this, R.drawable.paint_button));
+        }
 
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        compositeDisposable.clear();
+    public void openCloudActivity() {
+        Intent intent = FirebaseAuthActivity.getStartIntent(this);
+        startActivityForResult(intent, 2);
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        compositeDisposable.clear();
+    public void openChartActivity(CurrencyRatesData currencyRatesData) {
+        Intent intent = ChartActivity.getStartIntent(this, currencyRatesData);
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
-
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-            if (requestCode == 1) {
-                if (resultCode == RESULT_OK && data != null) {
-                    String name = data.getStringExtra("name");
-                    String value = data.getStringExtra("value");
-                    String currency = data.getStringExtra("currency");
-                    String valueRUB = "";
-                    if (currency.equals("RUB")) {
-                        valueRUB = value;
-                    }
-                    if (!value.equals("") && !currency.equals("")) {
-                        valueRUB = currencyRatesData.convertCurrency(new BigDecimal(value), currency, "RUB").toString();
-                    }
-                    final AccountSaver newAccount = new AccountSaver(name, value, valueRUB, currency);
-                    compositeDisposable.add(accountsRepository.insert(newAccount)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(new Consumer<Long>() {
-                                @Override
-                                public void accept(Long aLong) {
-                                    Log.i(TAG, "insert success");
-                                    newAccount.setId(aLong);
-                                    listAccounts.add(newAccount);
-                                    setAdapter();
-                                }
-                            }));
-                }
-            } else  if (requestCode == 2) {
-                if (resultCode == RESULT_OK) {
-                    getAccountsFromDatabase();
-                }
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK && data != null) {
+                String name = data.getStringExtra("name");
+                String value = data.getStringExtra("value");
+                String currency = data.getStringExtra("currency");
+                mPresenter.createAccount(name, value, currency);
             }
-
+        } else if (requestCode == 2) {
+            if (resultCode == RESULT_OK) {
+                mPresenter.getAccountsFromDatabase();
+            }
+        }
     }
+}
+
 
 }
 

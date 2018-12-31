@@ -1,5 +1,6 @@
 package com.example.android.bookkeeping.ui.account;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,6 +11,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.android.bookkeeping.R;
+import com.example.android.bookkeeping.currency.CurrencyRatesData;
 import com.example.android.bookkeeping.ui.dialogs.CurrenciesDialog;
 import com.example.android.bookkeeping.ui.dialogs.DialogCommunicator;
 
@@ -23,6 +25,12 @@ public class CreateAccountActivity extends AppCompatActivity implements DialogCo
     private String[] ratesNames;
 
     private CurrenciesDialog currenciesDialog;
+
+    public static Intent getStartIntent(Context context, CurrencyRatesData currencyRatesData) {
+        Intent intent = new Intent(context, AccountsActivity.class);
+        intent.putExtra("rates", currencyRatesData.getCurrenciesList());
+        return intent;
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

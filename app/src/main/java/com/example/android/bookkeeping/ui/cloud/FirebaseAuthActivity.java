@@ -18,6 +18,7 @@ import com.example.android.bookkeeping.R;
 import com.example.android.bookkeeping.di.components.CloudAuthComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.di.modules.FirebaseModule;
+import com.example.android.bookkeeping.ui.account.AccountsActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -45,7 +46,10 @@ public class FirebaseAuthActivity extends AppCompatActivity {
     @Inject
     public FirebaseAuth mAuth;
 
-
+    public static Intent getStartIntent(Context context) {
+        Intent intent = new Intent(context, FirebaseAuthActivity.class);
+        return intent;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

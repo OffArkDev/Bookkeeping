@@ -16,11 +16,13 @@ import android.widget.Toast;
 import com.example.android.bookkeeping.MyApplication;
 import com.example.android.bookkeeping.R;
 import com.example.android.bookkeeping.currency.CurrencyRatesData;
+import com.example.android.bookkeeping.data.model.AccountSaver;
 import com.example.android.bookkeeping.data.model.TransactionSaver;
 import com.example.android.bookkeeping.di.components.TransactionComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.di.modules.StorageModule;
 import com.example.android.bookkeeping.repository.TransactionsRepository;
+import com.example.android.bookkeeping.ui.account.AccountsActivity;
 import com.example.android.bookkeeping.ui.adapters.TransactionsListAdapter;
 import com.google.gson.Gson;
 
@@ -68,6 +70,14 @@ public class TransactionsActivity extends AppCompatActivity {
     public TransactionsRepository transactionsRepository;
 
 
+    public static Intent getStartIntent(Context context, int accountId, List<AccountSaver> listAccounts, CurrencyRatesData currencyRatesData) {
+        Intent intentTransactions = new Intent(context, TransactionsActivity.class);
+        intentTransactions.putExtra("accountId", listAccounts.get(accountId).getId());
+        Gson gson = new Gson();
+        String json = gson.toJson(currencyRatesData);
+        intentTransactions.putExtra("currencyRates", json);
+        return intentTransactions;
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

@@ -66,6 +66,12 @@ public class ChartActivity extends AppCompatActivity implements DialogCommunicat
     @Inject
     public UrlParser urlParser;
 
+    public static Intent getStartIntent(Context context, CurrencyRatesData currencyRatesData) {
+        Intent intent = new Intent(context, ChartActivity.class);
+        intent.putExtra("rates", currencyRatesData.getCurrenciesList());
+        return intent;
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -4,4 +4,18 @@ import com.example.android.bookkeeping.ui.mvp.MvpPresenter;
 
 
 public interface AccountsMvpPresenter <V extends AccountsMvpView> extends MvpPresenter<V> {
+
+    void btnCreateAccountClick();
+
+    void btnCloudClick();
+
+    void btnChartClick();
+
+    void itemAccountsClick(int accountId, boolean isDeleteClicked);
+
+    void createAccount(String name, String value, String currency);
+
+    void getAccountsFromDatabase();
+
+
 }

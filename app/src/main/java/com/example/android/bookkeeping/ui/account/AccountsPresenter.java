@@ -8,6 +8,7 @@ import com.example.android.bookkeeping.data.model.AccountSaver;
 import com.example.android.bookkeeping.repository.AccountsRepository;
 import com.example.android.bookkeeping.ui.mvp.BasePresenter;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +49,8 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
         getMvpView().showLoading();
 
         parseUrl();
+
+        getAccountsFromDatabase();
     }
 
 
@@ -84,6 +87,31 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
                 });
     }
 
+    @Override
+    public void btnCreateAccountClick() {
+        getMvpView().openCreateAccountActivity(currencyRatesData);
+    }
+
+    @Override
+    public void btnCloudClick() {
+        getMvpView().openCloudActivity();
+    }
+
+
+    @Override
+    public void btnChartClick() {
+        getMvpView().openChartActivity(currencyRatesData);
+    }
+
+    @Override
+    public void itemAccountsClick(int accountId, boolean isDeleteClicked) {
+        if (isDeleteClicked) {
+            deleteAccount(accountId);
+        } else {
+            getMvpView().openTransactionsActivity(accountId, listAccounts, currencyRatesData);
+        }
+    }
+
     public void deleteAccount (final int id) {
         compositeDisposable.add(accountsRepository.delete(listAccounts.get(id))
                 .subscribeOn(Schedulers.io())
@@ -93,7 +121,7 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
                                public void run() {
                                    Log.i(TAG, "delete account complete");
                                    listAccounts.remove(id);
-                                   getMvpView().setAdapter();
+                                   getMvpView().updateListView();
                                }
                            }, new Consumer<Throwable>() {
                                @Override
@@ -104,7 +132,7 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
                 ));
 
     }
-
+    @Override
     public void getAccountsFromDatabase() {
         compositeDisposable.add(accountsRepository.getAll()
                 .observeOn(AndroidSchedulers.mainThread())
@@ -112,8 +140,40 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
                     @Override
                     public void accept(List<AccountSaver> accountSavers) {
                         listAccounts = accountSavers;
-                        getMvpView().setAdapter();
+                        getMvpView().updateListView();
                     }
                 }));
     }
+
+    @Override
+    public void createAccount(String name, String value, String currency) {
+
+        String valueRUB = convertValueRub(value, currency);
+
+        final AccountSaver newAccount = new AccountSaver(name, value, valueRUB, currency);
+        compositeDisposable.add(accountsRepository.insert(newAccount)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Long>() {
+                    @Override
+                    public void accept(Long aLong) {
+                        Log.i(TAG, "insert success");
+                        newAccount.setId(aLong);
+                        listAccounts.add(newAccount);
+                        getMvpView().updateListView();
+                    }
+                }));
+    }
+
+    public String convertValueRub(String value, String currency) {
+        String valueRUB = "";
+        if (currency.equals("RUB")) {
+            valueRUB = value;
+        } else if (!value.equals("") && !currency.equals("")) {
+           valueRUB = currencyRatesData.convertCurrency(new BigDecimal(value), currency, "RUB").toString();
+        }
+        return valueRUB;
+    }
+
+
 }
