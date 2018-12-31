@@ -2,12 +2,18 @@ package com.example.android.bookkeeping.di.modules;
 
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.ArrayAdapter;
 
+import com.example.android.bookkeeping.R;
 import com.example.android.bookkeeping.data.model.AccountSaver;
 import com.example.android.bookkeeping.ui.account.AccountsMvpPresenter;
 import com.example.android.bookkeeping.ui.account.AccountsMvpView;
 import com.example.android.bookkeeping.ui.account.AccountsPresenter;
 import com.example.android.bookkeeping.ui.adapters.AccountsListAdapter;
+import com.example.android.bookkeeping.ui.dialogs.currencies.CurrenciesDialog;
+import com.example.android.bookkeeping.ui.dialogs.currencies.CurrenciesDialogMvpPresenter;
+import com.example.android.bookkeeping.ui.dialogs.currencies.CurrenciesDialogMvpView;
+import com.example.android.bookkeeping.ui.dialogs.currencies.CurrenciesDialogPresenter;
 
 import java.util.ArrayList;
 
@@ -50,6 +56,19 @@ public class ActivityModule {
     @Provides
     AccountsListAdapter provideFeedPagerAdapter(Context context) {
         return new AccountsListAdapter(context, new ArrayList<AccountSaver>());
+    }
+
+    @Singleton
+    @Provides
+    CurrenciesDialogMvpPresenter<CurrenciesDialogMvpView> provideCurrenciesDialogMvpPresenter(CurrenciesDialogPresenter<CurrenciesDialogMvpView> presenter) {
+        return presenter;
+    }
+
+    @Singleton
+    @Provides
+    ArrayAdapter<String> provideArrayAdapter(Context context) {
+        return  new ArrayAdapter<String>(context, R.layout.dialog_item, R.id.txt_currency, currencies);
+
     }
 
 }

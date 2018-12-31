@@ -1,4 +1,4 @@
-package com.example.android.bookkeeping.ui.account;
+package com.example.android.bookkeeping.ui.account.create;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,12 +10,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.android.bookkeeping.Constants;
+import com.example.android.bookkeeping.MyApplication;
 import com.example.android.bookkeeping.R;
 import com.example.android.bookkeeping.currency.CurrencyRatesData;
-import com.example.android.bookkeeping.ui.dialogs.CurrenciesDialog;
+import com.example.android.bookkeeping.di.components.FragmentComponent;
+import com.example.android.bookkeeping.di.modules.ActivityModule;
+import com.example.android.bookkeeping.di.modules.StorageModule;
+import com.example.android.bookkeeping.di.modules.UrlParserModule;
+import com.example.android.bookkeeping.ui.account.AccountsActivity;
+import com.example.android.bookkeeping.ui.dialogs.currencies.CurrenciesDialog;
 import com.example.android.bookkeeping.ui.dialogs.DialogCommunicator;
+import com.example.android.bookkeeping.ui.mvp.MvpView;
 
-public class CreateAccountActivity extends AppCompatActivity implements DialogCommunicator {
+import javax.inject.Inject;
+
+public class CreateAccountActivity extends AppCompatActivity implements DialogCommunicator, MvpView {
 
     private EditText nameAccount;
     private EditText valueAccount;
@@ -24,6 +34,7 @@ public class CreateAccountActivity extends AppCompatActivity implements DialogCo
 
     private String[] ratesNames;
 
+    @Inject
     private CurrenciesDialog currenciesDialog;
 
     public static Intent getStartIntent(Context context, CurrencyRatesData currencyRatesData) {
@@ -36,12 +47,15 @@ public class CreateAccountActivity extends AppCompatActivity implements DialogCo
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
+
+
         findViews();
         setDialog();
         setRatesFromIntent();
         setOnClickListeners();
     }
 
+    @Override
     public void findViews() {
         btnCurrency = findViewById(R.id.account_currency_btn);
         btnDone = findViewById(R.id.button_done_create_account);
@@ -55,10 +69,13 @@ public class CreateAccountActivity extends AppCompatActivity implements DialogCo
     }
 
     public void setDialog() {
-        currenciesDialog = new CurrenciesDialog();
+        currenciesDialog = CurrenciesDialog.newInstance();
         currenciesDialog.setDialogCommunicator(this);
     }
 
+
+
+    @Override
     public void setOnClickListeners() {
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,5 +116,25 @@ public class CreateAccountActivity extends AppCompatActivity implements DialogCo
         if (code == 1) {
             btnCurrency.setText(result);
         }
+    }
+
+    @Override
+    public void onError(int resId) {
+
+    }
+
+    @Override
+    public void onError(String message) {
+
+    }
+
+    @Override
+    public void showMessage(String message) {
+
+    }
+
+    @Override
+    public void showMessage(int resId) {
+
     }
 }

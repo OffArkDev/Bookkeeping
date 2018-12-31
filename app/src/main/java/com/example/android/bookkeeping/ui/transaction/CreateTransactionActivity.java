@@ -12,7 +12,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.android.bookkeeping.R;
-import com.example.android.bookkeeping.ui.dialogs.CurrenciesDialog;
+import com.example.android.bookkeeping.ui.dialogs.currencies.CurrenciesDialog;
 import com.example.android.bookkeeping.ui.dialogs.DialogCommunicator;
 
 public class CreateTransactionActivity extends AppCompatActivity implements DialogCommunicator {

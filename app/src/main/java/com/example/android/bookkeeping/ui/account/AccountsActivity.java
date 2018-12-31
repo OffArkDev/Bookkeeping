@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -23,20 +22,15 @@ import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.di.modules.UrlParserModule;
 import com.example.android.bookkeeping.di.modules.StorageModule;
 import com.example.android.bookkeeping.ui.ChartActivity;
+import com.example.android.bookkeeping.ui.account.create.CreateAccountActivity;
 import com.example.android.bookkeeping.ui.cloud.FirebaseAuthActivity;
 import com.example.android.bookkeeping.ui.mvp.BaseActivity;
 import com.example.android.bookkeeping.ui.transaction.TransactionsActivity;
 import com.example.android.bookkeeping.ui.adapters.AccountsListAdapter;
-import com.google.gson.Gson;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import javax.inject.Inject;
-
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 
 public class AccountsActivity extends BaseActivity implements AccountsMvpView {
 
@@ -88,6 +82,7 @@ public class AccountsActivity extends BaseActivity implements AccountsMvpView {
                 .newAccountComponent(new ActivityModule(this), new StorageModule(this), new UrlParserModule(Constants.URL_DAILY));
     }
 
+    @Override
     public void findViews() {
         btnCreateAccount = findViewById(R.id.add_account_button);
         btnDeleteAccount = findViewById(R.id.delete_account_button);

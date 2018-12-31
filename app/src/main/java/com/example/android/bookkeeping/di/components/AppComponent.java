@@ -23,6 +23,7 @@ public interface AppComponent {
     ChartComponent newChartComponent(ActivityModule activityModule, UrlParserModule urlParserModule);
     CloudStorageComponent newCloudStorageComponent(ActivityModule activityModule, StorageModule storageModule);
     CloudAuthComponent newCloudAuthComponent(ActivityModule activityModule, FirebaseModule firebaseModule);
+    FragmentComponent newFragmentComponent(ActivityModule activityModule);
 
 
 }

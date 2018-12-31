@@ -22,7 +22,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.account.CreateAccountActivity"
+        <activity android:name=".ui.account.create.CreateAccountActivity"
             android:label="@string/create_account"
             >
 

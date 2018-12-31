@@ -8,6 +8,10 @@ import java.util.List;
 
 public interface AccountsMvpView extends MvpView {
 
+    void showLoading();
+
+    void hideLoading();
+
     void updateListView();
 
     void openCreateAccountActivity(CurrencyRatesData currencyRatesData);
