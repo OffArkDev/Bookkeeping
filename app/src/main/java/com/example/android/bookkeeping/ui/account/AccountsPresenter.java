@@ -41,6 +41,9 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
     private List<AccountSaver> listAccounts = new ArrayList<>();
 
 
+    @Inject
+    public AccountsPresenter() {
+    }
 
     @Override
     public void onAttach(V mvpView) {
@@ -175,5 +178,7 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
         return valueRUB;
     }
 
-
+    public List<AccountSaver> getListAccounts() {
+        return listAccounts;
+    }
 }

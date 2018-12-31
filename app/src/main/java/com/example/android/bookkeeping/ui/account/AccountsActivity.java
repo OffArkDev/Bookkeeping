@@ -51,12 +51,12 @@ public class AccountsActivity extends BaseActivity implements AccountsMvpView {
     private ImageView ivChartButton;
 
     @Inject
-    private AccountsListAdapter accountsListAdapter;
-
-    private boolean isDeleteClicked = false;
+    public AccountsListAdapter accountsListAdapter;
 
     @Inject
-    AccountsMvpPresenter<AccountsMvpView> mPresenter;
+    public AccountsMvpPresenter<AccountsMvpView> mPresenter;
+
+    private boolean isDeleteClicked = false;
 
     public static Intent getStartIntent(Context context) {
         Intent intent = new Intent(context, AccountsActivity.class);
@@ -234,6 +234,4 @@ public class AccountsActivity extends BaseActivity implements AccountsMvpView {
     }
 }
 
-
-}
 
