@@ -21,21 +21,23 @@ import com.example.android.bookkeeping.di.modules.UrlParserModule;
 import com.example.android.bookkeeping.ui.account.AccountsActivity;
 import com.example.android.bookkeeping.ui.dialogs.currencies.CurrenciesDialog;
 import com.example.android.bookkeeping.ui.dialogs.DialogCommunicator;
+import com.example.android.bookkeeping.ui.mvp.BaseActivity;
 import com.example.android.bookkeeping.ui.mvp.MvpView;
 
 import javax.inject.Inject;
 
-public class CreateAccountActivity extends AppCompatActivity implements DialogCommunicator, MvpView {
+public class CreateAccountActivity extends BaseActivity implements DialogCommunicator, MvpView {
 
     private EditText nameAccount;
     private EditText valueAccount;
     private Button btnCurrency;
     private Button btnDone;
 
-    private String[] ratesNames;
+    @Inject
+    public CreateAccountMvpPresenter<CreateAccountMvpView> presenter;
 
     @Inject
-    private CurrenciesDialog currenciesDialog;
+    public CurrenciesDialog currenciesDialog;
 
     public static Intent getStartIntent(Context context, CurrencyRatesData currencyRatesData) {
         Intent intent = new Intent(context, AccountsActivity.class);
@@ -47,7 +49,6 @@ public class CreateAccountActivity extends AppCompatActivity implements DialogCo
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
-
 
         findViews();
         setDialog();
@@ -65,7 +66,7 @@ public class CreateAccountActivity extends AppCompatActivity implements DialogCo
 
     public void setRatesFromIntent() {
         Intent intent = getIntent();
-        ratesNames = intent.getStringArrayExtra("rates");
+        presenter.setRatesFromIntent(intent);
     }
 
     public void setDialog() {
@@ -104,9 +105,9 @@ public class CreateAccountActivity extends AppCompatActivity implements DialogCo
             @Override
             public void onClick(View v) {
                 Bundle args = new Bundle();
-                args.putStringArray("currencies", ratesNames);
+                args.putStringArray("currencies", presenter.getRatesNames());
                 currenciesDialog.setArguments(args);
-                currenciesDialog.show(getFragmentManager(), "currency");
+                currenciesDialog.show(getSupportFragmentManager(), "currency");
             }
         });
     }
@@ -137,4 +138,6 @@ public class CreateAccountActivity extends AppCompatActivity implements DialogCo
     public void showMessage(int resId) {
 
     }
+
+
 }

@@ -6,6 +6,7 @@ import com.example.android.bookkeeping.currency.CurrencyRatesData;
 import com.example.android.bookkeeping.currency.UrlParser;
 import com.example.android.bookkeeping.data.model.AccountSaver;
 import com.example.android.bookkeeping.repository.AccountsRepository;
+import com.example.android.bookkeeping.ui.adapters.AccountsListAdapter;
 import com.example.android.bookkeeping.ui.mvp.BasePresenter;
 
 import java.math.BigDecimal;
@@ -180,5 +181,10 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
 
     public List<AccountSaver> getListAccounts() {
         return listAccounts;
+    }
+
+    @Override
+    public AccountsListAdapter initAdapter() {
+        return new AccountsListAdapter(getMvpView().getContext(), listAccounts);
     }
 }

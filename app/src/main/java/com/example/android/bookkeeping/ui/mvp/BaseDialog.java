@@ -1,6 +1,7 @@
 package com.example.android.bookkeeping.ui.mvp;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.DialogFragment;
 
@@ -60,6 +61,5 @@ public abstract class BaseDialog extends DialogFragment implements DialogMvpView
     public BaseActivity getBaseActivity() {
         return mActivity;
     }
-
 
 }

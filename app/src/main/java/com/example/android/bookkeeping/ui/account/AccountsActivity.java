@@ -44,7 +44,6 @@ public class AccountsActivity extends BaseActivity implements AccountsMvpView {
     private ProgressBar progressBar;
     private ImageView ivChartButton;
 
-    @Inject
     public AccountsListAdapter accountsListAdapter;
 
     @Inject
@@ -63,6 +62,8 @@ public class AccountsActivity extends BaseActivity implements AccountsMvpView {
         setContentView(R.layout.activity_accounts_list);
 
         getAccountComponent().inject(this);
+
+        accountsListAdapter = mPresenter.initAdapter();
 
         findViews();
         setOnClickListeners();
@@ -210,6 +211,11 @@ public class AccountsActivity extends BaseActivity implements AccountsMvpView {
         Intent intent = ChartActivity.getStartIntent(this, currencyRatesData);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+    }
+
+    @Override
+    public Context getContext() {
+        return this;
     }
 
     @Override

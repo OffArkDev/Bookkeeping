@@ -51,24 +51,11 @@ public class ActivityModule {
         return presenter;
     }
 
-
-    @Singleton
-    @Provides
-    AccountsListAdapter provideFeedPagerAdapter(Context context) {
-        return new AccountsListAdapter(context, new ArrayList<AccountSaver>());
-    }
-
     @Singleton
     @Provides
     CurrenciesDialogMvpPresenter<CurrenciesDialogMvpView> provideCurrenciesDialogMvpPresenter(CurrenciesDialogPresenter<CurrenciesDialogMvpView> presenter) {
         return presenter;
     }
 
-    @Singleton
-    @Provides
-    ArrayAdapter<String> provideArrayAdapter(Context context) {
-        return  new ArrayAdapter<String>(context, R.layout.dialog_item, R.id.txt_currency, currencies);
-
-    }
 
 }
