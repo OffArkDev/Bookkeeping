@@ -285,8 +285,7 @@ public class AccountsActivity extends AppCompatActivity{
                     String valueRUB = "";
                     if (currency.equals("RUB")) {
                         valueRUB = value;
-                    }
-                    if (!value.equals("") && !currency.equals("")) {
+                    } else if (!value.equals("") && !currency.equals("")) {
                         valueRUB = currencyRatesData.convertCurrency(new BigDecimal(value), currency, "RUB").toString();
                     }
                     final AccountSaver newAccount = new AccountSaver(name, value, valueRUB, currency);
