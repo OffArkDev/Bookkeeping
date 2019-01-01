@@ -159,26 +159,6 @@ public class AccountsActivity extends BaseActivity implements AccountsMvpView {
     }
 
     @Override
-    public void onError(int resId) {
-
-    }
-
-    @Override
-    public void onError(String message) {
-
-    }
-
-    @Override
-    public void showMessage(String message) {
-
-    }
-
-    @Override
-    public void showMessage(int resId) {
-
-    }
-
-    @Override
     public void openCreateAccountActivity(CurrencyRatesData currencyRatesData) {
         Intent intent = CreateAccountActivity.getStartIntent(this, currencyRatesData);
         startActivityForResult(intent, 1);

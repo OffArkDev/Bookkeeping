@@ -19,6 +19,7 @@ import com.example.android.bookkeeping.di.components.CloudAuthComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.di.modules.FirebaseModule;
 import com.example.android.bookkeeping.ui.cloud.storage.FirebaseStorageActivity;
+import com.example.android.bookkeeping.ui.mvp.BaseActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -27,7 +28,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import javax.inject.Inject;
 
 
-public class FirebaseAuthActivity extends AppCompatActivity implements FirebaseAuthMvpView{
+public class FirebaseAuthActivity extends BaseActivity implements FirebaseAuthMvpView{
 
     private static final String TAG = "myfirebaseauth";
 
@@ -156,26 +157,10 @@ public class FirebaseAuthActivity extends AppCompatActivity implements FirebaseA
         btnReg.setVisibility(View.VISIBLE);
     }
 
-
-
     @Override
-    public Context getContext() {
-        return this;
-    }
-
-    @Override
-    public void onError(int resId) {
-
-    }
-
-    @Override
-    public void onError(String message) {
-
-    }
-
-    @Override
-    public void showMessage(String message) {
-
+    protected void onDestroy() {
+        presenter.onDetach();
+        super.onDestroy();
     }
 
     @Override

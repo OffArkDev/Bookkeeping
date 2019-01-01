@@ -15,10 +15,11 @@ import com.example.android.bookkeeping.R;
 import com.example.android.bookkeeping.di.components.CloudStorageComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.di.modules.StorageModule;
+import com.example.android.bookkeeping.ui.mvp.BaseActivity;
 
 import javax.inject.Inject;
 
-public class FirebaseStorageActivity extends AppCompatActivity implements FirebaseStorageMvpView {
+public class FirebaseStorageActivity extends BaseActivity implements FirebaseStorageMvpView {
 
     private final static String TAG = "mystorage";
 
@@ -97,32 +98,10 @@ public class FirebaseStorageActivity extends AppCompatActivity implements Fireba
         progressBar.setVisibility(View.INVISIBLE);
     }
 
-
-
-
     @Override
-    public Context getContext() {
-        return this;
+    protected void onDestroy() {
+        presenter.onDetach();
+        super.onDestroy();
     }
 
-    @Override
-    public void onError(int resId) {
-
-    }
-
-    @Override
-    public void onError(String message) {
-
-    }
-
-    @Override
-    public void showMessage(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-
-    }
-
-    @Override
-    public void showMessage(int resId) {
-        Toast.makeText(this, resId, Toast.LENGTH_SHORT).show();
-    }
 }

@@ -22,6 +22,7 @@ import com.example.android.bookkeeping.di.components.TransactionComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.di.modules.StorageModule;
 import com.example.android.bookkeeping.ui.adapters.TransactionsListAdapter;
+import com.example.android.bookkeeping.ui.mvp.BaseActivity;
 import com.example.android.bookkeeping.ui.transaction.create.CreateTransactionActivity;
 import com.google.gson.Gson;
 
@@ -38,7 +39,7 @@ import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-public class TransactionsActivity extends AppCompatActivity implements TransactionMvpView {
+public class TransactionsActivity extends BaseActivity implements TransactionMvpView {
 
     private final static String TAG = "myTransactionsList";
 
@@ -145,11 +146,6 @@ public class TransactionsActivity extends AppCompatActivity implements Transacti
         startActivityForResult(intent, 1);
     }
 
-    @Override
-    public Context getContext() {
-        return this;
-    }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -167,30 +163,11 @@ public class TransactionsActivity extends AppCompatActivity implements Transacti
         }
     }
 
-
-
     @Override
-    public void onError(int resId) {
-
+    protected void onDestroy() {
+        presenter.onDetach();
+        super.onDestroy();
     }
-
-    @Override
-    public void onError(String message) {
-
-    }
-
-    @Override
-    public void showMessage(String message) {
-
-    }
-
-    @Override
-    public void showMessage(int resId) {
-
-    }
-
-
-
 
 
 }

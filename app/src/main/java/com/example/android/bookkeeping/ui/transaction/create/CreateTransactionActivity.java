@@ -19,10 +19,11 @@ import com.example.android.bookkeeping.di.components.FragmentComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.ui.dialogs.currencies.CurrenciesDialog;
 import com.example.android.bookkeeping.ui.dialogs.DialogCommunicator;
+import com.example.android.bookkeeping.ui.mvp.BaseActivity;
 
 import javax.inject.Inject;
 
-public class CreateTransactionActivity extends AppCompatActivity implements DialogCommunicator, CreateTransactionMvpView {
+public class CreateTransactionActivity extends BaseActivity implements DialogCommunicator, CreateTransactionMvpView {
 
     private EditText etName;
     private EditText etValue;
@@ -143,27 +144,8 @@ public class CreateTransactionActivity extends AppCompatActivity implements Dial
     }
 
     @Override
-    public Context getContext() {
-        return this;
-    }
-
-    @Override
-    public void onError(int resId) {
-
-    }
-
-    @Override
-    public void onError(String message) {
-
-    }
-
-    @Override
-    public void showMessage(String message) {
-
-    }
-
-    @Override
-    public void showMessage(int resId) {
-
+    protected void onDestroy() {
+        presenter.onDetach();
+        super.onDestroy();
     }
 }

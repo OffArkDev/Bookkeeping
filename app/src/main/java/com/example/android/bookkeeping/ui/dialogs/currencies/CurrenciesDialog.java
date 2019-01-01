@@ -134,29 +134,10 @@ public class CurrenciesDialog extends BaseDialog implements  CurrenciesDialogMvp
     }
 
 
-    @Override
-    public void onError(int resId) {
-
-    }
-
-    @Override
-    public void onError(String message) {
-
-    }
-
-    @Override
-    public void showMessage(String message) {
-
-    }
-
-    @Override
-    public void showMessage(int resId) {
-
-    }
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
         presenter.onDetach();
+        super.onDestroyView();
     }
 }

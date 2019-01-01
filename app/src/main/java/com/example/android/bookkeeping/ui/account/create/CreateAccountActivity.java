@@ -123,31 +123,16 @@ public class CreateAccountActivity extends BaseActivity implements DialogCommuni
     }
 
     @Override
+    protected void onDestroy() {
+        presenter.onDetach();
+        super.onDestroy();
+    }
+
+    @Override
     public void sendRequest(int code, String result) {
         if (code == 1) {
             btnCurrency.setText(result);
         }
     }
-
-    @Override
-    public void onError(int resId) {
-
-    }
-
-    @Override
-    public void onError(String message) {
-
-    }
-
-    @Override
-    public void showMessage(String message) {
-
-    }
-
-    @Override
-    public void showMessage(int resId) {
-
-    }
-
 
 }

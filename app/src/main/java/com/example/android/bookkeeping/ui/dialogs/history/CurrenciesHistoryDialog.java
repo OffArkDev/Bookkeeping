@@ -142,27 +142,14 @@ public class CurrenciesHistoryDialog extends BaseDialog implements CurrenciesHis
     }
 
     @Override
+    public void onDestroyView() {
+        presenter.onDetach();
+        super.onDestroyView();
+    }
+
+    @Override
     public void dismissDialog() {
         getDialog().dismiss();
     }
 
-    @Override
-    public void onError(int resId) {
-
-    }
-
-    @Override
-    public void onError(String message) {
-
-    }
-
-    @Override
-    public void showMessage(String message) {
-
-    }
-
-    @Override
-    public void showMessage(int resId) {
-
-    }
 }

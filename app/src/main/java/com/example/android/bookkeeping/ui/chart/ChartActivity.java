@@ -20,6 +20,7 @@ import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.di.modules.UrlParserModule;
 import com.example.android.bookkeeping.ui.dialogs.history.CurrenciesHistoryDialog;
 import com.example.android.bookkeeping.ui.dialogs.DialogCommunicator;
+import com.example.android.bookkeeping.ui.mvp.BaseActivity;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
@@ -42,7 +43,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-public class ChartActivity extends AppCompatActivity implements DialogCommunicator, ChartMvpView {
+public class ChartActivity extends BaseActivity implements DialogCommunicator, ChartMvpView {
 
     private final static String TAG = "chartActivity";
 
@@ -145,30 +146,10 @@ public class ChartActivity extends AppCompatActivity implements DialogCommunicat
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
-
-
     @Override
-    public Context getContext() {
-        return this;
+    protected void onDestroy() {
+        presenter.onDetach();
+        super.onDestroy();
     }
 
-    @Override
-    public void onError(int resId) {
-
-    }
-
-    @Override
-    public void onError(String message) {
-
-    }
-
-    @Override
-    public void showMessage(String message) {
-
-    }
-
-    @Override
-    public void showMessage(int resId) {
-
-    }
 }

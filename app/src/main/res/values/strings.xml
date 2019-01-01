@@ -51,6 +51,7 @@
     <string name="loading_database_success">Loading from database success</string>
     <string name="click_on_transaction_to_delete">click on transaction to delete</string>
     <string name="click_account_to_delete">click on account to delete</string>
+    <string name="some_error">Some error occurred!</string>
 
 
 </resources>
