@@ -1,5 +1,6 @@
 package com.example.android.bookkeeping.ui.transaction.create;
 
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -28,6 +29,7 @@ public class CreateTransactionActivity extends BaseActivity implements DialogCom
     private EditText etName;
     private EditText etValue;
     private EditText etComment;
+    private EditText etDate;
     private Button btnCurrency;
     private Spinner spinnerType;
     private Button btnDone;
@@ -70,6 +72,7 @@ public class CreateTransactionActivity extends BaseActivity implements DialogCom
         btnCurrency = findViewById(R.id.transaction_currency_btn);
         spinnerType = findViewById(R.id.transaction_type_spinner);
         btnDone = findViewById(R.id.button_done_create_transaction);
+        etDate = findViewById(R.id.edit_transaction_date);
     }
 
     private void setRatesFromIntent() {
@@ -103,6 +106,16 @@ public class CreateTransactionActivity extends BaseActivity implements DialogCom
             }
         });
 
+        etDate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            public void onFocusChange(View view, boolean hasfocus) {
+                if (hasfocus) {
+                    DateDialog dialog = new DateDialog(view);
+                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+                    dialog.show(ft, "DatePicker");
+                }
+            }
+
+        });
     }
 
     @Override
