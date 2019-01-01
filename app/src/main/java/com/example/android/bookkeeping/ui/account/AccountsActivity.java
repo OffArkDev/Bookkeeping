@@ -133,7 +133,7 @@ public class AccountsActivity extends BaseActivity implements AccountsMvpView {
     }
 
     public void initAdapter(){
-        accountsListAdapter = mPresenter.initAdapter();
+        accountsListAdapter = mPresenter.initAccountsAdapter();
         listView.setAdapter(accountsListAdapter);
     }
 

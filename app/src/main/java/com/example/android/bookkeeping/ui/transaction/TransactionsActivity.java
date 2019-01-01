@@ -21,14 +21,12 @@ import com.example.android.bookkeeping.data.model.TransactionSaver;
 import com.example.android.bookkeeping.di.components.TransactionComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.di.modules.StorageModule;
-import com.example.android.bookkeeping.repository.TransactionsRepository;
-import com.example.android.bookkeeping.ui.account.AccountsActivity;
 import com.example.android.bookkeeping.ui.adapters.TransactionsListAdapter;
+import com.example.android.bookkeeping.ui.transaction.create.CreateTransactionActivity;
 import com.google.gson.Gson;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -36,13 +34,11 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-public class TransactionsActivity extends AppCompatActivity {
+public class TransactionsActivity extends AppCompatActivity implements TransactionMvpView {
 
     private final static String TAG = "myTransactionsList";
 
@@ -50,24 +46,15 @@ public class TransactionsActivity extends AppCompatActivity {
     private ListView listView;
     private Button btnDeleteTransaction;
 
-    private List<TransactionSaver> listTransactions = new ArrayList<>();
 
     private TransactionsListAdapter transactionsListAdapter;
 
-    private long accountId;
-
-    private CurrencyRatesData currencyRatesData;
 
     boolean isDeleteClicked = false;
 
     @Inject
-    Context context;
+    TransactionMvpPresenter<TransactionMvpView> presenter;
 
-    @Inject
-    public CompositeDisposable compositeDisposable;
-
-    @Inject
-    public TransactionsRepository transactionsRepository;
 
 
     public static Intent getStartIntent(Context context, int accountId, List<AccountSaver> listAccounts, CurrencyRatesData currencyRatesData) {
@@ -86,9 +73,9 @@ public class TransactionsActivity extends AppCompatActivity {
         getTransactionComponent().inject(this);
         findViews();
         getRatesFromIntent();
-        compositeDisposable.add(getTransactionsFromDatabase());
-        setAdapter();
         setOnClickListeners();
+        presenter.onAttach(this);
+        initAdapter();
     }
 
     public TransactionComponent getTransactionComponent() {
@@ -107,138 +94,97 @@ public class TransactionsActivity extends AppCompatActivity {
         btnCreateTransaction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createTransaction();
+                presenter.btnCreateTransactionClick();
             }
         });
 
         btnDeleteTransaction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (isDeleteClicked) {
-                    isDeleteClicked = false;
-                    btnDeleteTransaction.setBackground(ContextCompat.getDrawable(context, R.drawable.empty_button));
-                    listView.setOnItemClickListener(null);
-                } else {
-                    isDeleteClicked = true;
-                    Toast.makeText(context, R.string.click_on_transaction_to_delete, Toast.LENGTH_LONG).show();
-                    btnDeleteTransaction.setBackground(ContextCompat.getDrawable(context, R.drawable.paint_button));
-                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            deleteTransaction((int) id);
-                        }
-                    });
-                }
+                presenter.btnDeleteClick();
             }
         });
     }
 
-    public void setAdapter() {
-        transactionsListAdapter = new TransactionsListAdapter(this, listTransactions);
+    public void initAdapter() {
+        transactionsListAdapter = presenter.initTransactionsAdapter();
         listView.setAdapter(transactionsListAdapter);
     }
 
     public void getRatesFromIntent() {
         Intent intent = getIntent();
-        accountId = intent.getLongExtra("accountId", 0L);
-        Gson gson = new Gson();
-        currencyRatesData = gson.fromJson(intent.getStringExtra("currencyRates"), CurrencyRatesData.class);
-        Log.i(TAG, "getRatesFromIntent: " + currencyRatesData.getTime());
+        presenter.getRatesFromIntent(intent);
 
     }
 
-    public Disposable getTransactionsFromDatabase() {
-        return transactionsRepository.getTransactionsOfAccount(accountId)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<TransactionSaver>>() {
-                    @Override
-                    public void accept(List<TransactionSaver> transactionSavers) {
-                        listTransactions = transactionSavers;
-                        setAdapter();
-                    }
-                });
+    @Override
+    public void updateListView(List<TransactionSaver> listTransactions) {
+        transactionsListAdapter.updateList(listTransactions);
     }
 
-    public void createTransaction() {
-        Intent intent = new Intent(this, CreateTransactionActivity.class);
-        intent.putExtra("ratesNames", currencyRatesData.getCurrenciesList());
+    @Override
+    public void changeDeleteButtonState() {
+        if (isDeleteClicked) {
+            isDeleteClicked = false;
+            btnDeleteTransaction.setBackground(ContextCompat.getDrawable(this, R.drawable.empty_button));
+        } else {
+            isDeleteClicked = true;
+            Toast.makeText(this, R.string.click_on_transaction_to_delete, Toast.LENGTH_LONG).show();
+            btnDeleteTransaction.setBackground(ContextCompat.getDrawable(this, R.drawable.paint_button));
+        }
+    }
+
+    public void openCreateTransactionActivity(CurrencyRatesData currencyRatesData) {
+        Intent intent = CreateTransactionActivity.getStartIntent(this, currencyRatesData);
         startActivityForResult(intent, 1);
     }
 
-    public void deleteTransaction(final int id) {
-        compositeDisposable.add(transactionsRepository.delete(listTransactions.get(id))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action() {
-                    @Override
-                    public void run() {
-                        Log.i(TAG, "delete transaction complete");
-                        listTransactions.remove(id);
-                        setAdapter();
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) {
-                        Log.i(TAG, "delete transaction fail " + throwable.getMessage());
-                    }
-                })
-        );
-    }
-
-
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        compositeDisposable.clear();
+    public Context getContext() {
+        return this;
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        compositeDisposable.clear();
-    }
-
-
-    public String getCurrentDate() {
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat mdformat = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
-        return mdformat.format(calendar.getTime());
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (data != null) {
             if (requestCode == 1) {
                 if (resultCode == RESULT_OK) {
-                   String type = data.getStringExtra("type");
-                   String name = data.getStringExtra("name");
-                   String date = getCurrentDate();
-                   String value = data.getStringExtra("value");
-                   String currency = data.getStringExtra("currency");
-                   String comment = data.getStringExtra("comment");
-                   String valueRUB = "";
-                    if (currency.equals("RUB")) {
-                        valueRUB = value;
-                    }
-                    if (!value.equals("") && !currency.equals("")) {
-                        valueRUB = currencyRatesData.convertCurrency(new BigDecimal(value), currency, "RUB").toString();
-                    }
-
-                    final TransactionSaver newTransactionSaver = new TransactionSaver(accountId, type, name, date, value, valueRUB, currency, comment);
-                    compositeDisposable.add(transactionsRepository.insert(newTransactionSaver)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(new Consumer<Long>() {
-                                @Override
-                                public void accept(Long aLong) {
-                                    Log.i(TAG, "insert success");
-                                    newTransactionSaver.setId(aLong);
-                                    listTransactions.add(newTransactionSaver);
-                                    setAdapter();
-                                }
-                            }));
+                    String type = data.getStringExtra("type");
+                    String name = data.getStringExtra("name");
+                    String value = data.getStringExtra("value");
+                    String currency = data.getStringExtra("currency");
+                    String comment = data.getStringExtra("comment");
+                    presenter.createTransaction(type, name, value, currency, comment);
                 }
             }
         }
     }
+
+
+
+    @Override
+    public void onError(int resId) {
+
+    }
+
+    @Override
+    public void onError(String message) {
+
+    }
+
+    @Override
+    public void showMessage(String message) {
+
+    }
+
+    @Override
+    public void showMessage(int resId) {
+
+    }
+
+
+
+
+
 }

@@ -6,7 +6,7 @@ import com.example.android.bookkeeping.ui.mvp.MvpPresenter;
 
 public interface CreateAccountMvpPresenter<V extends CreateAccountMvpView> extends MvpPresenter<V> {
 
-    void setRatesFromIntent(Intent intent);
+    void getRatesFromIntent(Intent intent);
 
     String[] getRatesNames();
 

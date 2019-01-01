@@ -12,7 +12,7 @@ public class CreateAccountPresenter<V extends CreateAccountMvpView> extends Base
 
 
     @Override
-    public void setRatesFromIntent(Intent intent) {
+    public void getRatesFromIntent(Intent intent) {
         ratesNames = intent.getStringArrayExtra("rates");
     }
 

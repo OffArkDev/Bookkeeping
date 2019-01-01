@@ -1,5 +1,6 @@
-package com.example.android.bookkeeping.ui.transaction;
+package com.example.android.bookkeeping.ui.transaction.create;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,6 +13,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.android.bookkeeping.R;
+import com.example.android.bookkeeping.currency.CurrencyRatesData;
 import com.example.android.bookkeeping.ui.dialogs.currencies.CurrenciesDialog;
 import com.example.android.bookkeeping.ui.dialogs.DialogCommunicator;
 
@@ -27,6 +29,13 @@ public class CreateTransactionActivity extends AppCompatActivity implements Dial
 
 
     private String[] ratesNames;
+
+
+    public static Intent getStartIntent(Context context, CurrencyRatesData currencyRatesData) {
+        Intent intent = new Intent(context, CreateTransactionActivity.class);
+        intent.putExtra("ratesNames", currencyRatesData.getCurrenciesList());
+        return intent;
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

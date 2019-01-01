@@ -78,6 +78,12 @@ public class TransactionsListAdapter extends BaseAdapter {
         return (getItem(position));
     }
 
+    public void updateList(List<TransactionSaver> listTransactions) {
+        list.clear();
+        list.addAll(listTransactions);
+        notifyDataSetChanged();
+    }
+
 
     private static class ViewHolder {
         private TextView name;

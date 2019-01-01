@@ -34,7 +34,7 @@
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.transaction.CreateTransactionActivity"
+        <activity android:name=".ui.transaction.create.CreateTransactionActivity"
             android:label="@string/create_transaction">
 
 

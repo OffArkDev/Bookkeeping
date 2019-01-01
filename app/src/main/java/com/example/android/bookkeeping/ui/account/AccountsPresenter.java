@@ -55,9 +55,7 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
         parseUrl();
 
         getAccountsFromDatabase();
-
     }
-
 
     @Override
     public void onDetach() {
@@ -190,7 +188,7 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
     }
 
     @Override
-    public AccountsListAdapter initAdapter() {
+    public AccountsListAdapter initAccountsAdapter() {
         return new AccountsListAdapter(getMvpView().getContext(), listAccounts);
     }
 }

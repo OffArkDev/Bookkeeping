@@ -20,7 +20,7 @@ public interface AccountsMvpView extends MvpView {
 
     void openCreateAccountActivity(CurrencyRatesData currencyRatesData);
 
-     void openTransactionsActivity(int accountId, List<AccountSaver> listAccounts, CurrencyRatesData currencyRatesData);
+    void openTransactionsActivity(int accountId, List<AccountSaver> listAccounts, CurrencyRatesData currencyRatesData);
 
     void changeDeleteButtonState();
 
