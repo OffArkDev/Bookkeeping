@@ -2,7 +2,7 @@ package com.example.android.bookkeeping.di.components;
 
 import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.ui.account.create.CreateAccountActivity;
-import com.example.android.bookkeeping.ui.dialogs.CurrenciesHistoryDialog;
+import com.example.android.bookkeeping.ui.dialogs.history.CurrenciesHistoryDialog;
 import com.example.android.bookkeeping.ui.dialogs.currencies.CurrenciesDialog;
 import com.example.android.bookkeeping.ui.transaction.create.CreateTransactionActivity;
 
