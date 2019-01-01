@@ -43,7 +43,7 @@ public class FirebaseAuthActivity extends AppCompatActivity implements FirebaseA
     public FirebaseAuth mAuth;
 
     @Inject
-    FirebaseAuthMvpPresenter<FirebaseAuthMvpView> presenter;
+    public FirebaseAuthMvpPresenter<FirebaseAuthMvpView> presenter;
 
     public static Intent getStartIntent(Context context) {
         Intent intent = new Intent(context, FirebaseAuthActivity.class);
@@ -56,6 +56,8 @@ public class FirebaseAuthActivity extends AppCompatActivity implements FirebaseA
         getCloudComponent().inject(this);
         findViews();
         setOnClickListeners();
+
+        presenter.onAttach(this);
     }
 
     public CloudAuthComponent getCloudComponent() {
@@ -87,7 +89,7 @@ public class FirebaseAuthActivity extends AppCompatActivity implements FirebaseA
         btnAuth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                presenter.btnAuthorizationClick(etEmail.getText().toString(), etPassword.getText().toString());
+                presenter.btnAuthorizationClick(etEmail.getText().toString().trim(), etPassword.getText().toString());
             }
         });
 

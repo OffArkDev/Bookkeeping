@@ -50,6 +50,8 @@ public class CreateAccountActivity extends BaseActivity implements DialogCommuni
         setDialog();
         setRatesFromIntent();
         setOnClickListeners();
+
+        presenter.onAttach(this);
     }
 
     public FragmentComponent getFragmentComponent() {

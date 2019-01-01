@@ -2,6 +2,7 @@ package com.example.android.bookkeeping.ui.mvp;
 
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
 public abstract class BaseActivity extends AppCompatActivity implements MvpView {
 
@@ -19,4 +20,6 @@ public abstract class BaseActivity extends AppCompatActivity implements MvpView 
     public Context getContext() {
         return this;
     }
+
+
 }
