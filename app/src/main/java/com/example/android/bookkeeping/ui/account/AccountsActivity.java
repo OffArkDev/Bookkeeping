@@ -19,14 +19,14 @@ import com.example.android.bookkeeping.currency.CurrencyRatesData;
 import com.example.android.bookkeeping.data.model.AccountSaver;
 import com.example.android.bookkeeping.di.components.AccountComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
-import com.example.android.bookkeeping.di.modules.UrlParserModule;
 import com.example.android.bookkeeping.di.modules.StorageModule;
+import com.example.android.bookkeeping.di.modules.UrlParserModule;
 import com.example.android.bookkeeping.ui.ChartActivity;
 import com.example.android.bookkeeping.ui.account.create.CreateAccountActivity;
+import com.example.android.bookkeeping.ui.adapters.AccountsListAdapter;
 import com.example.android.bookkeeping.ui.cloud.FirebaseAuthActivity;
 import com.example.android.bookkeeping.ui.mvp.BaseActivity;
 import com.example.android.bookkeeping.ui.transaction.TransactionsActivity;
-import com.example.android.bookkeeping.ui.adapters.AccountsListAdapter;
 
 import java.util.List;
 
@@ -60,14 +60,11 @@ public class AccountsActivity extends BaseActivity implements AccountsMvpView {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accounts_list);
-
         getAccountComponent().inject(this);
-
-        accountsListAdapter = mPresenter.initAdapter();
-
         findViews();
         setOnClickListeners();
         mPresenter.onAttach(this);
+        initAdapter();
     }
 
 
@@ -122,7 +119,7 @@ public class AccountsActivity extends BaseActivity implements AccountsMvpView {
         btnDeleteAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                changeDeleteButtonSate();
+                mPresenter.btnDeleteAccount();
             }
         });
 
@@ -135,9 +132,15 @@ public class AccountsActivity extends BaseActivity implements AccountsMvpView {
 
     }
 
+    public void initAdapter(){
+        accountsListAdapter = mPresenter.initAdapter();
+        listView.setAdapter(accountsListAdapter);
+    }
 
-    public void updateListView() {
-        accountsListAdapter.notifyDataSetChanged();
+
+    @Override
+    public void updateListView(List<AccountSaver> listAccounts) {
+        accountsListAdapter.updateList(listAccounts);
     }
 
 
@@ -187,8 +190,10 @@ public class AccountsActivity extends BaseActivity implements AccountsMvpView {
         startActivity(intentTransactions);
     }
 
+
+
     @Override
-    public void changeDeleteButtonSate() {
+    public void changeDeleteButtonState() {
         if (isDeleteClicked) {
             isDeleteClicked = false;
             btnDeleteAccount.setBackground(ContextCompat.getDrawable(this, R.drawable.empty_button));
@@ -197,7 +202,6 @@ public class AccountsActivity extends BaseActivity implements AccountsMvpView {
             Toast.makeText(this, R.string.click_account_to_delete, Toast.LENGTH_LONG).show();
             btnDeleteAccount.setBackground(ContextCompat.getDrawable(this, R.drawable.paint_button));
         }
-
     }
 
     @Override

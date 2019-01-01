@@ -36,11 +36,10 @@ public class CreateAccountActivity extends BaseActivity implements DialogCommuni
     @Inject
     public CreateAccountMvpPresenter<CreateAccountMvpView> presenter;
 
-    @Inject
-    public CurrenciesDialog currenciesDialog;
+    private CurrenciesDialog currenciesDialog;
 
     public static Intent getStartIntent(Context context, CurrencyRatesData currencyRatesData) {
-        Intent intent = new Intent(context, AccountsActivity.class);
+        Intent intent = new Intent(context, CreateAccountActivity.class);
         intent.putExtra("rates", currencyRatesData.getCurrenciesList());
         return intent;
     }
@@ -50,10 +49,18 @@ public class CreateAccountActivity extends BaseActivity implements DialogCommuni
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
 
+        getFragmentComponent().inject(this);
+
         findViews();
         setDialog();
         setRatesFromIntent();
         setOnClickListeners();
+    }
+
+    public FragmentComponent getFragmentComponent() {
+        return ((MyApplication) getApplication())
+                .getApplicationComponent()
+                .newFragmentComponent(new ActivityModule(this));
     }
 
     @Override
@@ -81,8 +88,6 @@ public class CreateAccountActivity extends BaseActivity implements DialogCommuni
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                switch (view.getId()) {
-                    case R.id.button_done_create_account:
                         String name = nameAccount.getText().toString();
                         String value = valueAccount.getText().toString();
                         String currency = btnCurrency.getText().toString();
@@ -96,20 +101,22 @@ public class CreateAccountActivity extends BaseActivity implements DialogCommuni
                             setResult(RESULT_OK, resultIntent);
                             finish();
                         }
-                        break;
                 }
-            }
         });
 
         btnCurrency.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle args = new Bundle();
-                args.putStringArray("currencies", presenter.getRatesNames());
-                currenciesDialog.setArguments(args);
-                currenciesDialog.show(getSupportFragmentManager(), "currency");
+                showDialog();
             }
         });
+    }
+
+    public void showDialog() {
+        Bundle args = new Bundle();
+        args.putStringArray("currencies", presenter.getRatesNames());
+        currenciesDialog.setArguments(args);
+        currenciesDialog.show(getSupportFragmentManager(), "currency");
     }
 
     @Override

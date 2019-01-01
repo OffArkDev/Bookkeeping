@@ -16,13 +16,13 @@ public interface AccountsMvpView extends MvpView {
 
     void hideLoading();
 
-    void updateListView();
+    void updateListView(List<AccountSaver> listAccounts);
 
     void openCreateAccountActivity(CurrencyRatesData currencyRatesData);
 
      void openTransactionsActivity(int accountId, List<AccountSaver> listAccounts, CurrencyRatesData currencyRatesData);
 
-    void changeDeleteButtonSate();
+    void changeDeleteButtonState();
 
     void openCloudActivity();
 

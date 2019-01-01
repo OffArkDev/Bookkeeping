@@ -1,6 +1,5 @@
 package com.example.android.bookkeeping.ui.dialogs.currencies;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -36,6 +35,8 @@ public class CurrenciesDialog extends BaseDialog implements  CurrenciesDialogMvp
     private GridView gridView;
     private Button btnCancel;
 
+    private Bundle args;
+
 
     public static CurrenciesDialog newInstance() {
         CurrenciesDialog fragment = new CurrenciesDialog();
@@ -45,26 +46,33 @@ public class CurrenciesDialog extends BaseDialog implements  CurrenciesDialogMvp
     }
 
     @Override
-    public void setArguments(Bundle args) {
-        presenter.setArguments(args);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getAccountComponent().inject(this);
+
     }
+
+    @Override
+    public void setArguments(Bundle args) {
+        this.args = args;
+    }
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.dialog_currencies, container, false);
 
-        getAccountComponent().inject(this);
-
-        adapter = presenter.initAdapter();
-
         findViews();
-
-        gridView.setAdapter(adapter);
 
         setOnClickListeners();
 
+        passArgsToPresenter();
+
         presenter.onAttach(this);
+
+        initAdapter();
+
 
         return rootView;
     }
@@ -103,6 +111,16 @@ public class CurrenciesDialog extends BaseDialog implements  CurrenciesDialogMvp
         });
     }
 
+    public void initAdapter() {
+        adapter = presenter.initAdapter();
+        gridView.setAdapter(adapter);
+    }
+
+    public void passArgsToPresenter() {
+        presenter.setArguments(args);
+        args.clear();
+    }
+
     public void setDialogCommunicator(DialogCommunicator dialogCommunicator) {
         this.dialogCommunicator = dialogCommunicator;
     }
@@ -136,5 +154,11 @@ public class CurrenciesDialog extends BaseDialog implements  CurrenciesDialogMvp
     @Override
     public void showMessage(int resId) {
 
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        presenter.onDetach();
     }
 }

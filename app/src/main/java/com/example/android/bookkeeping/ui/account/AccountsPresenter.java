@@ -55,6 +55,7 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
         parseUrl();
 
         getAccountsFromDatabase();
+
     }
 
 
@@ -116,6 +117,11 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
         }
     }
 
+    @Override
+    public void btnDeleteAccount() {
+        getMvpView().changeDeleteButtonState();
+    }
+
     public void deleteAccount (final int id) {
         compositeDisposable.add(accountsRepository.delete(listAccounts.get(id))
                 .subscribeOn(Schedulers.io())
@@ -125,7 +131,7 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
                                public void run() {
                                    Log.i(TAG, "delete account complete");
                                    listAccounts.remove(id);
-                                   getMvpView().updateListView();
+                                   getMvpView().updateListView(listAccounts);
                                }
                            }, new Consumer<Throwable>() {
                                @Override
@@ -144,7 +150,7 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
                     @Override
                     public void accept(List<AccountSaver> accountSavers) {
                         listAccounts = accountSavers;
-                        getMvpView().updateListView();
+                        getMvpView().updateListView(listAccounts);
                     }
                 }));
     }
@@ -164,7 +170,7 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
                         Log.i(TAG, "insert success");
                         newAccount.setId(aLong);
                         listAccounts.add(newAccount);
-                        getMvpView().updateListView();
+                        getMvpView().updateListView(listAccounts);
                     }
                 }));
     }

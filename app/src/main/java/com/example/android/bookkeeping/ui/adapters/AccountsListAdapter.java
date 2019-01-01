@@ -79,6 +79,11 @@ public class AccountsListAdapter extends BaseAdapter {
         return (getItem(position));
     }
 
+    public void updateList(List<AccountSaver> newList) {
+        list.clear();
+        list.addAll(newList);
+        this.notifyDataSetChanged();
+    }
 
     private static class ViewHolder {
         private TextView name;

@@ -8,6 +8,8 @@ public interface AccountsMvpPresenter <V extends AccountsMvpView> extends MvpPre
 
     void btnCreateAccountClick();
 
+    void btnDeleteAccount();
+
     void btnCloudClick();
 
     void btnChartClick();

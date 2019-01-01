@@ -97,7 +97,7 @@ public class CreateTransactionActivity extends AppCompatActivity implements Dial
                 Bundle args = new Bundle();
                 args.putStringArray("currencies", ratesNames);
                 currenciesDialog.setArguments(args);
-                currenciesDialog.show(getFragmentManager(), "currency");
+                currenciesDialog.show(getSupportFragmentManager(), "currency");
             }
         });
 

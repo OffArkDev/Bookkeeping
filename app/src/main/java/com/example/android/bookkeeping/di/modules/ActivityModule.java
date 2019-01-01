@@ -9,6 +9,9 @@ import com.example.android.bookkeeping.data.model.AccountSaver;
 import com.example.android.bookkeeping.ui.account.AccountsMvpPresenter;
 import com.example.android.bookkeeping.ui.account.AccountsMvpView;
 import com.example.android.bookkeeping.ui.account.AccountsPresenter;
+import com.example.android.bookkeeping.ui.account.create.CreateAccountMvpPresenter;
+import com.example.android.bookkeeping.ui.account.create.CreateAccountMvpView;
+import com.example.android.bookkeeping.ui.account.create.CreateAccountPresenter;
 import com.example.android.bookkeeping.ui.adapters.AccountsListAdapter;
 import com.example.android.bookkeeping.ui.dialogs.currencies.CurrenciesDialog;
 import com.example.android.bookkeeping.ui.dialogs.currencies.CurrenciesDialogMvpPresenter;
@@ -48,6 +51,12 @@ public class ActivityModule {
     @Provides
     AccountsMvpPresenter<AccountsMvpView> provideAccountsMvpPresenter(
             AccountsPresenter<AccountsMvpView> presenter) {
+        return presenter;
+    }
+
+    @Singleton
+    @Provides
+    CreateAccountMvpPresenter<CreateAccountMvpView> provideCreateAccountMvpView(CreateAccountPresenter<CreateAccountMvpView> presenter) {
         return presenter;
     }
 
