@@ -124,16 +124,13 @@ public class TransactionPresenter<V extends TransactionMvpView> extends BasePres
     }
 
     @Override
-    public void createTransaction(String name, String value, String currency, String type, String comment) {
-        String valueRUB = "";
-        if (currency.equals("RUB")) {
-            valueRUB = value;
-        }
-        if (!value.equals("") && !currency.equals("")) {
-            valueRUB = currencyRatesData.convertCurrency(new BigDecimal(value), currency, "RUB").toString();
-        }
+    public void createTransaction(String name, String value, String currency, String date, String type, String comment) {
 
-        String date = getCurrentDate();
+        String date = getTodayDate();
+
+
+        String valueRUB = convertValueRub(currency, value, date);
+
 
         final TransactionSaver newTransactionSaver = new TransactionSaver(accountId, type, name, date, value, valueRUB, currency, comment);
         compositeDisposable.add(transactionsRepository.insert(newTransactionSaver)
@@ -150,7 +147,27 @@ public class TransactionPresenter<V extends TransactionMvpView> extends BasePres
                 }));
     }
 
-    public String getCurrentDate() {
+    private String convertValueRub(String currency, String value, String date) {
+        String valueRUB = "";
+        if (currency.equals("RUB")) {
+            valueRUB = value;
+        }
+        if (!value.equals("") && !currency.equals("")) {
+            valueRUB = currencyRatesData.convertCurrency(new BigDecimal(value), currency, "RUB").toString();
+        }
+        return valueRUB;
+    }
+
+    private String prepareDate(String date, String todayDate) {
+        if (date > todayDate) {
+            return todayDate;
+        } else if (date < "01.01.1968") {
+            return "01.01.1968";
+        }
+        return null;
+    }
+
+    public String getTodayDate() {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat mdformat = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
         return mdformat.format(calendar.getTime());

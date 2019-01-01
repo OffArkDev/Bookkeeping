@@ -17,7 +17,7 @@ public interface TransactionMvpPresenter <V extends TransactionMvpView> extends 
 
     void getRatesFromIntent(Intent intent);
 
-    void createTransaction(String name, String value, String currency, String type, String comment);
+    void createTransaction(String name, String value, String currency, String date, String type, String comment);
 
 
 }

@@ -132,6 +132,7 @@ public class CreateTransactionActivity extends BaseActivity implements DialogCom
         String name = etName.getText().toString();
         String value = etValue.getText().toString();
         String comment = etComment.getText().toString();
+        String date = etDate.getText().toString();
         String currency = btnCurrency.getText().toString();
         String type = spinnerType.getSelectedItem().toString();
         if (value.equals("")) {
@@ -140,6 +141,7 @@ public class CreateTransactionActivity extends BaseActivity implements DialogCom
             Intent resultIntent = new Intent();
             resultIntent.putExtra("name", name);
             resultIntent.putExtra("value", value);
+            resultIntent.putExtra("date", date);
             resultIntent.putExtra("comment", comment);
             resultIntent.putExtra("currency", currency);
             resultIntent.putExtra("type", type);

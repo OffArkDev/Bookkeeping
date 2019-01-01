@@ -154,10 +154,11 @@ public class TransactionsActivity extends BaseActivity implements TransactionMvp
                 if (resultCode == RESULT_OK) {
                     String type = data.getStringExtra("type");
                     String name = data.getStringExtra("name");
+                    String date = data.getStringExtra("date");
                     String value = data.getStringExtra("value");
                     String currency = data.getStringExtra("currency");
                     String comment = data.getStringExtra("comment");
-                    presenter.createTransaction(name, value, currency, type, comment);
+                    presenter.createTransaction(name, value, currency, date, type, comment);
                 }
             }
         }
