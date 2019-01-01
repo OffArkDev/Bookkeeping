@@ -1,11 +1,9 @@
 package com.example.android.bookkeeping.ui.transaction.create;
 
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -13,6 +11,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.android.bookkeeping.Constants;
 import com.example.android.bookkeeping.MyApplication;
 import com.example.android.bookkeeping.R;
 import com.example.android.bookkeeping.currency.CurrencyRatesData;
@@ -20,6 +19,7 @@ import com.example.android.bookkeeping.di.components.FragmentComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.ui.dialogs.currencies.CurrenciesDialog;
 import com.example.android.bookkeeping.ui.dialogs.DialogCommunicator;
+import com.example.android.bookkeeping.ui.dialogs.date.DateDialog;
 import com.example.android.bookkeeping.ui.mvp.BaseActivity;
 
 import javax.inject.Inject;
@@ -34,6 +34,7 @@ public class CreateTransactionActivity extends BaseActivity implements DialogCom
     private Spinner spinnerType;
     private Button btnDone;
 
+    private DateDialog dateDialog;
     private CurrenciesDialog currenciesDialog;
 
     @Inject
@@ -52,7 +53,7 @@ public class CreateTransactionActivity extends BaseActivity implements DialogCom
         getFragmentComponent().inject(this);
         findViews();
         setRatesFromIntent();
-        setDialog();
+        setDialogs();
         setOnClickListeners();
 
         presenter.onAttach(this);
@@ -86,9 +87,11 @@ public class CreateTransactionActivity extends BaseActivity implements DialogCom
         spinnerType.setSelection(0);
     }
 
-    public void setDialog() {
+    public void setDialogs() {
         currenciesDialog = CurrenciesDialog.newInstance();
         currenciesDialog.setDialogCommunicator(this);
+        dateDialog = DateDialog.newInstance();
+        dateDialog.setDialogCommunicator(this);
     }
 
     public void setOnClickListeners() {
@@ -109,9 +112,7 @@ public class CreateTransactionActivity extends BaseActivity implements DialogCom
         etDate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             public void onFocusChange(View view, boolean hasfocus) {
                 if (hasfocus) {
-                    DateDialog dialog = new DateDialog(view);
-                    FragmentTransaction ft = getFragmentManager().beginTransaction();
-                    dialog.show(ft, "DatePicker");
+                    dateDialog.show(getSupportFragmentManager(), "date dateDialog");
                 }
             }
 
@@ -151,8 +152,11 @@ public class CreateTransactionActivity extends BaseActivity implements DialogCom
 
     @Override
     public void sendRequest(int code, String result) {
-        if (code == 1) {
+        if (code == Constants.CURRENCIES_DIALOG_CODE) {
             btnCurrency.setText(result);
+        }
+        if (code == Constants.DATE_DIALOG_CODE) {
+            etDate.setText(result);
         }
     }
 

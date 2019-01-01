@@ -119,7 +119,7 @@ public class ChartActivity extends BaseActivity implements DialogCommunicator, C
 
     @Override
     public void sendRequest(int code, String result) {
-        if (code == 2) {
+        if (code == Constants.HISTORY_DIALOG_CODE) {
             presenter.setChosenCurrency(result);
             presenter.loadAndShowCurrencies();
         }

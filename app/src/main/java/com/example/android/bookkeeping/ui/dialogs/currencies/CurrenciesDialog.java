@@ -45,6 +45,8 @@ public class CurrenciesDialog extends BaseDialog implements  CurrenciesDialogMvp
         return fragment;
     }
 
+
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

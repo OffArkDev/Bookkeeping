@@ -26,6 +26,9 @@ package com.example.android.bookkeeping.di.modules;
         import com.example.android.bookkeeping.ui.dialogs.currencies.CurrenciesDialogMvpPresenter;
         import com.example.android.bookkeeping.ui.dialogs.currencies.CurrenciesDialogMvpView;
         import com.example.android.bookkeeping.ui.dialogs.currencies.CurrenciesDialogPresenter;
+        import com.example.android.bookkeeping.ui.dialogs.date.DateDialogMvpPresenter;
+        import com.example.android.bookkeeping.ui.dialogs.date.DateDialogMvpView;
+        import com.example.android.bookkeeping.ui.dialogs.date.DateDialogPresenter;
         import com.example.android.bookkeeping.ui.dialogs.history.CurrenciesHistoryMvpPresenter;
         import com.example.android.bookkeeping.ui.dialogs.history.CurrenciesHistoryMvpView;
         import com.example.android.bookkeeping.ui.dialogs.history.CurrenciesHistoryPresenter;
@@ -118,6 +121,12 @@ public class ActivityModule {
     @Singleton
     @Provides
     FirebaseStorageMvpPresenter<FirebaseStorageMvpView> provideFirebaseStoragePresenter(FirebaseStoragePresenter<FirebaseStorageMvpView> presenter) {
+        return presenter;
+    }
+
+    @Singleton
+    @Provides
+    DateDialogMvpPresenter<DateDialogMvpView> provideDateDialogPresenter(DateDialogPresenter<DateDialogMvpView> presenter) {
         return presenter;
     }
 }
