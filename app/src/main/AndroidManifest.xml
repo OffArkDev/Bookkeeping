@@ -48,7 +48,7 @@
             android:label="@string/cloud_storage"
             >
         </activity>
-        <activity android:name=".ui.ChartActivity"
+        <activity android:name=".ui.chart.ChartActivity"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar"
             />

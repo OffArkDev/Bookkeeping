@@ -48,8 +48,7 @@ public class CurrenciesDialog extends BaseDialog implements  CurrenciesDialogMvp
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getAccountComponent().inject(this);
-
+        getFragmentComponent().inject(this);
     }
 
     @Override
@@ -83,7 +82,7 @@ public class CurrenciesDialog extends BaseDialog implements  CurrenciesDialogMvp
         btnCancel = rootView.findViewById(R.id.btn_cancel);
     }
 
-    public FragmentComponent getAccountComponent() {
+    public FragmentComponent getFragmentComponent() {
         FragmentActivity activity = getActivity();
         if (activity != null) {
             return ((MyApplication) getActivity().getApplication())

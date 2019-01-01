@@ -21,7 +21,7 @@ import com.example.android.bookkeeping.di.components.AccountComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.di.modules.StorageModule;
 import com.example.android.bookkeeping.di.modules.UrlParserModule;
-import com.example.android.bookkeeping.ui.ChartActivity;
+import com.example.android.bookkeeping.ui.chart.ChartActivity;
 import com.example.android.bookkeeping.ui.account.create.CreateAccountActivity;
 import com.example.android.bookkeeping.ui.adapters.AccountsListAdapter;
 import com.example.android.bookkeeping.ui.cloud.FirebaseAuthActivity;

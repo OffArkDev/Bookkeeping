@@ -4,6 +4,7 @@ import android.app.DialogFragment;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,12 +14,16 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 
+import com.example.android.bookkeeping.MyApplication;
 import com.example.android.bookkeeping.R;
+import com.example.android.bookkeeping.di.components.FragmentComponent;
+import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.ui.dialogs.DialogCommunicator;
+import com.example.android.bookkeeping.ui.mvp.BaseDialog;
 
 import javax.inject.Inject;
 
-public class CurrenciesHistoryDialog extends DialogFragment implements CurrenciesHistoryMvpView{
+public class CurrenciesHistoryDialog extends BaseDialog implements CurrenciesHistoryMvpView{
 
     private View rootView;
     private GridView gridView;
@@ -41,6 +46,12 @@ public class CurrenciesHistoryDialog extends DialogFragment implements Currencie
         this.args = args;
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getFragmentComponent().inject(this);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -57,6 +68,16 @@ public class CurrenciesHistoryDialog extends DialogFragment implements Currencie
         initAdapter();
 
         return rootView;
+    }
+
+
+    public FragmentComponent getFragmentComponent() {
+        FragmentActivity activity = getActivity();
+        if (activity != null) {
+            return ((MyApplication) getActivity().getApplication())
+                    .getApplicationComponent()
+                    .newFragmentComponent(new ActivityModule(activity));
+        } else return null;
     }
 
     public void setDialogCommunicator(DialogCommunicator dialogCommunicator) {

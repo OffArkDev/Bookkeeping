@@ -13,10 +13,16 @@ import com.example.android.bookkeeping.ui.account.create.CreateAccountMvpPresent
 import com.example.android.bookkeeping.ui.account.create.CreateAccountMvpView;
 import com.example.android.bookkeeping.ui.account.create.CreateAccountPresenter;
 import com.example.android.bookkeeping.ui.adapters.AccountsListAdapter;
+import com.example.android.bookkeeping.ui.chart.ChartMvpPresenter;
+import com.example.android.bookkeeping.ui.chart.ChartMvpView;
+import com.example.android.bookkeeping.ui.chart.ChartPresenter;
 import com.example.android.bookkeeping.ui.dialogs.currencies.CurrenciesDialog;
 import com.example.android.bookkeeping.ui.dialogs.currencies.CurrenciesDialogMvpPresenter;
 import com.example.android.bookkeeping.ui.dialogs.currencies.CurrenciesDialogMvpView;
 import com.example.android.bookkeeping.ui.dialogs.currencies.CurrenciesDialogPresenter;
+import com.example.android.bookkeeping.ui.dialogs.history.CurrenciesHistoryMvpPresenter;
+import com.example.android.bookkeeping.ui.dialogs.history.CurrenciesHistoryMvpView;
+import com.example.android.bookkeeping.ui.dialogs.history.CurrenciesHistoryPresenter;
 import com.example.android.bookkeeping.ui.transaction.TransactionMvpPresenter;
 import com.example.android.bookkeeping.ui.transaction.TransactionMvpView;
 import com.example.android.bookkeeping.ui.transaction.TransactionPresenter;
@@ -84,5 +90,16 @@ public class ActivityModule {
         return presenter;
     }
 
+    @Singleton
+    @Provides
+    ChartMvpPresenter<ChartMvpView> provideChartMvpPresenter(ChartPresenter<ChartMvpView> presenter) {
+        return presenter;
+    }
+
+    @Singleton
+    @Provides
+    CurrenciesHistoryMvpPresenter<CurrenciesHistoryMvpView> provideCurrenciesHistoryPresenter(CurrenciesHistoryPresenter<CurrenciesHistoryMvpView> presenter) {
+        return presenter;
+    }
 
 }

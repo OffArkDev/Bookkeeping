@@ -3,7 +3,7 @@ package com.example.android.bookkeeping.di.components;
 
 import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.di.modules.UrlParserModule;
-import com.example.android.bookkeeping.ui.ChartActivity;
+import com.example.android.bookkeeping.ui.chart.ChartActivity;
 
 import javax.inject.Singleton;
 
