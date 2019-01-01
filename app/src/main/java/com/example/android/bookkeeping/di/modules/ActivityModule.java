@@ -17,6 +17,12 @@ import com.example.android.bookkeeping.ui.dialogs.currencies.CurrenciesDialog;
 import com.example.android.bookkeeping.ui.dialogs.currencies.CurrenciesDialogMvpPresenter;
 import com.example.android.bookkeeping.ui.dialogs.currencies.CurrenciesDialogMvpView;
 import com.example.android.bookkeeping.ui.dialogs.currencies.CurrenciesDialogPresenter;
+import com.example.android.bookkeeping.ui.transaction.TransactionMvpPresenter;
+import com.example.android.bookkeeping.ui.transaction.TransactionMvpView;
+import com.example.android.bookkeeping.ui.transaction.TransactionPresenter;
+import com.example.android.bookkeeping.ui.transaction.create.CreateTransactionMvpPresenter;
+import com.example.android.bookkeeping.ui.transaction.create.CreateTransactionMvpView;
+import com.example.android.bookkeeping.ui.transaction.create.CreateTransactionPresenter;
 
 import java.util.ArrayList;
 
@@ -63,6 +69,18 @@ public class ActivityModule {
     @Singleton
     @Provides
     CurrenciesDialogMvpPresenter<CurrenciesDialogMvpView> provideCurrenciesDialogMvpPresenter(CurrenciesDialogPresenter<CurrenciesDialogMvpView> presenter) {
+        return presenter;
+    }
+
+    @Singleton
+    @Provides
+    TransactionMvpPresenter<TransactionMvpView> provideTransactionMvpPresenter(TransactionPresenter<TransactionMvpView> presenter) {
+        return presenter;
+    }
+
+    @Singleton
+    @Provides
+    CreateTransactionMvpPresenter<CreateTransactionMvpView> provideCreateTransactionMvpPresenter(CreateTransactionPresenter<CreateTransactionMvpView> presenter) {
         return presenter;
     }
 

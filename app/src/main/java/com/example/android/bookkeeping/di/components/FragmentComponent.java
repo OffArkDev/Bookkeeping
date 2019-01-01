@@ -4,6 +4,7 @@ import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.ui.account.create.CreateAccountActivity;
 import com.example.android.bookkeeping.ui.dialogs.CurrenciesHistoryDialog;
 import com.example.android.bookkeeping.ui.dialogs.currencies.CurrenciesDialog;
+import com.example.android.bookkeeping.ui.transaction.create.CreateTransactionActivity;
 
 import javax.inject.Singleton;
 
@@ -19,6 +20,8 @@ public interface FragmentComponent {
     void inject(CurrenciesDialog currenciesDialog);
 
     void inject(CurrenciesHistoryDialog currenciesHistoryDialog);
+
+    void inject(CreateTransactionActivity createTransactionActivity);
 
 
 }

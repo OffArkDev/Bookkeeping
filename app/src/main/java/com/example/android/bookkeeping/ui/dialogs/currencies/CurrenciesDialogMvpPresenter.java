@@ -13,4 +13,8 @@ public interface CurrenciesDialogMvpPresenter<V extends CurrenciesDialogMvpView>
 
     String getCurrency(int id);
 
+    void btnCancelClick();
+
+    void itemGridViewClick(int id);
+
 }

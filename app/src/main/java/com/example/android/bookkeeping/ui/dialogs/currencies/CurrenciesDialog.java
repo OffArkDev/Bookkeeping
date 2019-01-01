@@ -97,16 +97,14 @@ public class CurrenciesDialog extends BaseDialog implements  CurrenciesDialogMvp
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dismissDialog();
+                presenter.btnCancelClick();
             }
         });
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String currency = presenter.getCurrency((int) id);
-                dialogCommunicator.sendRequest(1, currency);
-                dismissDialog();
+                presenter.itemGridViewClick((int) id);
             }
         });
     }
@@ -126,8 +124,9 @@ public class CurrenciesDialog extends BaseDialog implements  CurrenciesDialogMvp
     }
 
     @Override
-    public void setResult() {
-
+    public void returnResult(String chosenCurrency) {
+        dialogCommunicator.sendRequest(1, chosenCurrency);
+        dismissDialog();
     }
 
     @Override

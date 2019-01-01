@@ -32,4 +32,13 @@ public class CurrenciesDialogPresenter<V extends CurrenciesDialogMvpView> extend
         return currencies[id];
     }
 
+    @Override
+    public void btnCancelClick() {
+        getMvpView().dismissDialog();
+    }
+
+    @Override
+    public void itemGridViewClick(int id) {
+        getMvpView().returnResult(currencies[id]);
+    }
 }

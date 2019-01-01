@@ -21,7 +21,7 @@ import com.example.android.bookkeeping.ui.mvp.MvpView;
 
 import javax.inject.Inject;
 
-public class CreateAccountActivity extends BaseActivity implements DialogCommunicator, MvpView {
+public class CreateAccountActivity extends BaseActivity implements DialogCommunicator, CreateAccountMvpView {
 
     private EditText nameAccount;
     private EditText valueAccount;
@@ -66,7 +66,7 @@ public class CreateAccountActivity extends BaseActivity implements DialogCommuni
         valueAccount = findViewById(R.id.value_create_account);
     }
 
-    public void setRatesFromIntent() {
+    private void setRatesFromIntent() {
         Intent intent = getIntent();
         presenter.getRatesFromIntent(intent);
     }
@@ -83,35 +83,41 @@ public class CreateAccountActivity extends BaseActivity implements DialogCommuni
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                        String name = nameAccount.getText().toString();
-                        String value = valueAccount.getText().toString();
-                        String currency = btnCurrency.getText().toString();
-                        if (name.equals("")) {
-                            Toast.makeText(CreateAccountActivity.this, getString(R.string.write_name), Toast.LENGTH_LONG).show();
-                        } else {
-                            Intent resultIntent = new Intent();
-                            resultIntent.putExtra("name", name);
-                            resultIntent.putExtra("value", value);
-                            resultIntent.putExtra("currency", currency);
-                            setResult(RESULT_OK, resultIntent);
-                            finish();
-                        }
-                }
+                presenter.btnDoneClick();
+            }
         });
 
         btnCurrency.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDialog();
+                presenter.btnCurrencyClick();
             }
         });
     }
 
-    public void showDialog() {
+    @Override
+    public void showCurrenciesDialog() {
         Bundle args = new Bundle();
         args.putStringArray("currencies", presenter.getRatesNames());
         currenciesDialog.setArguments(args);
         currenciesDialog.show(getSupportFragmentManager(), "currency");
+    }
+
+    @Override
+    public void returnActivityResult() {
+        String name = nameAccount.getText().toString();
+        String value = valueAccount.getText().toString();
+        String currency = btnCurrency.getText().toString();
+        if (name.equals("")) {
+            Toast.makeText(CreateAccountActivity.this, getString(R.string.write_name), Toast.LENGTH_LONG).show();
+        } else {
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra("name", name);
+            resultIntent.putExtra("value", value);
+            resultIntent.putExtra("currency", currency);
+            setResult(RESULT_OK, resultIntent);
+            finish();
+        }
     }
 
     @Override

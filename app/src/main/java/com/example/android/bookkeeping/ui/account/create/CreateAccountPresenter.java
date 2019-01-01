@@ -24,4 +24,14 @@ public class CreateAccountPresenter<V extends CreateAccountMvpView> extends Base
     public String[] getRatesNames() {
         return ratesNames;
     }
+
+    @Override
+    public void btnCurrencyClick() {
+        getMvpView().showCurrenciesDialog();
+    }
+
+    @Override
+    public void btnDoneClick() {
+        getMvpView().returnActivityResult();
+    }
 }

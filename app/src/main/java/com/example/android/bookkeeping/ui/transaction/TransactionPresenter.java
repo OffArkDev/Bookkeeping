@@ -41,6 +41,10 @@ public class TransactionPresenter<V extends TransactionMvpView> extends BasePres
     @Inject
     public TransactionsRepository transactionsRepository;
 
+    @Inject
+    public TransactionPresenter() {
+    }
+
     @Override
     public void onAttach(V mvpView) {
         super.onAttach(mvpView);
@@ -120,7 +124,7 @@ public class TransactionPresenter<V extends TransactionMvpView> extends BasePres
     }
 
     @Override
-    public void createTransaction(String currency, String value, String type, String name, String comment) {
+    public void createTransaction(String name, String value, String currency, String type, String comment) {
         String valueRUB = "";
         if (currency.equals("RUB")) {
             valueRUB = value;

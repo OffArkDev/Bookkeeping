@@ -49,7 +49,6 @@ public class TransactionsActivity extends AppCompatActivity implements Transacti
 
     private TransactionsListAdapter transactionsListAdapter;
 
-
     boolean isDeleteClicked = false;
 
     @Inject
@@ -104,6 +103,13 @@ public class TransactionsActivity extends AppCompatActivity implements Transacti
                 presenter.btnDeleteClick();
             }
         });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                presenter.itemTransactionsClick((int) id, isDeleteClicked);
+            }
+        });
     }
 
     public void initAdapter() {
@@ -155,7 +161,7 @@ public class TransactionsActivity extends AppCompatActivity implements Transacti
                     String value = data.getStringExtra("value");
                     String currency = data.getStringExtra("currency");
                     String comment = data.getStringExtra("comment");
-                    presenter.createTransaction(type, name, value, currency, comment);
+                    presenter.createTransaction(name, value, currency, type, comment);
                 }
             }
         }

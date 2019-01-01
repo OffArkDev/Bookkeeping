@@ -10,4 +10,8 @@ public interface CreateAccountMvpPresenter<V extends CreateAccountMvpView> exten
 
     String[] getRatesNames();
 
+    void btnCurrencyClick();
+
+    void btnDoneClick();
+
 }
