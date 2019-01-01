@@ -39,12 +39,12 @@
 
 
         </activity>
-        <activity android:name=".ui.cloud.FirebaseAuthActivity"
+        <activity android:name=".ui.cloud.auth.FirebaseAuthActivity"
             android:label="@string/cloud"
             >
 
         </activity>
-        <activity android:name=".ui.cloud.FirebaseStorageActivity"
+        <activity android:name=".ui.cloud.storage.FirebaseStorageActivity"
             android:label="@string/cloud_storage"
             >
         </activity>

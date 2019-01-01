@@ -16,6 +16,9 @@ import com.example.android.bookkeeping.ui.adapters.AccountsListAdapter;
 import com.example.android.bookkeeping.ui.chart.ChartMvpPresenter;
 import com.example.android.bookkeeping.ui.chart.ChartMvpView;
 import com.example.android.bookkeeping.ui.chart.ChartPresenter;
+import com.example.android.bookkeeping.ui.cloud.auth.FirebaseAuthMvpPresenter;
+import com.example.android.bookkeeping.ui.cloud.auth.FirebaseAuthMvpView;
+import com.example.android.bookkeeping.ui.cloud.auth.FirebaseAuthPresenter;
 import com.example.android.bookkeeping.ui.dialogs.currencies.CurrenciesDialog;
 import com.example.android.bookkeeping.ui.dialogs.currencies.CurrenciesDialogMvpPresenter;
 import com.example.android.bookkeeping.ui.dialogs.currencies.CurrenciesDialogMvpView;
@@ -102,4 +105,9 @@ public class ActivityModule {
         return presenter;
     }
 
+    @Singleton
+    @Provides
+    FirebaseAuthMvpPresenter<FirebaseAuthMvpView> provideFirebaseAuthPresenter(FirebaseAuthPresenter<FirebaseAuthMvpView> presenter) {
+        return presenter;
+    }
 }

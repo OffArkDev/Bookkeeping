@@ -2,7 +2,7 @@ package com.example.android.bookkeeping.di.components;
 
 import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.di.modules.FirebaseModule;
-import com.example.android.bookkeeping.ui.cloud.FirebaseAuthActivity;
+import com.example.android.bookkeeping.ui.cloud.auth.FirebaseAuthActivity;
 
 import javax.inject.Singleton;
 

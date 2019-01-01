@@ -1,4 +1,4 @@
-package com.example.android.bookkeeping.ui.cloud;
+package com.example.android.bookkeeping.ui.cloud.auth;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,17 +18,16 @@ import com.example.android.bookkeeping.R;
 import com.example.android.bookkeeping.di.components.CloudAuthComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.di.modules.FirebaseModule;
-import com.example.android.bookkeeping.ui.account.AccountsActivity;
+import com.example.android.bookkeeping.ui.cloud.storage.FirebaseStorageActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import javax.inject.Inject;
 
 
-public class FirebaseAuthActivity extends AppCompatActivity {
+public class FirebaseAuthActivity extends AppCompatActivity implements FirebaseAuthMvpView{
 
     private static final String TAG = "myfirebaseauth";
 
@@ -41,10 +40,10 @@ public class FirebaseAuthActivity extends AppCompatActivity {
     private ProgressBar pbProgress;
 
     @Inject
-    public Context context;
+    public FirebaseAuth mAuth;
 
     @Inject
-    public FirebaseAuth mAuth;
+    FirebaseAuthMvpPresenter<FirebaseAuthMvpView> presenter;
 
     public static Intent getStartIntent(Context context) {
         Intent intent = new Intent(context, FirebaseAuthActivity.class);
@@ -78,9 +77,9 @@ public class FirebaseAuthActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (etPassword.getText().length() < 6) {
-                    Toast.makeText(FirebaseAuthActivity.this, R.string.password_longer, Toast.LENGTH_SHORT).show();
+                    showMessage(R.string.password_longer);
                 } else {
-                    registration(etEmail.getText().toString(), etPassword.getText().toString());
+                    presenter.btnRegistrationClick(etEmail.getText().toString(), etPassword.getText().toString());
                 }
             }
         });
@@ -88,7 +87,7 @@ public class FirebaseAuthActivity extends AppCompatActivity {
         btnAuth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                signIn(etEmail.getText().toString().trim(), etPassword.getText().toString());
+                presenter.btnAuthorizationClick(etEmail.getText().toString(), etPassword.getText().toString());
             }
         });
 
@@ -96,59 +95,93 @@ public class FirebaseAuthActivity extends AppCompatActivity {
 
     public void signIn(final String email , String password)
     {
-        showOrHideProgress(true);
+        showLoading();
         mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()) {
-                    Intent intent = new Intent(context, FirebaseStorageActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
-                    intent.putExtra("email", email);
-                    startActivity(intent);
-                    finish();
-                    showOrHideProgress(false);
+                    openFirebaseStorageActivity(email);
+                    hideLoading();
                 }
                 else {
-                    Toast.makeText(FirebaseAuthActivity.this, R.string.auth_fail, Toast.LENGTH_SHORT).show();
-                    showOrHideProgress(false);
+                    showMessage(R.string.auth_fail);
+                    hideLoading();
                 }
             }
         });
     }
+
+    @Override
+    public void openFirebaseStorageActivity(String email) {
+        Intent intent = FirebaseStorageActivity.getStartIntent(this, email);
+        startActivity(intent);
+        finish();
+    }
+
     public void registration (String email , String password){
-        showOrHideProgress(true);
+        showLoading();
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful())
                 {
-                    Toast.makeText(FirebaseAuthActivity.this, R.string.reg_success, Toast.LENGTH_SHORT).show();
-                    showOrHideProgress(false);
-
+                    showMessage(R.string.reg_success);
+                    hideLoading();
                 }
                 else {
                     if (task.getException() != null) {
                         Log.i(TAG, task.getException().getMessage());
                         Log.i(TAG, task.getException().toString());
                     }
-                    Toast.makeText(FirebaseAuthActivity.this, R.string.reg_fail, Toast.LENGTH_SHORT).show();
-                    showOrHideProgress(false);
+                    showMessage(R.string.reg_fail);
+                    hideLoading();
                 }
             }
         });
     }
 
-    public void showOrHideProgress(Boolean show) {
-        if (show) {
-            pbProgress.setVisibility(View.VISIBLE);
-            btnAuth.setVisibility(View.GONE);
-            btnReg.setVisibility(View.GONE);
-        } else {
-            pbProgress.setVisibility(View.GONE);
-            btnAuth.setVisibility(View.VISIBLE);
-            btnReg.setVisibility(View.VISIBLE);
-        }
+    @Override
+    public void showLoading() {
+        pbProgress.setVisibility(View.VISIBLE);
+        btnAuth.setVisibility(View.GONE);
+        btnReg.setVisibility(View.GONE);
     }
+
+    @Override
+    public void hideLoading() {
+        pbProgress.setVisibility(View.GONE);
+        btnAuth.setVisibility(View.VISIBLE);
+        btnReg.setVisibility(View.VISIBLE);
+    }
+
+
+
+    @Override
+    public Context getContext() {
+        return this;
+    }
+
+    @Override
+    public void onError(int resId) {
+
+    }
+
+    @Override
+    public void onError(String message) {
+
+    }
+
+    @Override
+    public void showMessage(String message) {
+
+    }
+
+    @Override
+    public void showMessage(int resId) {
+        Toast.makeText(FirebaseAuthActivity.this, resId, Toast.LENGTH_SHORT).show();
+    }
+
+
 
 
 }

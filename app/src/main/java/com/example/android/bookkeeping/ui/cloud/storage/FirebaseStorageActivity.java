@@ -1,6 +1,7 @@
-package com.example.android.bookkeeping.ui.cloud;
+package com.example.android.bookkeeping.ui.cloud.storage;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -66,6 +67,13 @@ public class FirebaseStorageActivity extends AppCompatActivity {
 
     @Inject
     public CompositeDisposable compositeDisposable;
+
+    public static Intent getStartIntent(Context context, String email) {
+        Intent intent = new Intent(context, FirebaseStorageActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
+        intent.putExtra("email", email);
+        return intent;
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
