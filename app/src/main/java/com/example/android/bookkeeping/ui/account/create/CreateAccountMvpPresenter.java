@@ -14,4 +14,7 @@ public interface CreateAccountMvpPresenter<V extends CreateAccountMvpView> exten
 
     void btnDoneClick();
 
+    boolean checkInputDataFormat(String name);
+
+
 }

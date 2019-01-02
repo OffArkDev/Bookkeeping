@@ -9,7 +9,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.example.android.bookkeeping.Constants;
 import com.example.android.bookkeeping.MyApplication;
@@ -132,12 +131,10 @@ public class CreateTransactionActivity extends BaseActivity implements DialogCom
         String name = etName.getText().toString();
         String value = etValue.getText().toString();
         String comment = etComment.getText().toString();
-        String date = etDate.getText().toString();
+        String date  = etDate.getText().toString();
         String currency = btnCurrency.getText().toString();
         String type = spinnerType.getSelectedItem().toString();
-        if (value.equals("")) {
-            Toast.makeText(CreateTransactionActivity.this, getString(R.string.write_value), Toast.LENGTH_LONG).show();
-        } else {
+        if (presenter.checkInputDataFormat(value, date)) {
             Intent resultIntent = new Intent();
             resultIntent.putExtra("name", name);
             resultIntent.putExtra("value", value);

@@ -17,5 +17,7 @@ public interface CreateTransactionMvpPresenter<V extends CreateTransactionMvpVie
 
     ArrayAdapter<String> initAccountsAdapter();
 
+    boolean checkInputDataFormat(String value, String sDate);
+
 
 }

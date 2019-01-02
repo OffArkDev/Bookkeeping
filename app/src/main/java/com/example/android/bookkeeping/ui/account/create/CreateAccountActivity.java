@@ -78,8 +78,6 @@ public class CreateAccountActivity extends BaseActivity implements DialogCommuni
         currenciesDialog.setDialogCommunicator(this);
     }
 
-
-
     @Override
     public void setOnClickListeners() {
         btnDone.setOnClickListener(new View.OnClickListener() {
@@ -110,9 +108,7 @@ public class CreateAccountActivity extends BaseActivity implements DialogCommuni
         String name = nameAccount.getText().toString();
         String value = valueAccount.getText().toString();
         String currency = btnCurrency.getText().toString();
-        if (name.equals("")) {
-            Toast.makeText(CreateAccountActivity.this, getString(R.string.write_name), Toast.LENGTH_LONG).show();
-        } else {
+        if (presenter.checkInputDataFormat(name)) {
             Intent resultIntent = new Intent();
             resultIntent.putExtra("name", name);
             resultIntent.putExtra("value", value);
