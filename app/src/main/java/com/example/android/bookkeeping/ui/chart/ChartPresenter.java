@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.example.android.bookkeeping.R;
-import com.example.android.bookkeeping.currency.CurrencyRatesData;
+import com.example.android.bookkeeping.currency.CurrenciesRatesData;
 import com.example.android.bookkeeping.currency.UrlParser;
 import com.example.android.bookkeeping.ui.mvp.BasePresenter;
 import com.github.mikephil.charting.data.Entry;
@@ -30,7 +30,7 @@ public class ChartPresenter<V extends ChartMvpView> extends BasePresenter<V> imp
 
     private final static String TAG = "ChartPresenter";
 
-    private ArrayList<CurrencyRatesData> listHistoryCurrencies = new ArrayList<>();
+    private ArrayList<CurrenciesRatesData> listHistoryCurrencies = new ArrayList<>();
     private String[] ratesNames;
     private String chosenCurrency;
     private ArrayList<String> timesList = new ArrayList<>();
@@ -70,14 +70,14 @@ public class ChartPresenter<V extends ChartMvpView> extends BasePresenter<V> imp
         Observable.create(urlParser)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<CurrencyRatesData>() {
+                .subscribe(new Observer<CurrenciesRatesData>() {
                     @Override
                     public void onSubscribe(Disposable d) {
                         compositeDisposable.add(d);
                     }
 
                     @Override
-                    public void onNext(CurrencyRatesData data) {
+                    public void onNext(CurrenciesRatesData data) {
                         listHistoryCurrencies.add(data);
                     }
 
@@ -119,14 +119,14 @@ public class ChartPresenter<V extends ChartMvpView> extends BasePresenter<V> imp
         LineDataSet lDataSet1 = new LineDataSet(null, "");
         ArrayList<Entry> dataSet = new ArrayList<>();
         for (int j = 0; j < listHistoryCurrencies.size(); j++) {
-            CurrencyRatesData data = listHistoryCurrencies.get(j);
+            CurrenciesRatesData data = listHistoryCurrencies.get(j);
             Entry entry = new Entry(j, data.getRate(chosenCurrency).floatValue());
             dataSet.add(entry);
             lDataSet1 = new LineDataSet(dataSet, chosenCurrency);
             lDataSet1.setCircleColor(R.color.green);
         }
         lines.add(lDataSet1);
-        for (CurrencyRatesData data: listHistoryCurrencies) {
+        for (CurrenciesRatesData data: listHistoryCurrencies) {
             timesList.add(data.getTime());
         }
 

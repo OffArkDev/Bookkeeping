@@ -8,13 +8,12 @@ public interface CreateAccountMvpPresenter<V extends CreateAccountMvpView> exten
 
     void getRatesFromIntent(Intent intent);
 
-    String[] getRatesNames();
+    String[] getCurrenciesNames();
 
     void btnCurrencyClick();
 
     void btnDoneClick();
 
     boolean checkInputDataFormat(String name);
-
 
 }

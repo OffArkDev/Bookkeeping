@@ -22,8 +22,6 @@ public interface FragmentComponent {
 
     void inject(CurrenciesHistoryDialog currenciesHistoryDialog);
 
-    void inject(CreateTransactionActivity createTransactionActivity);
-
     void inject(DateDialog dateDialog);
 
 

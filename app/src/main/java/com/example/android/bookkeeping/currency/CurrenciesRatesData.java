@@ -1,16 +1,18 @@
 package com.example.android.bookkeeping.currency;
 
+import com.example.android.bookkeeping.utils.DateUtil;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 
 
 
-public class CurrencyRatesData {
+public class CurrenciesRatesData {
     String time;
     List<Pair> ratesList;
 
-    public CurrencyRatesData(List<Pair> ratesList, String time) {
+    public CurrenciesRatesData(List<Pair> ratesList, String time) {
         this.ratesList = ratesList;
         this.time = time;
     }

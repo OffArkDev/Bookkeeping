@@ -2,6 +2,7 @@ package com.example.android.bookkeeping.ui.transaction;
 
 import android.content.Intent;
 
+import com.example.android.bookkeeping.currency.CurrenciesRatesData;
 import com.example.android.bookkeeping.ui.adapters.TransactionsListAdapter;
 import com.example.android.bookkeeping.ui.mvp.MvpPresenter;
 
@@ -15,9 +16,9 @@ public interface TransactionMvpPresenter <V extends TransactionMvpView> extends 
 
     TransactionsListAdapter initTransactionsAdapter();
 
-    void getRatesFromIntent(Intent intent);
+    void getDataFromIntent(Intent intent);
 
-    void createTransaction(String name, String value, String currency, String date, String type, String comment);
+    void createTransaction(String name, String value, String currency, String date, String type, String comment, CurrenciesRatesData currenciesRatesData);
 
 
 }

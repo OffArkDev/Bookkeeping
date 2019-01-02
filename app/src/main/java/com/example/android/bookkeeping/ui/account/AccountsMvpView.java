@@ -2,7 +2,7 @@ package com.example.android.bookkeeping.ui.account;
 
 import android.content.Context;
 
-import com.example.android.bookkeeping.currency.CurrencyRatesData;
+import com.example.android.bookkeeping.currency.CurrenciesRatesData;
 import com.example.android.bookkeeping.data.model.AccountSaver;
 import com.example.android.bookkeeping.ui.mvp.MvpView;
 
@@ -18,13 +18,13 @@ public interface AccountsMvpView extends MvpView {
 
     void updateListView(List<AccountSaver> listAccounts);
 
-    void openCreateAccountActivity(CurrencyRatesData currencyRatesData);
+    void openCreateAccountActivity(String[] currenciesNames);
 
-    void openTransactionsActivity(int accountId, List<AccountSaver> listAccounts, CurrencyRatesData currencyRatesData);
+    void openTransactionsActivity(int accountId, List<AccountSaver> listAccounts, String[] currenciesNames);
 
     void changeDeleteButtonState();
 
     void openCloudActivity();
 
-    void openChartActivity(CurrencyRatesData currencyRatesData);
+    void openChartActivity(CurrenciesRatesData currenciesRatesData);
 }

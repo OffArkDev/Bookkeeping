@@ -2,7 +2,7 @@ package com.example.android.bookkeeping.ui.account;
 
 import android.util.Log;
 
-import com.example.android.bookkeeping.currency.CurrencyRatesData;
+import com.example.android.bookkeeping.currency.CurrenciesRatesData;
 import com.example.android.bookkeeping.currency.UrlParser;
 import com.example.android.bookkeeping.data.model.AccountSaver;
 import com.example.android.bookkeeping.repository.AccountsRepository;
@@ -28,7 +28,7 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
 
     private static final String TAG = "BasePresenter";
 
-    private CurrencyRatesData currencyRatesData;
+    private CurrenciesRatesData currenciesRatesData;
 
     @Inject
     public UrlParser urlParser;
@@ -67,15 +67,15 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
         Observable.create(urlParser)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<CurrencyRatesData>() {
+                .subscribe(new Observer<CurrenciesRatesData>() {
                     @Override
                     public void onSubscribe(Disposable d) {
                         compositeDisposable.add(d);
                     }
 
                     @Override
-                    public void onNext(CurrencyRatesData data) {
-                        currencyRatesData = data;
+                    public void onNext(CurrenciesRatesData data) {
+                        currenciesRatesData = data;
                     }
 
                     @Override
@@ -92,7 +92,7 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
 
     @Override
     public void btnCreateAccountClick() {
-        getMvpView().openCreateAccountActivity(currencyRatesData);
+        getMvpView().openCreateAccountActivity(currenciesRatesData.getCurrenciesList());
     }
 
     @Override
@@ -103,7 +103,7 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
 
     @Override
     public void btnChartClick() {
-        getMvpView().openChartActivity(currencyRatesData);
+        getMvpView().openChartActivity(currenciesRatesData);
     }
 
     @Override
@@ -111,7 +111,7 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
         if (isDeleteClicked) {
             deleteAccount(accountId);
         } else {
-            getMvpView().openTransactionsActivity(accountId, listAccounts, currencyRatesData);
+            getMvpView().openTransactionsActivity(accountId, listAccounts, currenciesRatesData.getCurrenciesList());
         }
     }
 
@@ -178,7 +178,7 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
         if (currency.equals("RUB")) {
             valueRUB = value;
         } else if (!value.equals("") && !currency.equals("")) {
-           valueRUB = currencyRatesData.convertCurrency(new BigDecimal(value), currency, "RUB").toString();
+           valueRUB = currenciesRatesData.convertCurrency(new BigDecimal(value), currency, "RUB").toString();
         }
         return valueRUB;
     }

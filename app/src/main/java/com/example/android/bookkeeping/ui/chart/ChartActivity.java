@@ -4,16 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
 import com.example.android.bookkeeping.Constants;
 import com.example.android.bookkeeping.MyApplication;
 import com.example.android.bookkeeping.R;
-import com.example.android.bookkeeping.currency.CurrencyRatesData;
-import com.example.android.bookkeeping.currency.UrlParser;
+import com.example.android.bookkeeping.currency.CurrenciesRatesData;
 
 import com.example.android.bookkeeping.di.components.ChartComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
@@ -23,25 +20,12 @@ import com.example.android.bookkeeping.ui.dialogs.DialogCommunicator;
 import com.example.android.bookkeeping.ui.mvp.BaseActivity;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
-
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 
 public class ChartActivity extends BaseActivity implements DialogCommunicator, ChartMvpView {
 
@@ -56,9 +40,9 @@ public class ChartActivity extends BaseActivity implements DialogCommunicator, C
     @Inject
     public ChartMvpPresenter<ChartMvpView> presenter;
 
-    public static Intent getStartIntent(Context context, CurrencyRatesData currencyRatesData) {
+    public static Intent getStartIntent(Context context, CurrenciesRatesData currenciesRatesData) {
         Intent intent = new Intent(context, ChartActivity.class);
-        intent.putExtra("rates", currencyRatesData.getCurrenciesList());
+        intent.putExtra("rates", currenciesRatesData.getCurrenciesList());
         return intent;
     }
 

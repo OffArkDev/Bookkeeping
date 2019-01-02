@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -15,7 +13,7 @@ import android.widget.Toast;
 
 import com.example.android.bookkeeping.MyApplication;
 import com.example.android.bookkeeping.R;
-import com.example.android.bookkeeping.currency.CurrencyRatesData;
+import com.example.android.bookkeeping.currency.CurrenciesRatesData;
 import com.example.android.bookkeeping.data.model.AccountSaver;
 import com.example.android.bookkeeping.data.model.TransactionSaver;
 import com.example.android.bookkeeping.di.components.TransactionComponent;
@@ -26,18 +24,9 @@ import com.example.android.bookkeeping.ui.mvp.BaseActivity;
 import com.example.android.bookkeeping.ui.transaction.create.CreateTransactionActivity;
 import com.google.gson.Gson;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 
 import javax.inject.Inject;
-
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Action;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 
 public class TransactionsActivity extends BaseActivity implements TransactionMvpView {
 
@@ -57,12 +46,10 @@ public class TransactionsActivity extends BaseActivity implements TransactionMvp
 
 
 
-    public static Intent getStartIntent(Context context, int accountId, List<AccountSaver> listAccounts, CurrencyRatesData currencyRatesData) {
+    public static Intent getStartIntent(Context context, int accountId, List<AccountSaver> listAccounts, String[] currenciesNames) {
         Intent intentTransactions = new Intent(context, TransactionsActivity.class);
         intentTransactions.putExtra("accountId", listAccounts.get(accountId).getId());
-        Gson gson = new Gson();
-        String json = gson.toJson(currencyRatesData);
-        intentTransactions.putExtra("currencyRates", json);
+        intentTransactions.putExtra("currenciesNames", currenciesNames);
         return intentTransactions;
     }
 
@@ -72,7 +59,7 @@ public class TransactionsActivity extends BaseActivity implements TransactionMvp
         setContentView(R.layout.activity_transactions_list);
         getTransactionComponent().inject(this);
         findViews();
-        getRatesFromIntent();
+        getDataFromIntent();
         setOnClickListeners();
         presenter.onAttach(this);
         initAdapter();
@@ -118,9 +105,9 @@ public class TransactionsActivity extends BaseActivity implements TransactionMvp
         listView.setAdapter(transactionsListAdapter);
     }
 
-    public void getRatesFromIntent() {
+    public void getDataFromIntent() {
         Intent intent = getIntent();
-        presenter.getRatesFromIntent(intent);
+        presenter.getDataFromIntent(intent);
 
     }
 
@@ -141,8 +128,8 @@ public class TransactionsActivity extends BaseActivity implements TransactionMvp
         }
     }
 
-    public void openCreateTransactionActivity(CurrencyRatesData currencyRatesData) {
-        Intent intent = CreateTransactionActivity.getStartIntent(this, currencyRatesData);
+    public void openCreateTransactionActivity(String[] ratesNames) {
+        Intent intent = CreateTransactionActivity.getStartIntent(this, ratesNames);
         startActivityForResult(intent, 1);
     }
 
@@ -156,9 +143,10 @@ public class TransactionsActivity extends BaseActivity implements TransactionMvp
                     String name = data.getStringExtra("name");
                     String date = data.getStringExtra("date");
                     String value = data.getStringExtra("value");
+                    CurrenciesRatesData currenciesRatesData = new Gson().fromJson(data.getStringExtra("currencyRates"), CurrenciesRatesData.class);
                     String currency = data.getStringExtra("currency");
                     String comment = data.getStringExtra("comment");
-                    presenter.createTransaction(name, value, currency, date, type, comment);
+                    presenter.createTransaction(name, value, currency, date, type, comment, currenciesRatesData);
                 }
             }
         }

@@ -7,17 +7,15 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.example.android.bookkeeping.MyApplication;
 import com.example.android.bookkeeping.R;
-import com.example.android.bookkeeping.currency.CurrencyRatesData;
+import com.example.android.bookkeeping.currency.CurrenciesRatesData;
 import com.example.android.bookkeeping.di.components.FragmentComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.ui.dialogs.currencies.CurrenciesDialog;
 import com.example.android.bookkeeping.ui.dialogs.DialogCommunicator;
 import com.example.android.bookkeeping.ui.mvp.BaseActivity;
-import com.example.android.bookkeeping.ui.mvp.MvpView;
 
 import javax.inject.Inject;
 
@@ -33,9 +31,9 @@ public class CreateAccountActivity extends BaseActivity implements DialogCommuni
 
     private CurrenciesDialog currenciesDialog;
 
-    public static Intent getStartIntent(Context context, CurrencyRatesData currencyRatesData) {
+    public static Intent getStartIntent(Context context, String[] currenciesNames) {
         Intent intent = new Intent(context, CreateAccountActivity.class);
-        intent.putExtra("rates", currencyRatesData.getCurrenciesList());
+        intent.putExtra("currenciesNames", currenciesNames);
         return intent;
     }
 
@@ -98,7 +96,7 @@ public class CreateAccountActivity extends BaseActivity implements DialogCommuni
     @Override
     public void showCurrenciesDialog() {
         Bundle args = new Bundle();
-        args.putStringArray("currencies", presenter.getRatesNames());
+        args.putStringArray("currencies", presenter.getCurrenciesNames());
         currenciesDialog.setArguments(args);
         currenciesDialog.show(getSupportFragmentManager(), "currency");
     }

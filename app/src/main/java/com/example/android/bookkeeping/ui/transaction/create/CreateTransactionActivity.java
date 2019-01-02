@@ -8,18 +8,21 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 
 import com.example.android.bookkeeping.Constants;
 import com.example.android.bookkeeping.MyApplication;
 import com.example.android.bookkeeping.R;
-import com.example.android.bookkeeping.currency.CurrencyRatesData;
-import com.example.android.bookkeeping.di.components.FragmentComponent;
+import com.example.android.bookkeeping.currency.CurrenciesRatesData;
+import com.example.android.bookkeeping.di.components.ChartComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
+import com.example.android.bookkeeping.di.modules.UrlParserModule;
 import com.example.android.bookkeeping.ui.dialogs.currencies.CurrenciesDialog;
 import com.example.android.bookkeeping.ui.dialogs.DialogCommunicator;
 import com.example.android.bookkeeping.ui.dialogs.date.DateDialog;
 import com.example.android.bookkeeping.ui.mvp.BaseActivity;
+import com.google.gson.Gson;
 
 import javax.inject.Inject;
 
@@ -32,6 +35,7 @@ public class CreateTransactionActivity extends BaseActivity implements DialogCom
     private Button btnCurrency;
     private Spinner spinnerType;
     private Button btnDone;
+    private ProgressBar pbCurrenciesLoading;
 
     private DateDialog dateDialog;
     private CurrenciesDialog currenciesDialog;
@@ -39,9 +43,9 @@ public class CreateTransactionActivity extends BaseActivity implements DialogCom
     @Inject
     CreateTransactionMvpPresenter<CreateTransactionMvpView> presenter;
 
-    public static Intent getStartIntent(Context context, CurrencyRatesData currencyRatesData) {
+    public static Intent getStartIntent(Context context, String[] currenciesNames) {
         Intent intent = new Intent(context, CreateTransactionActivity.class);
-        intent.putExtra("ratesNames", currencyRatesData.getCurrenciesList());
+        intent.putExtra("currenciesNames", currenciesNames);
         return intent;
     }
 
@@ -49,7 +53,7 @@ public class CreateTransactionActivity extends BaseActivity implements DialogCom
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_transaction);
-        getFragmentComponent().inject(this);
+        getChartComponent().inject(this);
         findViews();
         setRatesFromIntent();
         setDialogs();
@@ -59,10 +63,10 @@ public class CreateTransactionActivity extends BaseActivity implements DialogCom
         initAdapter();
     }
 
-    public FragmentComponent getFragmentComponent() {
+    public ChartComponent getChartComponent() {
         return ((MyApplication) getApplication())
                 .getApplicationComponent()
-                .newFragmentComponent(new ActivityModule(this));
+                .newChartComponent(new ActivityModule(this), new UrlParserModule(Constants.URL_HISTORY));
     }
 
     public void findViews() {
@@ -73,11 +77,12 @@ public class CreateTransactionActivity extends BaseActivity implements DialogCom
         spinnerType = findViewById(R.id.transaction_type_spinner);
         btnDone = findViewById(R.id.button_done_create_transaction);
         etDate = findViewById(R.id.edit_transaction_date);
+        pbCurrenciesLoading = findViewById(R.id.progress_bar);
     }
 
     private void setRatesFromIntent() {
         Intent intent = getIntent();
-        presenter.getRatesFromIntent(intent);
+        presenter.getDataFromIntent(intent);
     }
 
     public void initAdapter() {
@@ -121,7 +126,7 @@ public class CreateTransactionActivity extends BaseActivity implements DialogCom
     @Override
     public void showDialog() {
         Bundle args = new Bundle();
-        args.putStringArray("currencies", presenter.getRatesNames());
+        args.putStringArray("currencies", presenter.getCurrenciesNames());
         currenciesDialog.setArguments(args);
         currenciesDialog.show(getSupportFragmentManager(), "currency");
     }
@@ -135,19 +140,36 @@ public class CreateTransactionActivity extends BaseActivity implements DialogCom
         String currency = btnCurrency.getText().toString();
         String type = spinnerType.getSelectedItem().toString();
         if (presenter.checkInputDataFormat(value, date)) {
-            Intent resultIntent = new Intent();
-            resultIntent.putExtra("name", name);
-            resultIntent.putExtra("value", value);
-            resultIntent.putExtra("date", date);
-            resultIntent.putExtra("comment", comment);
-            resultIntent.putExtra("currency", currency);
-            resultIntent.putExtra("type", type);
-            setResult(RESULT_OK, resultIntent);
-            finish();
+            CurrenciesRatesData ratesData = presenter.getCurrenciesRatesData(date);
+            if (ratesData != null) {
+                Intent resultIntent = new Intent();
+                Gson gson = new Gson();
+                String json = gson.toJson(ratesData);
+                resultIntent.putExtra("currencyRates", json);
+                resultIntent.putExtra("name", name);
+                resultIntent.putExtra("value", value);
+                resultIntent.putExtra("date", date);
+                resultIntent.putExtra("comment", comment);
+                resultIntent.putExtra("currency", currency);
+                resultIntent.putExtra("type", type);
+                setResult(RESULT_OK, resultIntent);
+                finish();
+            }
+
         }
     }
 
+    @Override
+    public void showLoading() {
+        pbCurrenciesLoading.setVisibility(View.VISIBLE);
+        btnDone.setVisibility(View.GONE);
+    }
 
+    @Override
+    public void hideLoading() {
+        pbCurrenciesLoading.setVisibility(View.GONE);
+        btnDone.setVisibility(View.VISIBLE);
+    }
 
     @Override
     public void sendRequest(int code, String result) {

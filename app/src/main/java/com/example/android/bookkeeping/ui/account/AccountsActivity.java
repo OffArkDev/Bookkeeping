@@ -15,7 +15,7 @@ import android.widget.Toast;
 import com.example.android.bookkeeping.Constants;
 import com.example.android.bookkeeping.MyApplication;
 import com.example.android.bookkeeping.R;
-import com.example.android.bookkeeping.currency.CurrencyRatesData;
+import com.example.android.bookkeeping.currency.CurrenciesRatesData;
 import com.example.android.bookkeeping.data.model.AccountSaver;
 import com.example.android.bookkeeping.di.components.AccountComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
@@ -159,14 +159,14 @@ public class AccountsActivity extends BaseActivity implements AccountsMvpView {
     }
 
     @Override
-    public void openCreateAccountActivity(CurrencyRatesData currencyRatesData) {
-        Intent intent = CreateAccountActivity.getStartIntent(this, currencyRatesData);
+    public void openCreateAccountActivity(String[] currenciesNames) {
+        Intent intent = CreateAccountActivity.getStartIntent(this, currenciesNames);
         startActivityForResult(intent, 1);
     }
 
     @Override
-    public void openTransactionsActivity(int accountId, List<AccountSaver> listAccounts, CurrencyRatesData currencyRatesData) {
-        Intent intentTransactions = TransactionsActivity.getStartIntent(this, accountId, listAccounts, currencyRatesData);
+    public void openTransactionsActivity(int accountId, List<AccountSaver> listAccounts, String[] currenciesNames) {
+        Intent intentTransactions = TransactionsActivity.getStartIntent(this, accountId, listAccounts, currenciesNames);
         startActivity(intentTransactions);
     }
 
@@ -191,8 +191,8 @@ public class AccountsActivity extends BaseActivity implements AccountsMvpView {
     }
 
     @Override
-    public void openChartActivity(CurrencyRatesData currencyRatesData) {
-        Intent intent = ChartActivity.getStartIntent(this, currencyRatesData);
+    public void openChartActivity(CurrenciesRatesData currenciesRatesData) {
+        Intent intent = ChartActivity.getStartIntent(this, currenciesRatesData);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }

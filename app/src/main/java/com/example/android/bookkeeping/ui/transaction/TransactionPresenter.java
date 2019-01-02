@@ -3,19 +3,15 @@ package com.example.android.bookkeeping.ui.transaction;
 import android.content.Intent;
 import android.util.Log;
 
-import com.example.android.bookkeeping.currency.CurrencyRatesData;
+import com.example.android.bookkeeping.currency.CurrenciesRatesData;
 import com.example.android.bookkeeping.data.model.TransactionSaver;
 import com.example.android.bookkeeping.repository.TransactionsRepository;
 import com.example.android.bookkeeping.ui.adapters.TransactionsListAdapter;
 import com.example.android.bookkeeping.ui.mvp.BasePresenter;
-import com.google.gson.Gson;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -30,10 +26,9 @@ public class TransactionPresenter<V extends TransactionMvpView> extends BasePres
 
     private static final String TAG = "TransactionPresenter";
 
-
     private List<TransactionSaver> listTransactions = new ArrayList<>();
     private long accountId;
-    private CurrencyRatesData currencyRatesData;
+    private String[] currenciesNames;
 
     @Inject
     public CompositeDisposable compositeDisposable;
@@ -67,7 +62,7 @@ public class TransactionPresenter<V extends TransactionMvpView> extends BasePres
 
     @Override
     public void btnCreateTransactionClick() {
-        getMvpView().openCreateTransactionActivity(currencyRatesData);
+        getMvpView().openCreateTransactionActivity(currenciesNames);
     }
 
     @Override
@@ -96,11 +91,9 @@ public class TransactionPresenter<V extends TransactionMvpView> extends BasePres
 
 
     @Override
-    public void getRatesFromIntent(Intent intent) {
+    public void getDataFromIntent(Intent intent) {
         accountId = intent.getLongExtra("accountId", 0L);
-        Gson gson = new Gson();
-        currencyRatesData = gson.fromJson(intent.getStringExtra("currencyRates"), CurrencyRatesData.class);
-        Log.i(TAG, "getRatesFromIntent: " + currencyRatesData.getTime());
+        currenciesNames = intent.getStringArrayExtra("currenciesNames");
     }
 
     public void deleteTransaction(final int id) {
@@ -124,8 +117,8 @@ public class TransactionPresenter<V extends TransactionMvpView> extends BasePres
     }
 
     @Override
-    public void createTransaction(String name, String value, String currency, String date, String type, String comment) {
-        String valueRUB = convertValueRub(currency, value, date);
+    public void createTransaction(String name, String value, String currency, String date, String type, String comment, CurrenciesRatesData currenciesRatesData) {
+        String valueRUB = convertValueRub(currency, value, currenciesRatesData);
 
         final TransactionSaver newTransactionSaver = new TransactionSaver(accountId, type, name, date, value, valueRUB, currency, comment);
         compositeDisposable.add(transactionsRepository.insert(newTransactionSaver)
@@ -142,13 +135,13 @@ public class TransactionPresenter<V extends TransactionMvpView> extends BasePres
                 }));
     }
 
-    private String convertValueRub(String currency, String value, String date) {
+    private String convertValueRub(String currency, String value, CurrenciesRatesData currenciesRatesData) {
         String valueRUB = "";
         if (currency.equals("RUB")) {
             valueRUB = value;
         }
         if (!value.equals("") && !currency.equals("")) {
-            valueRUB = currencyRatesData.convertCurrency(new BigDecimal(value), currency, "RUB").toString();
+            valueRUB = currenciesRatesData.convertCurrency(new BigDecimal(value), currency, "RUB").toString();
         }
         return valueRUB;
     }

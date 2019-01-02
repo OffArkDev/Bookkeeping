@@ -1,11 +1,12 @@
 package com.example.android.bookkeeping.ui.transaction.create;
 
 import android.content.Intent;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 
 import com.example.android.bookkeeping.Constants;
 import com.example.android.bookkeeping.R;
-import com.example.android.bookkeeping.currency.CurrencyRatesData;
+import com.example.android.bookkeeping.currency.CurrenciesRatesData;
 import com.example.android.bookkeeping.currency.UrlParser;
 import com.example.android.bookkeeping.ui.mvp.BasePresenter;
 import com.example.android.bookkeeping.utils.DateUtil;
@@ -15,15 +16,24 @@ import java.util.Date;
 
 import javax.inject.Inject;
 
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class CreateTransactionPresenter<V extends CreateTransactionMvpView> extends BasePresenter<V> implements CreateTransactionMvpPresenter<V> {
 
-    private String[] ratesNames;
+    private final static String TAG = "createTrPresenter";
+
+    private String[] currenciesNames;
     private String str1[] = {"in", "out"};
 
-    private ArrayList<CurrencyRatesData> listHistoryCurrencies = new ArrayList<>();
+    private ArrayList<CurrenciesRatesData> listHistoryCurrencies = new ArrayList<>();
 
+    private boolean isCurrenciesLoaded = false;
+    private boolean isBtnDoneClicked = false;
 
     @Inject
     public CompositeDisposable compositeDisposable;
@@ -37,8 +47,51 @@ public class CreateTransactionPresenter<V extends CreateTransactionMvpView> exte
 
 
     @Override
-    public void getRatesFromIntent(Intent intent) {
-        ratesNames = intent.getStringArrayExtra("ratesNames");
+    public void onAttach(V mvpView) {
+        super.onAttach(mvpView);
+
+        loadCurrencies();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        compositeDisposable.dispose();
+    }
+
+    private void loadCurrencies() {
+        Observable.create(urlParser)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<CurrenciesRatesData>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        compositeDisposable.add(d);
+                    }
+
+                    @Override
+                    public void onNext(CurrenciesRatesData data) {
+                        listHistoryCurrencies.add(data);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.i(TAG, "onError: " + e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        if (isBtnDoneClicked) {
+                            getMvpView().returnActivityResult();
+                        }
+                        isCurrenciesLoaded = true;
+                    }
+                });
+    }
+
+    @Override
+    public void getDataFromIntent(Intent intent) {
+        currenciesNames = intent.getStringArrayExtra("currenciesNames");
     }
 
     @Override
@@ -47,8 +100,8 @@ public class CreateTransactionPresenter<V extends CreateTransactionMvpView> exte
     }
 
     @Override
-    public String[] getRatesNames() {
-        return ratesNames;
+    public String[] getCurrenciesNames() {
+        return currenciesNames;
     }
 
     @Override
@@ -60,7 +113,12 @@ public class CreateTransactionPresenter<V extends CreateTransactionMvpView> exte
 
     @Override
     public void btnDoneClick() {
-        getMvpView().returnActivityResult();
+        isBtnDoneClicked = true;
+        if (!isCurrenciesLoaded) {
+            getMvpView().showLoading();
+        } else {
+            getMvpView().returnActivityResult();
+        }
     }
 
     @Override
@@ -81,5 +139,21 @@ public class CreateTransactionPresenter<V extends CreateTransactionMvpView> exte
             return false;
         }
         return true;
+    }
+
+    @Override
+    public CurrenciesRatesData getCurrenciesRatesData(String date) {
+        String searcher = DateUtil.changeFormatToXml(date, Constants.DATE_MAIN_FORMAT);
+        if (searcher == null) {
+            getMvpView().showMessage(R.string.date_format_error);
+            return null;
+        }
+        for (CurrenciesRatesData data : listHistoryCurrencies) {
+            if (data.getTime().equals(searcher)) {
+                return data;
+            }
+        }
+        getMvpView().showMessage(R.string.currencies_rates_search_error);
+        return null;
     }
 }

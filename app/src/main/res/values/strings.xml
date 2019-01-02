@@ -56,6 +56,8 @@
     <string name="wrong_date_format">Wrong date format!</string>
     <string name="later_date_error">Choose a date earlier than today</string>
     <string name="early_date_error">You can not choose such earlier date</string>
+    <string name="date_format_error">date format error</string>
+    <string name="currencies_rates_search_error">Currencies rates for this date are not available</string>
 
 
 </resources>

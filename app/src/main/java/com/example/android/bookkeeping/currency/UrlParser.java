@@ -15,9 +15,9 @@ import java.util.List;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 
-public class UrlParser implements ObservableOnSubscribe<CurrencyRatesData> {
+public class UrlParser implements ObservableOnSubscribe<CurrenciesRatesData> {
 
-    private CurrencyRatesData currencyRatesData;
+    private CurrenciesRatesData currenciesRatesData;
     private String parsedUrl;
 
     public UrlParser(String parsedUrl) {
@@ -25,7 +25,7 @@ public class UrlParser implements ObservableOnSubscribe<CurrencyRatesData> {
     }
 
     @Override
-    public void subscribe(ObservableEmitter<CurrencyRatesData> emitter)  {
+    public void subscribe(ObservableEmitter<CurrenciesRatesData> emitter)  {
         //init variables
         List<Pair> params = new ArrayList<>();
         URL url = createUrl(parsedUrl);
@@ -73,8 +73,8 @@ public class UrlParser implements ObservableOnSubscribe<CurrencyRatesData> {
                          atName = xpp.getAttributeName(0);
                     }
                     if (xpp.getName().equalsIgnoreCase("cube") && rateStart && xpp.getAttributeCount() == -1) {
-                        currencyRatesData = new CurrencyRatesData(params, time);
-                        emitter.onNext(currencyRatesData);
+                        currenciesRatesData = new CurrenciesRatesData(params, time);
+                        emitter.onNext(currenciesRatesData);
                         params = new ArrayList<>();
                         rateStart = false;
                     }

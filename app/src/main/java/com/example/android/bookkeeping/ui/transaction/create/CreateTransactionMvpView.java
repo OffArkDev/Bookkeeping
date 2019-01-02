@@ -7,4 +7,8 @@ public interface CreateTransactionMvpView extends MvpView {
     void showDialog();
 
     void returnActivityResult();
+
+    void showLoading();
+
+    void hideLoading();
 }

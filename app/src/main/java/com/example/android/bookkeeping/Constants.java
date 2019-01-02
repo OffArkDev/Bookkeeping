@@ -1,6 +1,8 @@
 package com.example.android.bookkeeping;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 
 public class Constants {
@@ -13,8 +15,9 @@ public class Constants {
     public final static int DATE_DIALOG_CODE = 3;
 
     public final static String DATE_MAIN_FORMAT = "dd.MM.yyyy";
+    public final static String DATE_XML_FORMAT = "yyyy-MM-dd";
     public final static Locale DATE_MAIN_LOCALE = Locale.ENGLISH;
 
-    public final static Date FIRST_CURRENCY_DATE = new Date(1968, 1, 1);
+    public final static Date FIRST_CURRENCY_DATE = new GregorianCalendar(1968, 1, 1).getTime();
 
 }
