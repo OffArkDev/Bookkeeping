@@ -83,14 +83,12 @@ public class UrlParser implements ObservableOnSubscribe<CurrenciesRatesData> {
                     eventType = xpp.next();
                 } catch (IOException e) {
                     e.printStackTrace();
-                    emitter.onError(e);
                 }
 
 
             }
         } catch (XmlPullParserException e) {
             e.printStackTrace();
-            emitter.onError(e);
         }
         emitter.onComplete();
     }

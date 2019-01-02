@@ -62,7 +62,6 @@ public class AccountsActivity extends BaseActivity implements AccountsMvpView {
         setContentView(R.layout.activity_accounts_list);
         getAccountComponent().inject(this);
         findViews();
-        setOnClickListeners();
         mPresenter.onAttach(this);
         initAdapter();
     }
@@ -168,6 +167,7 @@ public class AccountsActivity extends BaseActivity implements AccountsMvpView {
     public void openTransactionsActivity(int accountId, List<AccountSaver> listAccounts, String[] currenciesNames) {
         Intent intentTransactions = TransactionsActivity.getStartIntent(this, accountId, listAccounts, currenciesNames);
         startActivity(intentTransactions);
+        overridePendingTransition(0, 0);
     }
 
 

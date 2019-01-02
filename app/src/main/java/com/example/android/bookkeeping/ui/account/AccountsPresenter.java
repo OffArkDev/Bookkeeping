@@ -86,6 +86,7 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
                     @Override
                     public void onComplete() {
                         getMvpView().hideLoading();
+                        getMvpView().setOnClickListeners();
                     }
                 });
     }

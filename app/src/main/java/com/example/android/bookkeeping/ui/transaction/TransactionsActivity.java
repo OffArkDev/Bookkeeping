@@ -158,5 +158,9 @@ public class TransactionsActivity extends BaseActivity implements TransactionMvp
         super.onDestroy();
     }
 
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(0, 0);
+    }
 }
