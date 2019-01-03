@@ -53,11 +53,6 @@ public class ChartPresenter<V extends ChartMvpView> extends BasePresenter<V> imp
         getMvpView().showDialog(ratesNames);
     }
 
-    @Override
-    public void onDetach() {
-        compositeDisposable.dispose();
-        super.onDetach();
-    }
 
     @Override
     public void setRatesFromIntent(Intent intent) {
@@ -91,6 +86,7 @@ public class ChartPresenter<V extends ChartMvpView> extends BasePresenter<V> imp
                         processData();
                     }
                 });
+
     }
 
 

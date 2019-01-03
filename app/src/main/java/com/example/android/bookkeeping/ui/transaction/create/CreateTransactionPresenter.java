@@ -53,11 +53,6 @@ public class CreateTransactionPresenter<V extends CreateTransactionMvpView> exte
         loadCurrencies();
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        compositeDisposable.dispose();
-    }
 
     private void loadCurrencies() {
         Observable.create(urlParser)

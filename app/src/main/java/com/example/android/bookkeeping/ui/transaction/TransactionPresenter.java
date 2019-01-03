@@ -3,6 +3,7 @@ package com.example.android.bookkeeping.ui.transaction;
 import android.content.Intent;
 import android.util.Log;
 
+import com.example.android.bookkeeping.Constants;
 import com.example.android.bookkeeping.currency.CurrenciesRatesData;
 import com.example.android.bookkeeping.data.model.TransactionSaver;
 import com.example.android.bookkeeping.repository.TransactionsRepository;
@@ -43,15 +44,7 @@ public class TransactionPresenter<V extends TransactionMvpView> extends BasePres
     @Override
     public void onAttach(V mvpView) {
         super.onAttach(mvpView);
-
         getTransactionsFromDatabase();
-
-    }
-
-    @Override
-    public void onDetach() {
-        compositeDisposable.dispose();
-        super.onDetach();
     }
 
     @Override
@@ -137,11 +130,11 @@ public class TransactionPresenter<V extends TransactionMvpView> extends BasePres
 
     private String convertValueRub(String currency, String value, CurrenciesRatesData currenciesRatesData) {
         String valueRUB = "";
-        if (currency.equals("RUB")) {
+        if (currency.equals(Constants.NAME_CURRENCY_RUB)) {
             valueRUB = value;
         }
         if (!value.equals("") && !currency.equals("")) {
-            valueRUB = currenciesRatesData.convertCurrency(value, currency, "RUB").toString();
+            valueRUB = currenciesRatesData.convertCurrency(value, currency, Constants.NAME_CURRENCY_RUB);
         }
         return valueRUB;
     }

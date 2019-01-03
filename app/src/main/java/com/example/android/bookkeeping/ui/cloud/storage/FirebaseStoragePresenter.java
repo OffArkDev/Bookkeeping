@@ -59,11 +59,6 @@ public class FirebaseStoragePresenter<V extends FirebaseStorageMvpView> extends 
         getDataFromDatabase();
     }
 
-    @Override
-    public void onDetach() {
-        compositeDisposable.dispose();
-        super.onDetach();
-    }
 
     @Override
     public void getEmailFromIntent(Intent intent) {

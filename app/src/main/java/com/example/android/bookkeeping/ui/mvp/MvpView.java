@@ -19,5 +19,4 @@ public interface MvpView {
 
     void showMessage(@StringRes int resId);
 
-
 }

@@ -39,9 +39,6 @@ public abstract class BaseActivity extends AppCompatActivity implements MvpView 
 
         }
 
-        void onFragmentDetached(String tag) {
-
-        }
 
     @Override
     public Context getContext() {

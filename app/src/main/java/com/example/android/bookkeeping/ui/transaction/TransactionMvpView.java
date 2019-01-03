@@ -1,6 +1,5 @@
 package com.example.android.bookkeeping.ui.transaction;
 
-import com.example.android.bookkeeping.currency.CurrenciesRatesData;
 import com.example.android.bookkeeping.data.model.TransactionSaver;
 import com.example.android.bookkeeping.ui.mvp.MvpView;
 
@@ -13,6 +12,4 @@ public interface TransactionMvpView extends MvpView {
     void openCreateTransactionActivity(String[] ratesNames);
 
     void updateListView(List<TransactionSaver> listTransactions);
-
-
 }

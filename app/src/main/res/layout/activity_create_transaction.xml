@@ -118,7 +118,7 @@
         android:text="@string/done"/>
 
     <ProgressBar
-        android:id="@+id/progess_bar"
+        android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"

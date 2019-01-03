@@ -19,6 +19,4 @@ public interface TransactionMvpPresenter <V extends TransactionMvpView> extends 
     void getDataFromIntent(Intent intent);
 
     void createTransaction(String name, String value, String currency, String date, String type, String comment, CurrenciesRatesData currenciesRatesData);
-
-
 }

@@ -2,16 +2,13 @@ package com.example.android.bookkeeping.ui.account;
 
 import android.util.Log;
 
+import com.example.android.bookkeeping.Constants;
 import com.example.android.bookkeeping.currency.CurrenciesRatesData;
 import com.example.android.bookkeeping.currency.UrlParser;
 import com.example.android.bookkeeping.data.model.AccountSaver;
 import com.example.android.bookkeeping.repository.AccountsRepository;
 import com.example.android.bookkeeping.ui.adapters.AccountsListAdapter;
 import com.example.android.bookkeeping.ui.mvp.BasePresenter;
-
-import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,12 +58,6 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
 
         parseUrl();
         getAccountsFromDatabase();
-    }
-
-    @Override
-    public void onDetach() {
-        compositeDisposable.dispose();
-        super.onDetach();
     }
 
     public void parseUrl() {
@@ -126,24 +117,25 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
 
     private  void updateDailyCurrencies() {
         for (AccountSaver account : listAccounts) {
-            String updatedValueRub = currenciesRatesData.convertCurrency(account.getValue(), account.getCurrency(), "RUB");
+            String updatedValueRub = currenciesRatesData.convertCurrency(account.getValue(), account.getCurrency(), Constants.NAME_CURRENCY_RUB);
             account.setValueRUB(updatedValueRub);
         }
-        updateAccountsData();
+        updateStorageData();
     }
 
-    private void updateAccountsData() {
+    private void updateStorageData() {
         List<Integer> listId = new ArrayList<>();
         for (int i = 0; i < listAccounts.size(); i++) {
             listId.add(i);
         }
 
         compositeDisposable.clear();
+
+        //for every index of listAccounts create completable request to update new value in rubles
         Flowable<Integer> flow = Flowable.fromIterable(listId);
         compositeDisposable.add(flow.flatMapCompletable(new Function<Integer, Completable>() {
             @Override
             public Completable apply(Integer index) {
-
                 return accountsRepository.updateValueRub(listAccounts.get(index).getId(), listAccounts.get(index).getValueRUB());
             }
         }).subscribeOn(Schedulers.io())
@@ -158,7 +150,7 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
                     }
                 }, new Consumer<Throwable>() {
                     @Override
-                    public void accept(Throwable throwable) throws Exception {
+                    public void accept(Throwable throwable) {
                         Log.e(TAG, "delete account fail " + throwable.getMessage());
                     }
                 }));
@@ -239,10 +231,10 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
 
     public String convertValueRub(String value, String currency) {
         String valueRUB = "";
-        if (currency.equals("RUB")) {
+        if (currency.equals(Constants.NAME_CURRENCY_RUB)) {
             valueRUB = value;
         } else if (!value.equals("") && !currency.equals("")) {
-            valueRUB = currenciesRatesData.convertCurrency(value, currency, "RUB");
+            valueRUB = currenciesRatesData.convertCurrency(value, currency, Constants.NAME_CURRENCY_RUB);
         }
         return valueRUB;
     }
