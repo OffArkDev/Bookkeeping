@@ -10,7 +10,9 @@ import android.arch.persistence.room.Update;
 import com.example.android.bookkeeping.data.model.AccountSaver;
 
 import java.util.List;
+import java.util.Observable;
 
+import io.reactivex.Completable;
 import io.reactivex.Flowable;
 
 @Dao
@@ -21,6 +23,9 @@ public interface AccountDao {
 
     @Query("SELECT * FROM AccountSaver WHERE id = :id")
     AccountSaver getById(long id);
+
+    @Query("UPDATE AccountSaver SET valueRUB = :valueRUB WHERE id = :id")
+    void updateValueRub(long id, String valueRUB);
 
     @Insert (onConflict = OnConflictStrategy.REPLACE)
     long insert(AccountSaver accountSaver);

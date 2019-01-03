@@ -9,11 +9,16 @@ import com.example.android.bookkeeping.repository.AccountsRepository;
 import com.example.android.bookkeeping.ui.adapters.AccountsListAdapter;
 import com.example.android.bookkeeping.ui.mvp.BasePresenter;
 
+import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -21,6 +26,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter<V> implements AccountsMvpPresenter<V> {
@@ -126,18 +132,43 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
     }
 
     private void updateAccountsData() {
-        compositeDisposable.add(accountsRepository.deleteAll()
+//        compositeDisposable.add(accountsRepository.deleteAll()
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(Schedulers.io())
+//                .andThen(accountsRepository.insertList(listAccounts))
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new Consumer<long[]>() {
+//                    @Override
+//                    public void accept(long[] aLong) {
+//                        getMvpView().hideLoading();
+//                        getMvpView().setOnClickListeners();
+//                        getMvpView().updateListView(listAccounts);
+//                    }
+//                }));
+
+        List<Long> listId = new ArrayList<>();
+        for (AccountSaver account : listAccounts) {
+            listId.add(account.getId());
+        }
+        compositeDisposable.clear();
+        compositeDisposable.add(accountsRepository.updateValueRub(listId.get(0), "10")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .andThen(accountsRepository.insertList(listAccounts))
-                .subscribe(new Consumer<long[]>() {
+                .subscribe(new Action() {
                     @Override
-                    public void accept(long[] aLong) {
+                    public void run() {
+                        Log.e(TAG, "update success ");
                         getMvpView().hideLoading();
                         getMvpView().setOnClickListeners();
                         getMvpView().updateListView(listAccounts);
                     }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        Log.e(TAG, "delete account fail " + throwable.getMessage());
+                    }
                 }));
+
     }
 
 
