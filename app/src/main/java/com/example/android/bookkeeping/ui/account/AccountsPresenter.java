@@ -18,6 +18,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -132,31 +133,24 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
     }
 
     private void updateAccountsData() {
-//        compositeDisposable.add(accountsRepository.deleteAll()
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(Schedulers.io())
-//                .andThen(accountsRepository.insertList(listAccounts))
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(new Consumer<long[]>() {
-//                    @Override
-//                    public void accept(long[] aLong) {
-//                        getMvpView().hideLoading();
-//                        getMvpView().setOnClickListeners();
-//                        getMvpView().updateListView(listAccounts);
-//                    }
-//                }));
-
-        List<Long> listId = new ArrayList<>();
-        for (AccountSaver account : listAccounts) {
-            listId.add(account.getId());
+        List<Integer> listId = new ArrayList<>();
+        for (int i = 0; i < listAccounts.size(); i++) {
+            listId.add(i);
         }
+
         compositeDisposable.clear();
-        compositeDisposable.add(accountsRepository.updateValueRub(listId.get(0), "10")
-                .subscribeOn(Schedulers.io())
+        Flowable<Integer> flow = Flowable.fromIterable(listId);
+        compositeDisposable.add(flow.flatMapCompletable(new Function<Integer, Completable>() {
+            @Override
+            public Completable apply(Integer index) {
+
+                return accountsRepository.updateValueRub(listAccounts.get(index).getId(), listAccounts.get(index).getValueRUB());
+            }
+        }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action() {
                     @Override
-                    public void run() {
+                    public void run()  {
                         Log.e(TAG, "update success ");
                         getMvpView().hideLoading();
                         getMvpView().setOnClickListeners();
@@ -168,7 +162,6 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
                         Log.e(TAG, "delete account fail " + throwable.getMessage());
                     }
                 }));
-
     }
 
 
