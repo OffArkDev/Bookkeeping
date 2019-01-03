@@ -17,7 +17,7 @@ import com.example.android.bookkeeping.MyApplication;
 import com.example.android.bookkeeping.R;
 import com.example.android.bookkeeping.currency.CurrenciesRatesData;
 import com.example.android.bookkeeping.data.model.AccountSaver;
-import com.example.android.bookkeeping.di.components.AccountComponent;
+import com.example.android.bookkeeping.di.components.StorageUrlParserComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.di.modules.StorageModule;
 import com.example.android.bookkeeping.di.modules.UrlParserModule;
@@ -73,10 +73,10 @@ public class AccountsActivity extends BaseActivity implements AccountsMvpView {
         super.onDestroy();
     }
 
-    public AccountComponent getAccountComponent() {
+    public StorageUrlParserComponent getAccountComponent() {
         return ((MyApplication) getApplication())
                 .getApplicationComponent()
-                .newAccountComponent(new ActivityModule(this), new StorageModule(this), new UrlParserModule(Constants.URL_DAILY));
+                .newStorageUrlParserComponent(new ActivityModule(this), new StorageModule(this), new UrlParserModule(Constants.URL_DAILY));
     }
 
     @Override

@@ -31,6 +31,7 @@ public interface AccountDao {
     @Update
     void update(AccountSaver accountSaver);
 
+
     @Delete
     void delete(AccountSaver accountSaver);
 

@@ -16,7 +16,7 @@ import com.example.android.bookkeeping.R;
 import com.example.android.bookkeeping.currency.CurrenciesRatesData;
 import com.example.android.bookkeeping.data.model.AccountSaver;
 import com.example.android.bookkeeping.data.model.TransactionSaver;
-import com.example.android.bookkeeping.di.components.TransactionComponent;
+import com.example.android.bookkeeping.di.components.StorageComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.di.modules.StorageModule;
 import com.example.android.bookkeeping.ui.adapters.TransactionsListAdapter;
@@ -65,10 +65,10 @@ public class TransactionsActivity extends BaseActivity implements TransactionMvp
         initAdapter();
     }
 
-    public TransactionComponent getTransactionComponent() {
+    public StorageComponent getTransactionComponent() {
         return ((MyApplication) getApplication())
                 .getApplicationComponent()
-                .newTransactionComponent(new ActivityModule(this), new StorageModule(this));
+                .newStorageComponent(new ActivityModule(this), new StorageModule(this));
     }
 
     public void findViews() {

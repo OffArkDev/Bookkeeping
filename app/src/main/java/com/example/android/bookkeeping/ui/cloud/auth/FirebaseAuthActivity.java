@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 
 import android.util.Log;
 import android.view.View;
@@ -15,7 +14,7 @@ import android.widget.Toast;
 
 import com.example.android.bookkeeping.MyApplication;
 import com.example.android.bookkeeping.R;
-import com.example.android.bookkeeping.di.components.CloudAuthComponent;
+import com.example.android.bookkeeping.di.components.FirebaseComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.di.modules.FirebaseModule;
 import com.example.android.bookkeeping.ui.cloud.storage.FirebaseStorageActivity;
@@ -61,10 +60,10 @@ public class FirebaseAuthActivity extends BaseActivity implements FirebaseAuthMv
         presenter.onAttach(this);
     }
 
-    public CloudAuthComponent getCloudComponent() {
+    public FirebaseComponent getCloudComponent() {
         return ((MyApplication) getApplication())
                 .getApplicationComponent()
-                .newCloudAuthComponent(new ActivityModule(this), new FirebaseModule());
+                .newFirebaseComponent(new ActivityModule(this), new FirebaseModule());
     }
 
     public void findViews() {

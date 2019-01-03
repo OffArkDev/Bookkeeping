@@ -12,6 +12,6 @@ import dagger.Subcomponent;
 
 @Singleton
 @Subcomponent(modules = {ActivityModule.class, StorageModule.class, UrlParserModule.class})
-public interface AccountComponent {
+public interface StorageUrlParserComponent {
     void inject(AccountsActivity accountsActivity);
 }

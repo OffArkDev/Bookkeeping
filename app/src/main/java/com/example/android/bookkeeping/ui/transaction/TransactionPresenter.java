@@ -141,7 +141,7 @@ public class TransactionPresenter<V extends TransactionMvpView> extends BasePres
             valueRUB = value;
         }
         if (!value.equals("") && !currency.equals("")) {
-            valueRUB = currenciesRatesData.convertCurrency(new BigDecimal(value), currency, "RUB").toString();
+            valueRUB = currenciesRatesData.convertCurrency(value, currency, "RUB").toString();
         }
         return valueRUB;
     }

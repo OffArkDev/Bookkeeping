@@ -12,7 +12,7 @@ import dagger.Subcomponent;
 
 @Singleton
 @Subcomponent (modules = {ActivityModule.class, UrlParserModule.class})
-public interface ChartComponent {
+public interface UrlParserComponent {
     void inject(ChartActivity chartActivity);
 
     void inject(CreateTransactionActivity createTransactionActivity);

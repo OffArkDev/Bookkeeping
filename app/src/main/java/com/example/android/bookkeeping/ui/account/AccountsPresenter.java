@@ -9,7 +9,6 @@ import com.example.android.bookkeeping.repository.AccountsRepository;
 import com.example.android.bookkeeping.ui.adapters.AccountsListAdapter;
 import com.example.android.bookkeeping.ui.mvp.BasePresenter;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +40,7 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
 
     private List<AccountSaver> listAccounts = new ArrayList<>();
 
+    private boolean isFlowLoaded = false;
 
     @Inject
     public AccountsPresenter() {
@@ -53,7 +53,6 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
         getMvpView().showLoading();
 
         parseUrl();
-
         getAccountsFromDatabase();
     }
 
@@ -85,11 +84,62 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
 
                     @Override
                     public void onComplete() {
-                        getMvpView().hideLoading();
-                        getMvpView().setOnClickListeners();
+                        if (isFlowLoaded) {
+                            updateDailyCurrencies();
+                        } else {
+                            isFlowLoaded = true;
+                        }
+
                     }
                 });
+
+
+
     }
+
+    @Override
+    public void getAccountsFromDatabase() {
+        compositeDisposable.add(accountsRepository.getAll()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<List<AccountSaver>>() {
+                    @Override
+                    public void accept(List<AccountSaver> accountSavers) {
+                        listAccounts = accountSavers;
+                        if (isFlowLoaded) {
+                            updateDailyCurrencies();
+                        } else {
+                            isFlowLoaded = true;
+                        }
+
+                    }
+                }));
+    }
+
+
+    private  void updateDailyCurrencies() {
+        for (AccountSaver account : listAccounts) {
+            String updatedValueRub = currenciesRatesData.convertCurrency(account.getValue(), account.getCurrency(), "RUB");
+            account.setValueRUB(updatedValueRub);
+        }
+        updateAccountsData();
+    }
+
+    private void updateAccountsData() {
+        compositeDisposable.add(accountsRepository.deleteAll()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .andThen(accountsRepository.insertList(listAccounts))
+                .subscribe(new Consumer<long[]>() {
+                    @Override
+                    public void accept(long[] aLong) {
+                        getMvpView().hideLoading();
+                        getMvpView().setOnClickListeners();
+                        getMvpView().updateListView(listAccounts);
+                    }
+                }));
+    }
+
 
     @Override
     public void btnCreateAccountClick() {
@@ -134,25 +184,14 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
                                }
                            }, new Consumer<Throwable>() {
                                @Override
-                               public void accept(Throwable throwable)  {
+                               public void accept(Throwable throwable) {
                                    Log.e(TAG, "delete account fail " + throwable.getMessage());
                                }
                            }
                 ));
 
     }
-    @Override
-    public void getAccountsFromDatabase() {
-        compositeDisposable.add(accountsRepository.getAll()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<AccountSaver>>() {
-                    @Override
-                    public void accept(List<AccountSaver> accountSavers) {
-                        listAccounts = accountSavers;
-                        getMvpView().updateListView(listAccounts);
-                    }
-                }));
-    }
+
 
     @Override
     public void createAccount(String name, String value, String currency) {
@@ -179,7 +218,7 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
         if (currency.equals("RUB")) {
             valueRUB = value;
         } else if (!value.equals("") && !currency.equals("")) {
-           valueRUB = currenciesRatesData.convertCurrency(new BigDecimal(value), currency, "RUB").toString();
+            valueRUB = currenciesRatesData.convertCurrency(value, currency, "RUB");
         }
         return valueRUB;
     }

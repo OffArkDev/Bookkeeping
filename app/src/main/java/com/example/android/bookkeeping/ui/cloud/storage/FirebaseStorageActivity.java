@@ -4,15 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.example.android.bookkeeping.MyApplication;
 import com.example.android.bookkeeping.R;
-import com.example.android.bookkeeping.di.components.CloudStorageComponent;
+import com.example.android.bookkeeping.di.components.StorageComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.di.modules.StorageModule;
 import com.example.android.bookkeeping.ui.mvp.BaseActivity;
@@ -50,10 +48,10 @@ public class FirebaseStorageActivity extends BaseActivity implements FirebaseSto
         presenter.getEmailFromIntent(getIntent());
     }
 
-    public CloudStorageComponent getCloudComponent() {
+    public StorageComponent getCloudComponent() {
         return ((MyApplication) getApplication())
                 .getApplicationComponent()
-                .newCloudStorageComponent(new ActivityModule(this), new StorageModule(this));
+                .newStorageComponent(new ActivityModule(this), new StorageModule(this));
     }
 
     @Override

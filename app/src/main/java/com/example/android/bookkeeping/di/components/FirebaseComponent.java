@@ -10,6 +10,6 @@ import dagger.Subcomponent;
 
 @Singleton
 @Subcomponent(modules = {ActivityModule.class, FirebaseModule.class} )
-public interface CloudAuthComponent {
+public interface FirebaseComponent {
     void inject(FirebaseAuthActivity firebaseAuthActivity);
 }

@@ -12,7 +12,7 @@ import com.example.android.bookkeeping.MyApplication;
 import com.example.android.bookkeeping.R;
 import com.example.android.bookkeeping.currency.CurrenciesRatesData;
 
-import com.example.android.bookkeeping.di.components.ChartComponent;
+import com.example.android.bookkeeping.di.components.UrlParserComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.di.modules.UrlParserModule;
 import com.example.android.bookkeeping.ui.dialogs.history.CurrenciesHistoryDialog;
@@ -58,10 +58,10 @@ public class ChartActivity extends BaseActivity implements DialogCommunicator, C
         presenter.onAttach(this);
     }
 
-    public ChartComponent getChartComponent() {
+    public UrlParserComponent getChartComponent() {
         return ((MyApplication) getApplication())
                 .getApplicationComponent()
-                .newChartComponent(new ActivityModule(this), new UrlParserModule(Constants.URL_HISTORY));
+                .newUrlParserComponent(new ActivityModule(this), new UrlParserModule(Constants.URL_HISTORY));
     }
 
     public void findViews() {
