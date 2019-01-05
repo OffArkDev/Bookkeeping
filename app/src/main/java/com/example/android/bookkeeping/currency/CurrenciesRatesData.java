@@ -1,7 +1,5 @@
 package com.example.android.bookkeeping.currency;
 
-import com.example.android.bookkeeping.utils.DateUtil;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;

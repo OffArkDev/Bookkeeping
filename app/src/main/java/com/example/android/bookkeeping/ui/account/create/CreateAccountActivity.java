@@ -10,7 +10,6 @@ import android.widget.EditText;
 
 import com.example.android.bookkeeping.MyApplication;
 import com.example.android.bookkeeping.R;
-import com.example.android.bookkeeping.currency.CurrenciesRatesData;
 import com.example.android.bookkeeping.di.components.FragmentComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.ui.dialogs.currencies.CurrenciesDialog;
@@ -45,7 +44,7 @@ public class CreateAccountActivity extends BaseActivity implements DialogCommuni
         getFragmentComponent().inject(this);
 
         findViews();
-        setDialog();
+        initDialog();
         setRatesFromIntent();
         setOnClickListeners();
 
@@ -71,7 +70,7 @@ public class CreateAccountActivity extends BaseActivity implements DialogCommuni
         presenter.getRatesFromIntent(intent);
     }
 
-    public void setDialog() {
+    public void initDialog() {
         currenciesDialog = CurrenciesDialog.newInstance();
         currenciesDialog.setDialogCommunicator(this);
     }

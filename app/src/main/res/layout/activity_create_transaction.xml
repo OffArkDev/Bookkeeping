@@ -89,7 +89,7 @@
         android:maxLines="1"
         android:imeOptions="actionNext"
         android:layout_marginTop="8dp"
-        android:hint="DD.MM.YYYY"
+        android:hint="@string/date_input_format"
         />
 
     <TextView

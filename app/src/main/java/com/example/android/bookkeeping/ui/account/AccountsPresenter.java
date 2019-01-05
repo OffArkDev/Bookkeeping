@@ -87,7 +87,6 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
                         } else {
                             isFlowLoaded = true;
                         }
-
                     }
                 });
 

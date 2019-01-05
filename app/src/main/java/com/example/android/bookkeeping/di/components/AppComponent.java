@@ -18,7 +18,7 @@ import dagger.Component;
         }
 )
 public interface AppComponent {
-    StorageUrlParserComponent newStorageUrlParserComponent(ActivityModule activityModule, StorageModule storageModule, UrlParserModule urlParserModule);
+    StorageParserComponent newStorageUrlParserComponent(ActivityModule activityModule, StorageModule storageModule, UrlParserModule urlParserModule);
     StorageComponent newStorageComponent(ActivityModule activityModule, StorageModule storageModule);
     UrlParserComponent newUrlParserComponent(ActivityModule activityModule, UrlParserModule urlParserModule);
     FirebaseComponent newFirebaseComponent(ActivityModule activityModule, FirebaseModule firebaseModule);

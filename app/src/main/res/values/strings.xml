@@ -58,6 +58,7 @@
     <string name="early_date_error">You can not choose such earlier date</string>
     <string name="date_format_error">date format error</string>
     <string name="currencies_rates_search_error">Currencies rates for this date are not available</string>
+    <string name="date_input_format">DD.MM.YYYY</string>
 
 
 </resources>

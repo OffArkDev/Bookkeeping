@@ -52,7 +52,7 @@ public class ChartActivity extends BaseActivity implements DialogCommunicator, C
         setContentView(R.layout.activity_chart);
         getChartComponent().inject(this);
         findViews();
-        setDialog();
+        initDialog();
         setRatesFromIntent();
 
         presenter.onAttach(this);
@@ -74,7 +74,7 @@ public class ChartActivity extends BaseActivity implements DialogCommunicator, C
 
     }
 
-    public void setDialog() {
+    public void initDialog() {
         currenciesDialog = new CurrenciesHistoryDialog();
         currenciesDialog.setDialogCommunicator(this);
     }

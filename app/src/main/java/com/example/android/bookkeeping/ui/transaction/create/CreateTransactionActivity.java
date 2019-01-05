@@ -53,17 +53,17 @@ public class CreateTransactionActivity extends BaseActivity implements DialogCom
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_transaction);
-        getChartComponent().inject(this);
+        getUrlParserComponent().inject(this);
         findViews();
         setRatesFromIntent();
-        setDialogs();
+        initDialogs();
         setOnClickListeners();
 
         presenter.onAttach(this);
         initAdapter();
     }
 
-    public UrlParserComponent getChartComponent() {
+    public UrlParserComponent getUrlParserComponent() {
         return ((MyApplication) getApplication())
                 .getApplicationComponent()
                 .newUrlParserComponent(new ActivityModule(this), new UrlParserModule(Constants.URL_HISTORY));
@@ -91,7 +91,7 @@ public class CreateTransactionActivity extends BaseActivity implements DialogCom
         spinnerType.setSelection(0);
     }
 
-    public void setDialogs() {
+    public void initDialogs() {
         currenciesDialog = CurrenciesDialog.newInstance();
         currenciesDialog.setDialogCommunicator(this);
         dateDialog = DateDialog.newInstance();
@@ -155,7 +155,6 @@ public class CreateTransactionActivity extends BaseActivity implements DialogCom
                 setResult(RESULT_OK, resultIntent);
                 finish();
             }
-
         }
     }
 

@@ -24,5 +24,4 @@ public interface FragmentComponent {
 
     void inject(DateDialog dateDialog);
 
-
 }
