@@ -18,11 +18,10 @@ import dagger.Component;
         }
 )
 public interface AppComponent {
-    AccountComponent newAccountComponent(ActivityModule activityModule, StorageModule storageModule, UrlParserModule urlParserModule);
-    TransactionComponent newTransactionComponent(ActivityModule activityModule, StorageModule storageModule);
-    ChartComponent newChartComponent(ActivityModule activityModule, UrlParserModule urlParserModule);
-    CloudStorageComponent newCloudStorageComponent(ActivityModule activityModule, StorageModule storageModule);
-    CloudAuthComponent newCloudAuthComponent(ActivityModule activityModule, FirebaseModule firebaseModule);
+    StorageParserComponent newStorageParserComponent(ActivityModule activityModule, StorageModule storageModule, UrlParserModule urlParserModule);
+    StorageComponent newStorageComponent(ActivityModule activityModule, StorageModule storageModule);
+    UrlParserComponent newUrlParserComponent(ActivityModule activityModule, UrlParserModule urlParserModule);
+    FirebaseComponent newFirebaseComponent(ActivityModule activityModule, FirebaseModule firebaseModule);
 
 
 }

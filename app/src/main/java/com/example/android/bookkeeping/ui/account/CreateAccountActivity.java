@@ -29,7 +29,7 @@ public class CreateAccountActivity extends AppCompatActivity implements DialogCo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
         findViews();
-        setDialog();
+        initDialog();
         setRatesFromIntent();
         setOnClickListeners();
     }
@@ -46,7 +46,7 @@ public class CreateAccountActivity extends AppCompatActivity implements DialogCo
         ratesNames = intent.getStringArrayExtra("rates");
     }
 
-    public void setDialog() {
+    public void initDialog() {
         currenciesDialog = new CurrenciesDialog();
         currenciesDialog.setDialogCommunicator(this);
     }

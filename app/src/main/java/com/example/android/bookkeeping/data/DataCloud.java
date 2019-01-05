@@ -2,7 +2,7 @@ package com.example.android.bookkeeping.data;
 
 import java.util.List;
 
-public class DataPOJO {
+public class DataCloud {
   private  List<AccountSaver> accountsList;
   private  List<TransactionSaver> transactionList;
 

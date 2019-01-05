@@ -118,12 +118,6 @@
                 android:text="10.0"
                 />
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/account_transactions"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
     </LinearLayout>
 
 </LinearLayout>

@@ -20,6 +20,11 @@ public interface AccountDao {
     @Query("SELECT * FROM AccountSaver WHERE id = :id")
     AccountSaver getById(long id);
 
+
+    @Query("UPDATE AccountSaver SET valueRUB = :valueRUB WHERE id = :id")
+    void updateValueRub(long id, String valueRUB);
+
+
     @Insert (onConflict = OnConflictStrategy.REPLACE)
     long insert(AccountSaver accountSaver);
 

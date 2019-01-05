@@ -12,10 +12,10 @@ import android.widget.ProgressBar;
 import com.example.android.bookkeeping.Constants;
 import com.example.android.bookkeeping.MyApplication;
 import com.example.android.bookkeeping.R;
-import com.example.android.bookkeeping.currency.CurrencyRatesData;
+import com.example.android.bookkeeping.currency.CurrenciesRatesData;
 import com.example.android.bookkeeping.currency.UrlParser;
 
-import com.example.android.bookkeeping.di.components.ChartComponent;
+import com.example.android.bookkeeping.di.components.UrlParserComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.di.modules.UrlParserModule;
 import com.example.android.bookkeeping.ui.dialogs.CurrenciesHistoryDialog;
@@ -49,7 +49,7 @@ public class ChartActivity extends AppCompatActivity implements DialogCommunicat
     private LineChart lineChart;
     private ProgressBar progressBar;
 
-    private ArrayList<CurrencyRatesData> listHistoryCurrencies = new ArrayList<>();
+    private ArrayList<CurrenciesRatesData> listHistoryCurrencies = new ArrayList<>();
     private CurrenciesHistoryDialog currenciesDialog;
 
     private String[] ratesNames;
@@ -72,16 +72,16 @@ public class ChartActivity extends AppCompatActivity implements DialogCommunicat
         setContentView(R.layout.activity_chart);
         getChartComponent().inject(this);
         findViews();
-        setDialog();
+        initDialog();
         setRatesFromIntent();
         showDialog();
 
     }
 
-    public ChartComponent getChartComponent() {
+    public UrlParserComponent getChartComponent() {
         return ((MyApplication) getApplication())
                 .getApplicationComponent()
-                .newChartComponent(new ActivityModule(this), new UrlParserModule(Constants.URL_HISTORY));
+                .newUrlParserComponent(new ActivityModule(this), new UrlParserModule(Constants.URL_HISTORY));
     }
 
     public void findViews() {
@@ -90,7 +90,7 @@ public class ChartActivity extends AppCompatActivity implements DialogCommunicat
     }
 
 
-    public void setDialog() {
+    public void initDialog() {
         currenciesDialog = new CurrenciesHistoryDialog();
         currenciesDialog.setDialogCommunicator(this);
     }
@@ -120,14 +120,14 @@ public class ChartActivity extends AppCompatActivity implements DialogCommunicat
         Observable.create(urlParser)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<CurrencyRatesData>() {
+                .subscribe(new Observer<CurrenciesRatesData>() {
                     @Override
                     public void onSubscribe(Disposable d) {
                         compositeDisposable.add(d);
                     }
 
                     @Override
-                    public void onNext(CurrencyRatesData data) {
+                    public void onNext(CurrenciesRatesData data) {
                         listHistoryCurrencies.add(data);
                     }
 
@@ -172,14 +172,14 @@ public class ChartActivity extends AppCompatActivity implements DialogCommunicat
         LineDataSet lDataSet1 = new LineDataSet(null, "");
             ArrayList<Entry> dataSet = new ArrayList<>();
             for (int j = 0; j < listHistoryCurrencies.size(); j++) {
-                CurrencyRatesData data = listHistoryCurrencies.get(j);
+                CurrenciesRatesData data = listHistoryCurrencies.get(j);
                 Entry entry = new Entry(j, data.getRate(chosenCurrency).floatValue());
                 dataSet.add(entry);
                 lDataSet1 = new LineDataSet(dataSet, chosenCurrency);
                 lDataSet1.setCircleColor(R.color.green);
             }
             lines.add(lDataSet1);
-        for (CurrencyRatesData data: listHistoryCurrencies) {
+        for (CurrenciesRatesData data: listHistoryCurrencies) {
             timesList.add(data.getTime());
         }
 

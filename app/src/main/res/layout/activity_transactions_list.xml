@@ -15,7 +15,6 @@
         android:layout_alignParentTop="true"
         android:layout_above="@id/buttons_layout"
         >
-
     </ListView>
 
 

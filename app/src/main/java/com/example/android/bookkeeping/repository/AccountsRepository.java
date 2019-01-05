@@ -15,6 +15,8 @@ public interface AccountsRepository {
 
     AccountSaver getById(long id);
 
+    Completable updateValueRub(long id, String valueRUB);
+
     Single<Long> insert(final AccountSaver accountSaver);
 
     Single<long[]> insertList(List<AccountSaver> list);

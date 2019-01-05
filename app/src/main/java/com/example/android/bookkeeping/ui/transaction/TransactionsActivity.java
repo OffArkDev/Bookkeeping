@@ -13,18 +13,18 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.android.bookkeeping.Constants;
 import com.example.android.bookkeeping.MyApplication;
 import com.example.android.bookkeeping.R;
-import com.example.android.bookkeeping.currency.CurrencyRatesData;
+import com.example.android.bookkeeping.currency.CurrenciesRatesData;
 import com.example.android.bookkeeping.data.TransactionSaver;
-import com.example.android.bookkeeping.di.components.TransactionComponent;
+import com.example.android.bookkeeping.di.components.StorageComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.di.modules.StorageModule;
 import com.example.android.bookkeeping.repository.TransactionsRepository;
 import com.example.android.bookkeeping.ui.adapters.TransactionsListAdapter;
 import com.google.gson.Gson;
 
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -54,7 +54,7 @@ public class TransactionsActivity extends AppCompatActivity {
 
     private long accountId;
 
-    private CurrencyRatesData currencyRatesData;
+    private CurrenciesRatesData currenciesRatesData;
 
     boolean isDeleteClicked = false;
 
@@ -77,14 +77,14 @@ public class TransactionsActivity extends AppCompatActivity {
         findViews();
         getRatesFromIntent();
         compositeDisposable.add(getTransactionsFromDatabase());
-        setAdapter();
+        initAdapter();
         setOnClickListeners();
     }
 
-    public TransactionComponent getTransactionComponent() {
+    public StorageComponent getTransactionComponent() {
         return ((MyApplication) getApplication())
                 .getApplicationComponent()
-                .newTransactionComponent(new ActivityModule(this), new StorageModule(this));
+                .newStorageComponent(new ActivityModule(this), new StorageModule(this));
     }
 
     public void findViews() {
@@ -123,17 +123,22 @@ public class TransactionsActivity extends AppCompatActivity {
         });
     }
 
-    public void setAdapter() {
+    public void initAdapter() {
         transactionsListAdapter = new TransactionsListAdapter(this, listTransactions);
         listView.setAdapter(transactionsListAdapter);
     }
+
+    public void updateListView(List<TransactionSaver> listTransactions) {
+        transactionsListAdapter.updateList(listTransactions);
+    }
+
 
     public void getRatesFromIntent() {
         Intent intent = getIntent();
         accountId = intent.getLongExtra("accountId", 0L);
         Gson gson = new Gson();
-        currencyRatesData = gson.fromJson(intent.getStringExtra("currencyRates"), CurrencyRatesData.class);
-        Log.i(TAG, "getRatesFromIntent: " + currencyRatesData.getTime());
+        currenciesRatesData = gson.fromJson(intent.getStringExtra("currencyRates"), CurrenciesRatesData.class);
+        Log.i(TAG, "getRatesFromIntent: " + currenciesRatesData.getTime());
 
     }
 
@@ -144,14 +149,14 @@ public class TransactionsActivity extends AppCompatActivity {
                     @Override
                     public void accept(List<TransactionSaver> transactionSavers) {
                         listTransactions = transactionSavers;
-                        setAdapter();
+                        updateListView(listTransactions);
                     }
                 });
     }
 
     public void createTransaction() {
         Intent intent = new Intent(this, CreateTransactionActivity.class);
-        intent.putExtra("ratesNames", currencyRatesData.getCurrenciesList());
+        intent.putExtra("ratesNames", currenciesRatesData.getCurrenciesList());
         startActivityForResult(intent, 1);
     }
 
@@ -164,7 +169,7 @@ public class TransactionsActivity extends AppCompatActivity {
                     public void run() {
                         Log.i(TAG, "delete transaction complete");
                         listTransactions.remove(id);
-                        setAdapter();
+                        updateListView(listTransactions);
                     }
                 }, new Consumer<Throwable>() {
                     @Override
@@ -179,19 +184,12 @@ public class TransactionsActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        compositeDisposable.clear();
+        compositeDisposable.dispose();
     }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        compositeDisposable.clear();
-    }
-
 
     public String getCurrentDate() {
         Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat mdformat = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
+        SimpleDateFormat mdformat = new SimpleDateFormat(Constants.DATE_MAIN_FORMAT, Locale.ENGLISH);
         return mdformat.format(calendar.getTime());
     }
 
@@ -207,13 +205,12 @@ public class TransactionsActivity extends AppCompatActivity {
                    String currency = data.getStringExtra("currency");
                    String comment = data.getStringExtra("comment");
                    String valueRUB = "";
-                    if (currency.equals("RUB")) {
+                    if (currency.equals(Constants.NAME_CURRENCY_RUB)) {
                         valueRUB = value;
                     }
                     if (!value.equals("") && !currency.equals("")) {
-                        valueRUB = currencyRatesData.convertCurrency(new BigDecimal(value), currency, "RUB").toString();
+                        valueRUB = currenciesRatesData.convertCurrency(value, currency, Constants.NAME_CURRENCY_RUB);
                     }
-
                     final TransactionSaver newTransactionSaver = new TransactionSaver(accountId, type, name, date, value, valueRUB, currency, comment);
                     compositeDisposable.add(transactionsRepository.insert(newTransactionSaver)
                             .subscribeOn(Schedulers.io())
@@ -224,7 +221,7 @@ public class TransactionsActivity extends AppCompatActivity {
                                     Log.i(TAG, "insert success");
                                     newTransactionSaver.setId(aLong);
                                     listTransactions.add(newTransactionSaver);
-                                    setAdapter();
+                                    updateListView(listTransactions);
                                 }
                             }));
                 }

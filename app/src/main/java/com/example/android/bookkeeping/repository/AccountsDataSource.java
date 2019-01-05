@@ -27,6 +27,16 @@ public class AccountsDataSource implements AccountsRepository{
         return accountDao.getById(id);
     }
 
+    @Override
+    public Completable updateValueRub(final long id,final String valueRUB) {
+        return Completable.fromAction(new Action() {
+            @Override
+            public void run()  {
+                accountDao.updateValueRub(id, valueRUB);
+            }
+        });
+    }
+
     public Single<Long> insert(final AccountSaver accountSaver) {
 
         return Single.fromCallable(new Callable<Long>() {

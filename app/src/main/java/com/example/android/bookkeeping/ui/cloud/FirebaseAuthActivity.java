@@ -15,14 +15,13 @@ import android.widget.Toast;
 
 import com.example.android.bookkeeping.MyApplication;
 import com.example.android.bookkeeping.R;
-import com.example.android.bookkeeping.di.components.CloudAuthComponent;
+import com.example.android.bookkeeping.di.components.FirebaseComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.di.modules.FirebaseModule;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import javax.inject.Inject;
 
@@ -55,10 +54,10 @@ public class FirebaseAuthActivity extends AppCompatActivity {
         setOnClickListeners();
     }
 
-    public CloudAuthComponent getCloudComponent() {
+    public FirebaseComponent getCloudComponent() {
         return ((MyApplication) getApplication())
                 .getApplicationComponent()
-                .newCloudAuthComponent(new ActivityModule(this), new FirebaseModule());
+                .newFirebaseComponent(new ActivityModule(this), new FirebaseModule());
     }
 
     public void findViews() {
@@ -92,7 +91,7 @@ public class FirebaseAuthActivity extends AppCompatActivity {
 
     public void signIn(final String email , String password)
     {
-        showOrHideProgress(true);
+        showLoading();
         mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -102,24 +101,24 @@ public class FirebaseAuthActivity extends AppCompatActivity {
                     intent.putExtra("email", email);
                     startActivity(intent);
                     finish();
-                    showOrHideProgress(false);
+                    hideLoading();
                 }
                 else {
                     Toast.makeText(FirebaseAuthActivity.this, R.string.auth_fail, Toast.LENGTH_SHORT).show();
-                    showOrHideProgress(false);
+                    hideLoading();
                 }
             }
         });
     }
     public void registration (String email , String password){
-        showOrHideProgress(true);
+        showLoading();
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful())
                 {
                     Toast.makeText(FirebaseAuthActivity.this, R.string.reg_success, Toast.LENGTH_SHORT).show();
-                    showOrHideProgress(false);
+                    hideLoading();
 
                 }
                 else {
@@ -128,22 +127,25 @@ public class FirebaseAuthActivity extends AppCompatActivity {
                         Log.i(TAG, task.getException().toString());
                     }
                     Toast.makeText(FirebaseAuthActivity.this, R.string.reg_fail, Toast.LENGTH_SHORT).show();
-                    showOrHideProgress(false);
+                    hideLoading();
                 }
             }
         });
     }
 
-    public void showOrHideProgress(Boolean show) {
-        if (show) {
-            pbProgress.setVisibility(View.VISIBLE);
-            btnAuth.setVisibility(View.GONE);
-            btnReg.setVisibility(View.GONE);
-        } else {
-            pbProgress.setVisibility(View.GONE);
-            btnAuth.setVisibility(View.VISIBLE);
-            btnReg.setVisibility(View.VISIBLE);
-        }
+
+    public void showLoading() {
+        pbProgress.setVisibility(View.VISIBLE);
+        btnAuth.setVisibility(View.GONE);
+        btnReg.setVisibility(View.GONE);
+
+    }
+
+    public void hideLoading() {
+        pbProgress.setVisibility(View.GONE);
+        btnAuth.setVisibility(View.VISIBLE);
+        btnReg.setVisibility(View.VISIBLE);
+
     }
 
 

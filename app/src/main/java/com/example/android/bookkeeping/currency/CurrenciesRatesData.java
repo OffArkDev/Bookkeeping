@@ -6,11 +6,11 @@ import java.util.List;
 
 
 
-public class CurrencyRatesData {
+public class CurrenciesRatesData {
     String time;
     List<Pair> ratesList;
 
-    public CurrencyRatesData(List<Pair> ratesList, String time) {
+    public CurrenciesRatesData(List<Pair> ratesList, String time) {
         this.ratesList = ratesList;
         this.time = time;
     }
@@ -46,14 +46,15 @@ public class CurrencyRatesData {
     }
 
 
-    public BigDecimal convertCurrency(BigDecimal currentValue, String currentCurrency, String resultCurrency) {
+    public String convertCurrency(String currentValue, String currentCurrency, String resultCurrency) {
+        BigDecimal curValue = new BigDecimal(currentValue);
         BigDecimal currentRate = getRate(currentCurrency);
-        BigDecimal resultRate = getRate(resultCurrency);
-        BigDecimal someValue = currentValue.multiply(resultRate);
         if (resultCurrency.equals("EUR")) {
-            return someValue.divide(currentRate, RoundingMode.HALF_EVEN);
+            return curValue.divide(currentRate, RoundingMode.HALF_EVEN).toString();
         }
-        return someValue.divide(currentRate, RoundingMode.HALF_EVEN);
+        BigDecimal resultRate = getRate(resultCurrency);
+        BigDecimal someValue = curValue.multiply(resultRate);
+        return someValue.divide(currentRate, RoundingMode.HALF_EVEN).toString();
     }
 
 

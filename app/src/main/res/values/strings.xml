@@ -51,6 +51,14 @@
     <string name="loading_database_success">Loading from database success</string>
     <string name="click_on_transaction_to_delete">click on transaction to delete</string>
     <string name="click_account_to_delete">click on account to delete</string>
+    <string name="select_date">Select date</string>
+    <string name="date_input_format">DD.MM.YYYY</string>
+    <string name="some_error">Some error occured!</string>
+    <string name="wrong_date_format">Wrong date format!</string>
+    <string name="later_date_error">Choose a date earlier than today</string>
+    <string name="early_date_error">You can not choose such earlier date</string>
+    <string name="date_format_error">date format error</string>
+    <string name="currencies_rates_search_error">Currencies rates for this date are not available</string>
 
 
 </resources>

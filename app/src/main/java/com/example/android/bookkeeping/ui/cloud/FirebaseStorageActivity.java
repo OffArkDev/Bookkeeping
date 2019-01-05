@@ -15,9 +15,9 @@ import com.example.android.bookkeeping.Constants;
 import com.example.android.bookkeeping.MyApplication;
 import com.example.android.bookkeeping.R;
 import com.example.android.bookkeeping.data.AccountSaver;
-import com.example.android.bookkeeping.data.DataPOJO;
+import com.example.android.bookkeeping.data.DataCloud;
 import com.example.android.bookkeeping.data.TransactionSaver;
-import com.example.android.bookkeeping.di.components.CloudStorageComponent;
+import com.example.android.bookkeeping.di.components.StorageComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.di.modules.StorageModule;
 import com.example.android.bookkeeping.repository.AccountsRepository;
@@ -50,7 +50,7 @@ public class FirebaseStorageActivity extends AppCompatActivity {
 
     private String email;
 
-    private DataPOJO dataPOJO = new DataPOJO();
+    private DataCloud dataCloud = new DataCloud();
 
     private boolean isOneFlowLoaded = false;
 
@@ -78,10 +78,10 @@ public class FirebaseStorageActivity extends AppCompatActivity {
         setClickListeners();
     }
 
-    public CloudStorageComponent getCloudComponent() {
+    public StorageComponent getCloudComponent() {
         return ((MyApplication) getApplication())
                 .getApplicationComponent()
-                .newCloudStorageComponent(new ActivityModule(this), new StorageModule(this));
+                .newStorageComponent(new ActivityModule(this), new StorageModule(this));
     }
 
     public void setClickListeners() {
@@ -110,14 +110,14 @@ public class FirebaseStorageActivity extends AppCompatActivity {
     }
 
     public void getDataFromDatabase() {
-        showOrHideProgressBar(true);
+        showLoading();
 
         compositeDisposable.add(accountsRepository.getAll()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<List<AccountSaver>>() {
                     @Override
                     public void accept(List<AccountSaver> accountSavers) {
-                        dataPOJO.setAccountsList(accountSavers);
+                        dataCloud.setAccountsList(accountSavers);
                         hideBarIfFlowLoaded();
                     }
                 }));
@@ -127,7 +127,7 @@ public class FirebaseStorageActivity extends AppCompatActivity {
                 .subscribe(new Consumer<List<TransactionSaver>>() {
                     @Override
                     public void accept(List<TransactionSaver> transactionSavers) {
-                        dataPOJO.setTransactionList(transactionSavers);
+                        dataCloud.setTransactionList(transactionSavers);
                         hideBarIfFlowLoaded();
                     }
                 }));
@@ -137,28 +137,30 @@ public class FirebaseStorageActivity extends AppCompatActivity {
         if (!isOneFlowLoaded) {
             isOneFlowLoaded = true;
         } else {
-            showOrHideProgressBar(false);
+            hideLoading();
         }
     }
 
-    public void showOrHideProgressBar(Boolean show) {
-        if (show) {
-            vButtons.setVisibility(View.INVISIBLE);
-            progressBar.setVisibility(View.VISIBLE);
-        } else {
-            vButtons.setVisibility(View.VISIBLE);
-            progressBar.setVisibility(View.INVISIBLE);
-        }
+    public void showLoading() {
+        vButtons.setVisibility(View.INVISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
+
+    }
+
+    public void hideLoading() {
+        vButtons.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.INVISIBLE);
+
     }
 
 
     public void saveToCloud() {
-        showOrHideProgressBar(true);
+        showLoading();
         FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
         StorageReference storageRef = firebaseStorage.getReference().child(Constants.CLOUD_DATA_PATH + email);
 
         Gson gson = new Gson();
-        String json = gson.toJson(dataPOJO);
+        String json = gson.toJson(dataCloud);
         byte[] data = json.getBytes();
 
         UploadTask uploadTask = storageRef.putBytes(data);
@@ -166,7 +168,7 @@ public class FirebaseStorageActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Exception exception) {
                 Log.i(TAG, "onFailure: " + exception.getMessage());
-                showOrHideProgressBar(false);
+                hideLoading();
 
             }
         }).addOnSuccessListener(
@@ -174,15 +176,14 @@ public class FirebaseStorageActivity extends AppCompatActivity {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Toast.makeText(context, R.string.saved_success, Toast.LENGTH_SHORT).show();
-                showOrHideProgressBar(false);
+                hideLoading();
 
             }
         });
     }
 
     public void loadFromCloud() {
-        showOrHideProgressBar(true);
-
+        showLoading();
         FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
         StorageReference storageRef = firebaseStorage.getReference().child(Constants.CLOUD_DATA_PATH + email);
         final long maxDownLoadSize = 5 * 1024 * 1024;
@@ -194,7 +195,7 @@ public class FirebaseStorageActivity extends AppCompatActivity {
                 } else {
                     String strData = new String(bytes);
                     Gson gson = new Gson();
-                    dataPOJO = gson.fromJson(strData, DataPOJO.class);
+                    dataCloud = gson.fromJson(strData, DataCloud.class);
                     updateData();
 
                 }
@@ -204,7 +205,7 @@ public class FirebaseStorageActivity extends AppCompatActivity {
             public void onFailure(@NonNull Exception exception) {
                 Log.i(TAG, "onFailure: " + exception.getMessage());
                 Toast.makeText(context, R.string.loading_failed, Toast.LENGTH_SHORT).show();
-                showOrHideProgressBar(false);
+                hideLoading();
             }
         });
     }
@@ -251,7 +252,7 @@ public class FirebaseStorageActivity extends AppCompatActivity {
     }
 
     public void loadAccountsToInternal() {
-        List<AccountSaver> listAccounts = dataPOJO.getAccountsList();
+        List<AccountSaver> listAccounts = dataCloud.getAccountsList();
 
         compositeDisposable.add(accountsRepository.insertList(listAccounts)
                 .subscribeOn(Schedulers.io())
@@ -261,7 +262,7 @@ public class FirebaseStorageActivity extends AppCompatActivity {
                     public void accept(long[] aLong) {
                         Log.i(TAG, "insert accounts success");
                         if (isOneFlowLoaded) {
-                            showOrHideProgressBar(false);
+                            hideLoading();
                             Toast.makeText(context, R.string.loading_database_success, Toast.LENGTH_SHORT).show();
                             setResult(RESULT_OK);
                         } else isOneFlowLoaded = true;
@@ -270,8 +271,7 @@ public class FirebaseStorageActivity extends AppCompatActivity {
     }
 
     public void loadTransactionsToInternal() {
-        List<TransactionSaver> listTransactions = dataPOJO.getTransactionList();
-
+        List<TransactionSaver> listTransactions = dataCloud.getTransactionList();
         compositeDisposable.add(transactionsRepository.insertList(listTransactions)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -280,7 +280,7 @@ public class FirebaseStorageActivity extends AppCompatActivity {
                     public void accept(long[] aLong) {
                         Log.i(TAG, "insert transactions success");
                         if (isOneFlowLoaded) {
-                            showOrHideProgressBar(false);
+                            hideLoading();
                             Toast.makeText(context,  R.string.loading_database_success, Toast.LENGTH_SHORT).show();
                             setResult(RESULT_OK);
                         } else isOneFlowLoaded = true;

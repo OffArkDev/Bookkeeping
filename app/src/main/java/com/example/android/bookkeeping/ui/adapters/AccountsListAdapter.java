@@ -59,7 +59,6 @@ public class AccountsListAdapter extends BaseAdapter {
             holder.value = v.findViewById(R.id.account_value);
             holder.valueRUB = v.findViewById(R.id.account_value_rub);
             holder.currency = v.findViewById(R.id.account_currency);
-            holder.lastTransactions =  v.findViewById(R.id.account_transactions);
             v.setTag(holder);
         }
 
@@ -70,9 +69,14 @@ public class AccountsListAdapter extends BaseAdapter {
         holder.value.setText(String.format("%s", accountData.getValue()));
         holder.valueRUB.setText(String.format("%s",accountData.getValueRUB()));
         holder.currency.setText(String.format("%s", accountData.getCurrency()));
-        //  holder.lastTransactions.setText(String.format("last transactions: %s", accountData.getLastTransaction()));
 
         return v;
+    }
+
+    public void updateList(List<AccountSaver> newList) {
+        list.clear();
+        list.addAll(newList);
+        this.notifyDataSetChanged();
     }
 
     private AccountSaver getData(int position){
@@ -84,7 +88,6 @@ public class AccountsListAdapter extends BaseAdapter {
         private TextView name;
         private TextView value;
         private TextView valueRUB;
-        private TextView lastTransactions;
         private TextView currency;
 
     }
