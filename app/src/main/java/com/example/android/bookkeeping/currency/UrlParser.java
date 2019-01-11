@@ -27,7 +27,7 @@ public class UrlParser implements FlowableOnSubscribe<CurrenciesRatesData> {
     }
 
     @Override
-    public void subscribe(FlowableEmitter<CurrenciesRatesData> emitter) throws Exception {
+    public void subscribe(FlowableEmitter<CurrenciesRatesData> emitter){
         //init variables
         List<Pair> params = new ArrayList<>();
         URL url = createUrl(parsedUrl);

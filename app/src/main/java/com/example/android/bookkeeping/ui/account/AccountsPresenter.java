@@ -61,6 +61,7 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
     }
 
     public void zipFlows() {
+        getMvpView().showLoading();
         Flowable<CurrenciesRatesData> parseUrl = Flowable.create(urlParser, BackpressureStrategy.DROP);
         Flowable<List<AccountSaver>> getAccounts = accountsRepository.getAll();
 
