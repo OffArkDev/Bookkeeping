@@ -28,7 +28,7 @@
 ### Subcomponents
 Для всех подкомпонентов использовал singleton scope, то есть их жизненный цикл совпадает с жизненным циклом activity. По сути подкомпоненты здесь нужны только для того, чтобы в разных activity создавались только те модули, которые ему нужны. 
 
-##MIT License
+## MIT License
 
 Copyright (c) [2019] [Offan Arkadiy Kazimirovich]
 
