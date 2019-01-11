@@ -28,12 +28,17 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -116,24 +121,25 @@ public class ChartActivity extends AppCompatActivity implements DialogCommunicat
     }
 
     public void loadAndShowCurrencies() {
-        showOrHideProgress(true);
-        Observable.create(urlParser)
+       showLoading();
+        Flowable.create(urlParser, BackpressureStrategy.DROP)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<CurrenciesRatesData>() {
+                .subscribe(new Subscriber<CurrenciesRatesData>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
-                        compositeDisposable.add(d);
+                    public void onSubscribe(Subscription s) {
+                        s.request(Long.MAX_VALUE);
                     }
 
                     @Override
-                    public void onNext(CurrenciesRatesData data) {
-                        listHistoryCurrencies.add(data);
+                    public void onNext(CurrenciesRatesData currenciesRatesData) {
+                        listHistoryCurrencies.add(currenciesRatesData);
+
                     }
 
                     @Override
-                    public void onError(Throwable e) {
-                        Log.i(TAG, "onError: " + e.getMessage());
+                    public void onError(Throwable t) {
+                        Log.i(TAG, "onError: " + t.getMessage());
                     }
 
                     @Override
@@ -158,7 +164,7 @@ public class ChartActivity extends AppCompatActivity implements DialogCommunicat
                         lineChart.setData(lineData);
                         XAxis xAxis = lineChart.getXAxis();
                         xAxis.setValueFormatter(new IndexAxisValueFormatter(timesList));
-                        showOrHideProgress(false);
+                        hideLoading();
                         lineChart.notifyDataSetChanged();
                         lineChart.invalidate();
                     }
@@ -186,15 +192,16 @@ public class ChartActivity extends AppCompatActivity implements DialogCommunicat
         return new LineData(lines);
     }
 
-    public void showOrHideProgress(Boolean show) {
-        if (show) {
-            progressBar.setVisibility(View.VISIBLE);
-            lineChart.setVisibility(View.INVISIBLE);
-        } else {
-            progressBar.setVisibility(View.INVISIBLE);
-            lineChart.setVisibility(View.VISIBLE);
-        }
+    public void showLoading() {
+        progressBar.setVisibility(View.VISIBLE);
+        lineChart.setVisibility(View.INVISIBLE);
     }
+
+    public void hideLoading() {
+        progressBar.setVisibility(View.INVISIBLE);
+        lineChart.setVisibility(View.VISIBLE);
+    }
+
 
     @Override
     public void onBackPressed() {

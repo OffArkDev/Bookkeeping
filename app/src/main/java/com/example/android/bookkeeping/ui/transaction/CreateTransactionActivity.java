@@ -28,16 +28,18 @@ import com.example.android.bookkeeping.ui.dialogs.DialogCommunicator;
 import com.example.android.bookkeeping.utils.DateUtil;
 import com.google.gson.Gson;
 
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+
 import java.util.ArrayList;
 import java.util.Date;
 
 import javax.inject.Inject;
 
-import io.reactivex.Observable;
-import io.reactivex.Observer;
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class CreateTransactionActivity extends AppCompatActivity implements DialogCommunicator {
@@ -158,23 +160,24 @@ public class CreateTransactionActivity extends AppCompatActivity implements Dial
     }
 
     private void loadCurrencies() {
-        Observable.create(urlParser)
+        Flowable.create(urlParser, BackpressureStrategy.DROP)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<CurrenciesRatesData>() {
+                .subscribe(new Subscriber<CurrenciesRatesData>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
-                        compositeDisposable.add(d);
+                    public void onSubscribe(Subscription s) {
+                        s.request(Long.MAX_VALUE);
                     }
 
                     @Override
-                    public void onNext(CurrenciesRatesData data) {
-                        listHistoryCurrencies.add(data);
+                    public void onNext(CurrenciesRatesData currenciesRatesData) {
+                        listHistoryCurrencies.add(currenciesRatesData);
+
                     }
 
                     @Override
-                    public void onError(Throwable e) {
-                        Log.i(TAG, "onError: " + e.getMessage());
+                    public void onError(Throwable t) {
+                        Log.i(TAG, "onError: " + t.getMessage());
                     }
 
                     @Override

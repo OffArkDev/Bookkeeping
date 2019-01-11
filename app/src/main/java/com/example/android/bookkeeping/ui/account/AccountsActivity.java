@@ -36,6 +36,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
@@ -44,6 +45,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
+import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
@@ -67,8 +69,6 @@ public class AccountsActivity extends AppCompatActivity{
 
     private boolean isDeleteClicked = false;
 
-    private boolean isFlowLoaded = false;
-
     @Inject
     public Context context;
 
@@ -87,8 +87,7 @@ public class AccountsActivity extends AppCompatActivity{
         setContentView(R.layout.activity_accounts_list);
         getAccountComponent().inject(this);
         findViews();
-        parseUrl();
-        getAccountsFromDatabase();
+        zipFlows();
         initAdapter();
         setOnClickListeners();
     }
@@ -188,37 +187,34 @@ public class AccountsActivity extends AppCompatActivity{
     }
 
 
-    public void parseUrl() {
+    public void zipFlows() {
         showLoading();
-        Observable.create(urlParser)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<CurrenciesRatesData>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        compositeDisposable.add(d);
-                    }
+        Flowable<CurrenciesRatesData> parseUrl = Flowable.create(urlParser, BackpressureStrategy.DROP);
+        Flowable<List<AccountSaver>> getAccounts = accountsRepository.getAll();
 
-                    @Override
-                    public void onNext(CurrenciesRatesData data) {
-                        currenciesRatesData = data;
-                    }
+        BiFunction<CurrenciesRatesData, List<AccountSaver>, Boolean> biFunction = new BiFunction<CurrenciesRatesData, List<AccountSaver>, Boolean>() {
+            @Override
+            public Boolean apply(CurrenciesRatesData data, List<AccountSaver> accountSavers) {
+                currenciesRatesData = data;
+                listAccounts = accountSavers;
+                return true;
+            }
+        };
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.i(TAG, "onError: " + e.getMessage());
-                    }
 
-                    @Override
-                    public void onComplete() {
-                        if (isFlowLoaded) {
-                            updateDailyCurrencies();
-                        } else {
-                            isFlowLoaded = true;
-                        }
-                    }
-                });
+        compositeDisposable.add(
+                Flowable.zip(parseUrl.subscribeOn(Schedulers.newThread()),
+                        getAccounts.subscribeOn(Schedulers.newThread()),
+                        biFunction)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Consumer<Boolean>() {
+                            @Override
+                            public void accept(Boolean o){
+                                updateDailyCurrencies();
+                            }
+                        }));
     }
+
 
     public void getAccountsFromDatabase() {
         compositeDisposable.add(accountsRepository.getAll()
@@ -227,11 +223,7 @@ public class AccountsActivity extends AppCompatActivity{
                     @Override
                     public void accept(List<AccountSaver> accountSavers) {
                         listAccounts = accountSavers;
-                        if (isFlowLoaded) {
-                            updateDailyCurrencies();
-                        } else {
-                            isFlowLoaded = true;
-                        }
+                        updateDailyCurrencies();
                     }
                 }));
     }
