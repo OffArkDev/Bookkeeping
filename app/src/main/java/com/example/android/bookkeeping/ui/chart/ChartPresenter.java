@@ -12,17 +12,20 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
@@ -30,7 +33,7 @@ public class ChartPresenter<V extends ChartMvpView> extends BasePresenter<V> imp
 
     private final static String TAG = "ChartPresenter";
 
-    private ArrayList<CurrenciesRatesData> listHistoryCurrencies = new ArrayList<>();
+    private ArrayList <CurrenciesRatesData> listHistoryCurrencies = new ArrayList<>();
     private String[] ratesNames;
     private String chosenCurrency;
     private ArrayList<String> timesList = new ArrayList<>();
@@ -62,23 +65,24 @@ public class ChartPresenter<V extends ChartMvpView> extends BasePresenter<V> imp
     @Override
     public void loadAndShowCurrencies() {
         getMvpView().showLoading();
-        Observable.create(urlParser)
+        Flowable.create(urlParser, BackpressureStrategy.DROP)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<CurrenciesRatesData>() {
+                .subscribe(new Subscriber<CurrenciesRatesData>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
-                        compositeDisposable.add(d);
+                    public void onSubscribe(Subscription s) {
+                        s.request(Long.MAX_VALUE);
                     }
 
                     @Override
-                    public void onNext(CurrenciesRatesData data) {
-                        listHistoryCurrencies.add(data);
+                    public void onNext(CurrenciesRatesData currenciesRatesData) {
+                        listHistoryCurrencies.add(currenciesRatesData);
+
                     }
 
                     @Override
-                    public void onError(Throwable e) {
-                        Log.i(TAG, "onError: " + e.getMessage());
+                    public void onError(Throwable t) {
+                        Log.i(TAG, "onError: " + t.getMessage());
                     }
 
                     @Override
@@ -86,7 +90,6 @@ public class ChartPresenter<V extends ChartMvpView> extends BasePresenter<V> imp
                         processData();
                     }
                 });
-
     }
 
 
