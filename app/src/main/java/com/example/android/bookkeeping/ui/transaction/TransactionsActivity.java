@@ -55,7 +55,7 @@ public class TransactionsActivity extends AppCompatActivity {
     boolean isDeleteClicked = false;
 
     @Inject
-    Context context;
+    public Context context;
 
     @Inject
     public CompositeDisposable compositeDisposable;
