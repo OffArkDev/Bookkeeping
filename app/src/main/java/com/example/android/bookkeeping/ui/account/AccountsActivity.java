@@ -62,8 +62,6 @@ public class AccountsActivity extends AppCompatActivity{
     private ProgressBar progressBar;
     private ImageView ivChartButton;
 
-    private AccountsListAdapter accountsListAdapter;
-    private List<AccountSaver> listAccounts = new ArrayList<>();
 
     private CurrenciesRatesData currenciesRatesData;
 
@@ -80,6 +78,12 @@ public class AccountsActivity extends AppCompatActivity{
 
     @Inject
     public CompositeDisposable compositeDisposable;
+
+    @Inject
+    public List<AccountSaver> listAccounts;
+
+    @Inject
+    public AccountsListAdapter accountsListAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -109,7 +113,6 @@ public class AccountsActivity extends AppCompatActivity{
     }
 
     public void initAdapter() {
-        accountsListAdapter = new AccountsListAdapter(this, listAccounts);
         listView.setAdapter(accountsListAdapter);
     }
 
@@ -297,7 +300,7 @@ public class AccountsActivity extends AppCompatActivity{
                                public void run() {
                                    Log.i(TAG, "delete account complete");
                                    listAccounts.remove(id);
-                                   initAdapter();
+                                   updateListView(listAccounts);
                                }
                            }, new Consumer<Throwable>() {
                                @Override

@@ -48,10 +48,6 @@ public class TransactionsActivity extends AppCompatActivity {
     private ListView listView;
     private Button btnDeleteTransaction;
 
-    private List<TransactionSaver> listTransactions = new ArrayList<>();
-
-    private TransactionsListAdapter transactionsListAdapter;
-
     private long accountId;
 
     private CurrenciesRatesData currenciesRatesData;
@@ -67,6 +63,10 @@ public class TransactionsActivity extends AppCompatActivity {
     @Inject
     public TransactionsRepository transactionsRepository;
 
+    @Inject
+    public List<TransactionSaver> listTransactions;
+    @Inject
+    public TransactionsListAdapter transactionsListAdapter;
 
 
     @Override
@@ -124,7 +124,6 @@ public class TransactionsActivity extends AppCompatActivity {
     }
 
     public void initAdapter() {
-        transactionsListAdapter = new TransactionsListAdapter(this, listTransactions);
         listView.setAdapter(transactionsListAdapter);
     }
 
@@ -198,13 +197,13 @@ public class TransactionsActivity extends AppCompatActivity {
         if (data != null) {
             if (requestCode == 1) {
                 if (resultCode == RESULT_OK) {
-                   String type = data.getStringExtra("type");
-                   String name = data.getStringExtra("name");
-                   String date = getCurrentDate();
-                   String value = data.getStringExtra("value");
-                   String currency = data.getStringExtra("currency");
-                   String comment = data.getStringExtra("comment");
-                   String valueRUB = "";
+                    String type = data.getStringExtra("type");
+                    String name = data.getStringExtra("name");
+                    String date = getCurrentDate();
+                    String value = data.getStringExtra("value");
+                    String currency = data.getStringExtra("currency");
+                    String comment = data.getStringExtra("comment");
+                    String valueRUB = "";
                     if (currency.equals(Constants.NAME_CURRENCY_RUB)) {
                         valueRUB = value;
                     }
