@@ -45,7 +45,8 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
     @Inject
     public CompositeDisposable compositeDisposable;
 
-    private List<AccountSaver> listAccounts = new ArrayList<>();
+    @Inject
+    public List<AccountSaver> listAccounts;
 
     @Inject
     public AccountsPresenter() {
@@ -232,8 +233,4 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
         return listAccounts;
     }
 
-    @Override
-    public AccountsListAdapter initAccountsAdapter() {
-        return new AccountsListAdapter(getMvpView().getContext(), listAccounts);
-    }
 }

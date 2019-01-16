@@ -68,12 +68,6 @@ public class UrlParser implements FlowableOnSubscribe<CurrenciesRatesData> {
                         }
                     }
                 }  else if (eventType == XmlPullParser.END_TAG) {
-                    String name = xpp.getName();
-                    int atCount = xpp.getAttributeCount();
-                    String atName = "";
-                    if (atCount > 0) {
-                        atName = xpp.getAttributeName(0);
-                    }
                     if (xpp.getName().equalsIgnoreCase("cube") && rateStart && xpp.getAttributeCount() == -1) {
                         currenciesRatesData = new CurrenciesRatesData(params, time);
                         emitter.onNext(currenciesRatesData);

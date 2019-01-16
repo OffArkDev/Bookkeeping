@@ -27,7 +27,7 @@ public class TransactionPresenter<V extends TransactionMvpView> extends BasePres
 
     private static final String TAG = "TransactionPresenter";
 
-    private List<TransactionSaver> listTransactions = new ArrayList<>();
+
     private long accountId;
     private String[] currenciesNames;
 
@@ -36,6 +36,9 @@ public class TransactionPresenter<V extends TransactionMvpView> extends BasePres
 
     @Inject
     public TransactionsRepository transactionsRepository;
+
+    @Inject
+    public List<TransactionSaver> listTransactions;
 
     @Inject
     public TransactionPresenter() {
@@ -76,12 +79,6 @@ public class TransactionPresenter<V extends TransactionMvpView> extends BasePres
                     }
                 });
     }
-
-    @Override
-    public TransactionsListAdapter initTransactionsAdapter() {
-        return new TransactionsListAdapter(getMvpView().getContext(), listTransactions);
-    }
-
 
     @Override
     public void getDataFromIntent(Intent intent) {

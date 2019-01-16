@@ -20,7 +20,5 @@ public interface AccountsMvpPresenter <V extends AccountsMvpView> extends MvpPre
 
     void getAccountsFromDatabase();
 
-    AccountsListAdapter initAccountsAdapter();
-
 
 }
