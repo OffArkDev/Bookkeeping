@@ -15,6 +15,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
@@ -23,8 +24,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
+import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
+import io.reactivex.functions.Function3;
 import io.reactivex.schedulers.Schedulers;
 
 public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter<V> implements AccountsMvpPresenter<V> {
@@ -42,9 +45,8 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
     @Inject
     public CompositeDisposable compositeDisposable;
 
-    private List<AccountSaver> listAccounts = new ArrayList<>();
-
-    private boolean isFlowLoaded = false;
+    @Inject
+    public List<AccountSaver> listAccounts;
 
     @Inject
     public AccountsPresenter() {
@@ -56,42 +58,35 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
 
         getMvpView().showLoading();
 
-        parseUrl();
-        getAccountsFromDatabase();
+        zipFlows();
     }
 
-    public void parseUrl() {
-        Observable.create(urlParser)
-                .subscribeOn(Schedulers.io())
+    public void zipFlows() {
+        getMvpView().showLoading();
+        Flowable<CurrenciesRatesData> parseUrl = Flowable.create(urlParser, BackpressureStrategy.DROP);
+        Flowable<List<AccountSaver>> getAccounts = accountsRepository.getAll();
+
+         BiFunction<CurrenciesRatesData, List<AccountSaver>, Boolean> biFunction = new BiFunction<CurrenciesRatesData, List<AccountSaver>, Boolean>() {
+             @Override
+             public Boolean apply(CurrenciesRatesData data, List<AccountSaver> accountSavers) {
+                 currenciesRatesData = data;
+                 listAccounts = accountSavers;
+                 return true;
+             }
+        };
+
+
+        compositeDisposable.add(
+                Flowable.zip(parseUrl.subscribeOn(Schedulers.newThread()),
+                getAccounts.subscribeOn(Schedulers.newThread()),
+                       biFunction)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<CurrenciesRatesData>() {
+                .subscribe(new Consumer<Boolean>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
-                        compositeDisposable.add(d);
+                    public void accept(Boolean o){
+                        updateDailyCurrencies();
                     }
-
-                    @Override
-                    public void onNext(CurrenciesRatesData data) {
-                        currenciesRatesData = data;
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.i(TAG, "onError: " + e.getMessage());
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        if (isFlowLoaded) {
-                            updateDailyCurrencies();
-                        } else {
-                            isFlowLoaded = true;
-                        }
-                    }
-                });
-
-
-
+                }));
     }
 
     @Override
@@ -103,11 +98,7 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
                     @Override
                     public void accept(List<AccountSaver> accountSavers) {
                         listAccounts = accountSavers;
-                        if (isFlowLoaded) {
-                            updateDailyCurrencies();
-                        } else {
-                            isFlowLoaded = true;
-                        }
+                        updateDailyCurrencies();
 
                     }
                 }));
@@ -242,8 +233,4 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
         return listAccounts;
     }
 
-    @Override
-    public AccountsListAdapter initAccountsAdapter() {
-        return new AccountsListAdapter(getMvpView().getContext(), listAccounts);
-    }
 }

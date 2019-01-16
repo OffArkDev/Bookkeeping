@@ -12,10 +12,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.FlowableEmitter;
+import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 
-public class UrlParser implements ObservableOnSubscribe<CurrenciesRatesData> {
+public class UrlParser implements FlowableOnSubscribe<CurrenciesRatesData> {
 
     private CurrenciesRatesData currenciesRatesData;
     private String parsedUrl;
@@ -25,7 +27,7 @@ public class UrlParser implements ObservableOnSubscribe<CurrenciesRatesData> {
     }
 
     @Override
-    public void subscribe(ObservableEmitter<CurrenciesRatesData> emitter)  {
+    public void subscribe(FlowableEmitter<CurrenciesRatesData> emitter){
         //init variables
         List<Pair> params = new ArrayList<>();
         URL url = createUrl(parsedUrl);
@@ -66,12 +68,6 @@ public class UrlParser implements ObservableOnSubscribe<CurrenciesRatesData> {
                         }
                     }
                 }  else if (eventType == XmlPullParser.END_TAG) {
-                    String name = xpp.getName();
-                    int atCount = xpp.getAttributeCount();
-                    String atName = "";
-                    if (atCount > 0) {
-                         atName = xpp.getAttributeName(0);
-                    }
                     if (xpp.getName().equalsIgnoreCase("cube") && rateStart && xpp.getAttributeCount() == -1) {
                         currenciesRatesData = new CurrenciesRatesData(params, time);
                         emitter.onNext(currenciesRatesData);
@@ -91,8 +87,8 @@ public class UrlParser implements ObservableOnSubscribe<CurrenciesRatesData> {
             e.printStackTrace();
         }
         emitter.onComplete();
-    }
 
+    }
 
     private URL createUrl(String url) {
         URL result = null;

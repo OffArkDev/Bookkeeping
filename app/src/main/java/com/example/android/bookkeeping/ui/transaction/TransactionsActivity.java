@@ -37,12 +37,14 @@ public class TransactionsActivity extends BaseActivity implements TransactionMvp
     private Button btnDeleteTransaction;
 
 
-    private TransactionsListAdapter transactionsListAdapter;
 
     boolean isDeleteClicked = false;
 
     @Inject
-    TransactionMvpPresenter<TransactionMvpView> presenter;
+    public TransactionMvpPresenter<TransactionMvpView> presenter;
+
+    @Inject
+    public TransactionsListAdapter transactionsListAdapter;
 
 
 
@@ -101,7 +103,6 @@ public class TransactionsActivity extends BaseActivity implements TransactionMvp
     }
 
     public void initAdapter() {
-        transactionsListAdapter = presenter.initTransactionsAdapter();
         listView.setAdapter(transactionsListAdapter);
     }
 

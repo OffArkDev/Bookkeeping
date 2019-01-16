@@ -44,6 +44,7 @@ public class AccountsActivity extends BaseActivity implements AccountsMvpView {
     private ProgressBar progressBar;
     private ImageView ivChartButton;
 
+    @Inject
     public AccountsListAdapter accountsListAdapter;
 
     @Inject
@@ -132,7 +133,6 @@ public class AccountsActivity extends BaseActivity implements AccountsMvpView {
     }
 
     public void initAdapter(){
-        accountsListAdapter = mPresenter.initAccountsAdapter();
         listView.setAdapter(accountsListAdapter);
     }
 
