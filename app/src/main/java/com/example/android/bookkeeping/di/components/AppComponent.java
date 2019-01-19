@@ -14,7 +14,7 @@ import dagger.Component;
 @AppScope
 @Component(
         modules = {
-                AppModule.class,
+                AppModule.class
         }
 )
 public interface AppComponent {
