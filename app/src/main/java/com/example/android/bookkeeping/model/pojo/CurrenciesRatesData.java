@@ -1,4 +1,4 @@
-package com.example.android.bookkeeping.currency;
+package com.example.android.bookkeeping.model.pojo;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -7,8 +7,8 @@ import java.util.List;
 
 
 public class CurrenciesRatesData {
-    String time;
-    List<Pair> ratesList;
+   private String time;
+   private List<Pair> ratesList;
 
     public CurrenciesRatesData(List<Pair> ratesList, String time) {
         this.ratesList = ratesList;

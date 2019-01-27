@@ -1,7 +1,8 @@
-package com.example.android.bookkeeping.repository;
+package com.example.android.bookkeeping.data.datasource;
 
-import com.example.android.bookkeeping.data.AccountDao;
-import com.example.android.bookkeeping.data.model.AccountSaver;
+import com.example.android.bookkeeping.data.dao.AccountDao;
+import com.example.android.bookkeeping.model.AccountSaver;
+import com.example.android.bookkeeping.repository.AccountsRepository;
 
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -11,7 +12,7 @@ import io.reactivex.Flowable;
 import io.reactivex.Single;
 import io.reactivex.functions.Action;
 
-public class AccountsDataSource implements AccountsRepository{
+public class AccountsDataSource implements AccountsRepository {
     private AccountDao accountDao;
 
     public AccountsDataSource(AccountDao accountDao) {
@@ -30,7 +31,7 @@ public class AccountsDataSource implements AccountsRepository{
 
         return Single.fromCallable(new Callable<Long>() {
             @Override
-            public Long call () throws Exception {
+            public Long call () {
                 return accountDao.insert(accountSaver);
             }
         });

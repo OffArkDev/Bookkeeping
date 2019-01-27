@@ -3,7 +3,7 @@ package com.example.android.bookkeeping.ui.transaction.create;
 import android.content.Intent;
 import android.widget.ArrayAdapter;
 
-import com.example.android.bookkeeping.currency.CurrenciesRatesData;
+import com.example.android.bookkeeping.model.pojo.CurrenciesRatesData;
 import com.example.android.bookkeeping.ui.mvp.MvpPresenter;
 
 public interface CreateTransactionMvpPresenter<V extends CreateTransactionMvpView> extends MvpPresenter<V> {

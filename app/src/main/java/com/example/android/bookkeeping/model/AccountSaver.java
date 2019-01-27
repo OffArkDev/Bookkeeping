@@ -1,4 +1,4 @@
-package com.example.android.bookkeeping.data.model;
+package com.example.android.bookkeeping.model;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;

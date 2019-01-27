@@ -1,6 +1,6 @@
 package com.example.android.bookkeeping.ui.transaction;
 
-import com.example.android.bookkeeping.data.model.TransactionSaver;
+import com.example.android.bookkeeping.model.TransactionSaver;
 import com.example.android.bookkeeping.ui.mvp.MvpView;
 
 import java.util.List;

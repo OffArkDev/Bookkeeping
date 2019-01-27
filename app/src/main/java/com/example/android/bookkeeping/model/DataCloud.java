@@ -1,4 +1,4 @@
-package com.example.android.bookkeeping.data.model;
+package com.example.android.bookkeeping.model;
 
 import java.util.List;
 

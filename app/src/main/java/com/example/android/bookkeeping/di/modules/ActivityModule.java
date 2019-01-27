@@ -2,8 +2,8 @@ package com.example.android.bookkeeping.di.modules;
 
 import android.content.Context;
 
-import com.example.android.bookkeeping.data.model.AccountSaver;
-import com.example.android.bookkeeping.data.model.TransactionSaver;
+import com.example.android.bookkeeping.model.AccountSaver;
+import com.example.android.bookkeeping.model.TransactionSaver;
 import com.example.android.bookkeeping.ui.account.AccountsMvpPresenter;
 import com.example.android.bookkeeping.ui.account.AccountsMvpView;
 import com.example.android.bookkeeping.ui.account.AccountsPresenter;

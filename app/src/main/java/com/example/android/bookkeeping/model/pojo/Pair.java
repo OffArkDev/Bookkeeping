@@ -1,4 +1,4 @@
-package com.example.android.bookkeeping.currency;
+package com.example.android.bookkeeping.model.pojo;
 
 import java.math.BigDecimal;
 
@@ -7,7 +7,7 @@ public class Pair
     private String currency;
     private BigDecimal rate;
 
-    public Pair(String currency, BigDecimal rate)
+    Pair(String currency, BigDecimal rate)
     {
         this.currency = currency;
         this.rate = rate;
@@ -17,7 +17,7 @@ public class Pair
         return currency;
     }
 
-    public BigDecimal getRate() {
+    BigDecimal getRate() {
         return rate;
     }
 }

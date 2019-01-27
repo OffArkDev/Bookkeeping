@@ -1,9 +1,8 @@
 package com.example.android.bookkeeping.repository;
 
-import com.example.android.bookkeeping.data.model.AccountSaver;
+import com.example.android.bookkeeping.model.AccountSaver;
 
 import java.util.List;
-import java.util.Observable;
 
 import io.reactivex.Completable;
 import io.reactivex.Flowable;

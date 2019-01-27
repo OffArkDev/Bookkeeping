@@ -6,9 +6,9 @@ import android.util.Log;
 
 import com.example.android.bookkeeping.Constants;
 import com.example.android.bookkeeping.R;
-import com.example.android.bookkeeping.data.model.AccountSaver;
-import com.example.android.bookkeeping.data.model.DataCloud;
-import com.example.android.bookkeeping.data.model.TransactionSaver;
+import com.example.android.bookkeeping.model.AccountSaver;
+import com.example.android.bookkeeping.model.DataCloud;
+import com.example.android.bookkeeping.model.TransactionSaver;
 import com.example.android.bookkeeping.repository.AccountsRepository;
 import com.example.android.bookkeeping.repository.TransactionsRepository;
 import com.example.android.bookkeeping.ui.mvp.BasePresenter;
@@ -40,16 +40,16 @@ public class FirebaseStoragePresenter<V extends FirebaseStorageMvpView> extends 
     private boolean isOneFlowLoaded = false;
 
     @Inject
-    public AccountsRepository accountsRepository;
+    AccountsRepository accountsRepository;
 
     @Inject
-    public TransactionsRepository transactionsRepository;
+    TransactionsRepository transactionsRepository;
 
     @Inject
-    public CompositeDisposable compositeDisposable;
+    CompositeDisposable compositeDisposable;
 
     @Inject
-    public FirebaseStoragePresenter() {
+    FirebaseStoragePresenter() {
     }
 
     @Override
@@ -75,7 +75,7 @@ public class FirebaseStoragePresenter<V extends FirebaseStorageMvpView> extends 
         loadFromCloud();
     }
 
-    public void getDataFromDatabase() {
+    private void getDataFromDatabase() {
         getMvpView().showLoading();
 
         compositeDisposable.add(accountsRepository.getAll()
@@ -99,7 +99,7 @@ public class FirebaseStoragePresenter<V extends FirebaseStorageMvpView> extends 
                 }));
     }
 
-    public void saveToCloud() {
+    private void saveToCloud() {
         getMvpView().showLoading();
         FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
         StorageReference storageRef = firebaseStorage.getReference().child(Constants.CLOUD_DATA_PATH + email);
@@ -127,7 +127,7 @@ public class FirebaseStoragePresenter<V extends FirebaseStorageMvpView> extends 
                 });
     }
 
-    public void hideBarIfFlowLoaded() {
+    private void hideBarIfFlowLoaded() {
         if (!isOneFlowLoaded) {
             isOneFlowLoaded = true;
         } else {
@@ -136,7 +136,7 @@ public class FirebaseStoragePresenter<V extends FirebaseStorageMvpView> extends 
     }
 
 
-    public void loadFromCloud() {
+    private void loadFromCloud() {
         getMvpView().showLoading();
 
         FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
@@ -166,7 +166,7 @@ public class FirebaseStoragePresenter<V extends FirebaseStorageMvpView> extends 
     }
 
 
-    public void updateData() {
+    private void updateData() {
         isOneFlowLoaded = false;
 
         compositeDisposable.add(accountsRepository.deleteAll()
@@ -205,7 +205,7 @@ public class FirebaseStoragePresenter<V extends FirebaseStorageMvpView> extends 
 
     }
 
-    public void loadAccountsToInternal() {
+    private void loadAccountsToInternal() {
         List<AccountSaver> listAccounts = dataCloud.getAccountsList();
 
         compositeDisposable.add(accountsRepository.insertList(listAccounts)
@@ -224,7 +224,7 @@ public class FirebaseStoragePresenter<V extends FirebaseStorageMvpView> extends 
                 }));
     }
 
-    public void loadTransactionsToInternal() {
+    private void loadTransactionsToInternal() {
         List<TransactionSaver> listTransactions = dataCloud.getTransactionList();
 
         compositeDisposable.add(transactionsRepository.insertList(listTransactions)

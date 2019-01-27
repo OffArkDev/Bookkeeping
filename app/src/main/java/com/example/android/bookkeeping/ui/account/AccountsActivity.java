@@ -15,8 +15,8 @@ import android.widget.Toast;
 import com.example.android.bookkeeping.Constants;
 import com.example.android.bookkeeping.MyApplication;
 import com.example.android.bookkeeping.R;
-import com.example.android.bookkeeping.currency.CurrenciesRatesData;
-import com.example.android.bookkeeping.data.model.AccountSaver;
+import com.example.android.bookkeeping.model.pojo.CurrenciesRatesData;
+import com.example.android.bookkeeping.model.AccountSaver;
 import com.example.android.bookkeeping.di.components.StorageParserComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.di.modules.StorageModule;
@@ -53,8 +53,7 @@ public class AccountsActivity extends BaseActivity implements AccountsMvpView {
     private boolean isDeleteClicked = false;
 
     public static Intent getStartIntent(Context context) {
-        Intent intent = new Intent(context, AccountsActivity.class);
-        return intent;
+        return new Intent(context, AccountsActivity.class);
     }
 
     @Override
