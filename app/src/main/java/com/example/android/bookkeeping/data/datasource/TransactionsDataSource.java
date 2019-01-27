@@ -1,7 +1,8 @@
-package com.example.android.bookkeeping.repository;
+package com.example.android.bookkeeping.data.datasource;
 
-import com.example.android.bookkeeping.data.TransactionDao;
-import com.example.android.bookkeeping.data.TransactionSaver;
+import com.example.android.bookkeeping.data.dao.TransactionDao;
+import com.example.android.bookkeeping.data.entities.TransactionSaver;
+import com.example.android.bookkeeping.data.repository.TransactionsRepository;
 
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -52,7 +53,7 @@ public class TransactionsDataSource implements TransactionsRepository {
     public Completable update(final TransactionSaver transactionSaver) {
         return Completable.fromAction(new Action() {
             @Override
-            public void run() throws Exception {
+            public void run() {
                 transactionDao.update(transactionSaver);
             }
         });
@@ -61,7 +62,7 @@ public class TransactionsDataSource implements TransactionsRepository {
     public Completable delete(final TransactionSaver transactionSaver) {
         return Completable.fromAction(new Action() {
             @Override
-            public void run() throws Exception {
+            public void run() {
                 transactionDao.delete(transactionSaver);
             }
         });

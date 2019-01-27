@@ -1,6 +1,6 @@
-package com.example.android.bookkeeping.repository;
+package com.example.android.bookkeeping.data.repository;
 
-import com.example.android.bookkeeping.data.AccountSaver;
+import com.example.android.bookkeeping.data.entities.AccountSaver;
 
 import java.util.List;
 

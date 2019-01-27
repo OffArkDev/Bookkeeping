@@ -2,8 +2,8 @@ package com.example.android.bookkeeping.di.modules;
 
 import android.content.Context;
 
-import com.example.android.bookkeeping.data.AccountSaver;
-import com.example.android.bookkeeping.data.TransactionSaver;
+import com.example.android.bookkeeping.data.entities.AccountSaver;
+import com.example.android.bookkeeping.data.entities.TransactionSaver;
 import com.example.android.bookkeeping.ui.adapters.AccountsListAdapter;
 import com.example.android.bookkeeping.ui.adapters.TransactionsListAdapter;
 

@@ -1,4 +1,4 @@
-package com.example.android.bookkeeping.data;
+package com.example.android.bookkeeping.data.entities;
 
 
 import android.arch.persistence.room.ColumnInfo;
@@ -7,10 +7,12 @@ import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
+import com.example.android.bookkeeping.data.entities.AccountSaver;
+
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 
 @Entity (foreignKeys = @ForeignKey(entity = AccountSaver.class, parentColumns = "id", childColumns = "account_id" , onDelete = CASCADE),
-        indices = {@Index("id")})
+        indices = {@Index("account_id")})
 public class TransactionSaver {
 
     @PrimaryKey(autoGenerate = true)

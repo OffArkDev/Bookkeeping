@@ -1,4 +1,7 @@
-package com.example.android.bookkeeping.data;
+package com.example.android.bookkeeping.pojo;
+
+import com.example.android.bookkeeping.data.entities.AccountSaver;
+import com.example.android.bookkeeping.data.entities.TransactionSaver;
 
 import java.util.List;
 

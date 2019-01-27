@@ -1,7 +1,7 @@
 package com.example.android.bookkeeping.di.modules;
 
 
-import com.example.android.bookkeeping.currency.UrlParser;
+import com.example.android.bookkeeping.pojo.UrlParser;
 
 import javax.inject.Singleton;
 
