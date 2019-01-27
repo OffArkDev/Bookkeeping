@@ -6,8 +6,8 @@ import android.widget.ArrayAdapter;
 
 import com.example.android.bookkeeping.Constants;
 import com.example.android.bookkeeping.R;
-import com.example.android.bookkeeping.currency.CurrenciesRatesData;
-import com.example.android.bookkeeping.currency.UrlParser;
+import com.example.android.bookkeeping.model.pojo.CurrenciesRatesData;
+import com.example.android.bookkeeping.model.pojo.UrlParser;
 import com.example.android.bookkeeping.ui.mvp.BasePresenter;
 import com.example.android.bookkeeping.utils.DateUtil;
 
@@ -41,10 +41,10 @@ public class CreateTransactionPresenter<V extends CreateTransactionMvpView> exte
     public CompositeDisposable compositeDisposable;
 
     @Inject
-    public UrlParser urlParser;
+    UrlParser urlParser;
 
     @Inject
-    public CreateTransactionPresenter() {
+    CreateTransactionPresenter() {
     }
 
 

@@ -1,4 +1,4 @@
-package com.example.android.bookkeeping.currency;
+package com.example.android.bookkeeping.model.pojo;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -14,8 +14,6 @@ import java.util.List;
 
 import io.reactivex.FlowableEmitter;
 import io.reactivex.FlowableOnSubscribe;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
 
 public class UrlParser implements FlowableOnSubscribe<CurrenciesRatesData> {
 

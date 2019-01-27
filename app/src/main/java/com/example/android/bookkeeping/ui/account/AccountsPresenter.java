@@ -3,11 +3,10 @@ package com.example.android.bookkeeping.ui.account;
 import android.util.Log;
 
 import com.example.android.bookkeeping.Constants;
-import com.example.android.bookkeeping.currency.CurrenciesRatesData;
-import com.example.android.bookkeeping.currency.UrlParser;
-import com.example.android.bookkeeping.data.model.AccountSaver;
+import com.example.android.bookkeeping.model.pojo.CurrenciesRatesData;
+import com.example.android.bookkeeping.model.pojo.UrlParser;
+import com.example.android.bookkeeping.model.AccountSaver;
 import com.example.android.bookkeeping.repository.AccountsRepository;
-import com.example.android.bookkeeping.ui.adapters.AccountsListAdapter;
 import com.example.android.bookkeeping.ui.mvp.BasePresenter;
 
 import java.util.ArrayList;
@@ -18,16 +17,12 @@ import javax.inject.Inject;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
-import io.reactivex.Observable;
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
-import io.reactivex.functions.Function3;
 import io.reactivex.schedulers.Schedulers;
 
 public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter<V> implements AccountsMvpPresenter<V> {
@@ -37,19 +32,19 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
     private CurrenciesRatesData currenciesRatesData;
 
     @Inject
-    public UrlParser urlParser;
+    UrlParser urlParser;
 
     @Inject
-    public AccountsRepository accountsRepository;
+    AccountsRepository accountsRepository;
 
     @Inject
-    public CompositeDisposable compositeDisposable;
+    CompositeDisposable compositeDisposable;
 
     @Inject
-    public List<AccountSaver> listAccounts;
+    List<AccountSaver> listAccounts;
 
     @Inject
-    public AccountsPresenter() {
+    AccountsPresenter() {
     }
 
     @Override
@@ -61,7 +56,7 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
         zipFlows();
     }
 
-    public void zipFlows() {
+    private void zipFlows() {
         getMvpView().showLoading();
         Flowable<CurrenciesRatesData> parseUrl = Flowable.create(urlParser, BackpressureStrategy.DROP);
         Flowable<List<AccountSaver>> getAccounts = accountsRepository.getAll();
@@ -177,7 +172,7 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
         getMvpView().changeDeleteButtonState();
     }
 
-    public void deleteAccount (final int id) {
+    private void deleteAccount (final int id) {
         compositeDisposable.add(accountsRepository.delete(listAccounts.get(id))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -219,7 +214,7 @@ public class AccountsPresenter <V extends AccountsMvpView> extends BasePresenter
                 }));
     }
 
-    public String convertValueRub(String value, String currency) {
+    private String convertValueRub(String value, String currency) {
         String valueRUB = "";
         if (currency.equals(Constants.NAME_CURRENCY_RUB)) {
             valueRUB = value;

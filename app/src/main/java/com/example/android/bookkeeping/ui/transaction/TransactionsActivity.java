@@ -13,9 +13,9 @@ import android.widget.Toast;
 
 import com.example.android.bookkeeping.MyApplication;
 import com.example.android.bookkeeping.R;
-import com.example.android.bookkeeping.currency.CurrenciesRatesData;
-import com.example.android.bookkeeping.data.model.AccountSaver;
-import com.example.android.bookkeeping.data.model.TransactionSaver;
+import com.example.android.bookkeeping.model.pojo.CurrenciesRatesData;
+import com.example.android.bookkeeping.model.AccountSaver;
+import com.example.android.bookkeeping.model.TransactionSaver;
 import com.example.android.bookkeeping.di.components.StorageComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;
 import com.example.android.bookkeeping.di.modules.StorageModule;

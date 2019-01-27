@@ -4,14 +4,11 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.example.android.bookkeeping.Constants;
-import com.example.android.bookkeeping.currency.CurrenciesRatesData;
-import com.example.android.bookkeeping.data.model.TransactionSaver;
+import com.example.android.bookkeeping.model.pojo.CurrenciesRatesData;
+import com.example.android.bookkeeping.model.TransactionSaver;
 import com.example.android.bookkeeping.repository.TransactionsRepository;
-import com.example.android.bookkeeping.ui.adapters.TransactionsListAdapter;
 import com.example.android.bookkeeping.ui.mvp.BasePresenter;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -35,13 +32,13 @@ public class TransactionPresenter<V extends TransactionMvpView> extends BasePres
     public CompositeDisposable compositeDisposable;
 
     @Inject
-    public TransactionsRepository transactionsRepository;
+    TransactionsRepository transactionsRepository;
 
     @Inject
-    public List<TransactionSaver> listTransactions;
+    List<TransactionSaver> listTransactions;
 
     @Inject
-    public TransactionPresenter() {
+    TransactionPresenter() {
     }
 
     @Override
@@ -68,7 +65,7 @@ public class TransactionPresenter<V extends TransactionMvpView> extends BasePres
         }
     }
 
-    public Disposable getTransactionsFromDatabase() {
+    private Disposable getTransactionsFromDatabase() {
         return transactionsRepository.getTransactionsOfAccount(accountId)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<List<TransactionSaver>>() {
@@ -86,7 +83,7 @@ public class TransactionPresenter<V extends TransactionMvpView> extends BasePres
         currenciesNames = intent.getStringArrayExtra("currenciesNames");
     }
 
-    public void deleteTransaction(final int id) {
+    private void deleteTransaction(final int id) {
         compositeDisposable.add(transactionsRepository.delete(listTransactions.get(id))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

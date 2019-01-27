@@ -10,7 +10,7 @@ import android.widget.ProgressBar;
 import com.example.android.bookkeeping.Constants;
 import com.example.android.bookkeeping.MyApplication;
 import com.example.android.bookkeeping.R;
-import com.example.android.bookkeeping.currency.CurrenciesRatesData;
+import com.example.android.bookkeeping.model.pojo.CurrenciesRatesData;
 
 import com.example.android.bookkeeping.di.components.UrlParserComponent;
 import com.example.android.bookkeeping.di.modules.ActivityModule;

@@ -4,8 +4,8 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.example.android.bookkeeping.R;
-import com.example.android.bookkeeping.currency.CurrenciesRatesData;
-import com.example.android.bookkeeping.currency.UrlParser;
+import com.example.android.bookkeeping.model.pojo.CurrenciesRatesData;
+import com.example.android.bookkeeping.model.pojo.UrlParser;
 import com.example.android.bookkeeping.ui.mvp.BasePresenter;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -43,10 +43,10 @@ public class ChartPresenter<V extends ChartMvpView> extends BasePresenter<V> imp
     public CompositeDisposable compositeDisposable;
 
     @Inject
-    public UrlParser urlParser;
+    UrlParser urlParser;
 
     @Inject
-    public ChartPresenter() {
+    ChartPresenter() {
     }
 
 
@@ -93,7 +93,7 @@ public class ChartPresenter<V extends ChartMvpView> extends BasePresenter<V> imp
     }
 
 
-    public void processData() {
+    private void processData() {
         compositeDisposable.add(Observable.fromCallable(new Callable<LineData>() {
             @Override
             public LineData call() {
@@ -113,7 +113,7 @@ public class ChartPresenter<V extends ChartMvpView> extends BasePresenter<V> imp
 
     }
 
-    public LineData addCurrenciesToChart(){
+    private LineData addCurrenciesToChart(){
         ArrayList<ILineDataSet> lines = new ArrayList<> ();
         LineDataSet lDataSet1 = new LineDataSet(null, "");
         ArrayList<Entry> dataSet = new ArrayList<>();
